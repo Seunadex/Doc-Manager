@@ -1,3 +1,9 @@
+[![Coverage Status](https://coveralls.io/repos/github/Seunadex/Doc-Manager/badge.svg)](https://coveralls.io/github/Seunadex/Doc-Manager)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[![Code Climate](https://codeclimate.com/github/Seunadex/Doc-manager/badges/gpa.svg)](https://codeclimate.com/github/Seunadex/Doc-Manager)
+
 ## Document Manager.
 A full stack document management system
 
