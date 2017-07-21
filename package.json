@@ -2,8 +2,9 @@
   "name": "doc-manager",
   "version": "1.0.0",
   "description": "Document manager",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
+    "start:dev": "nodemon ./bin/www --exec babel-node --presets es2015,stage-2",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,18 @@
   "bugs": {
     "url": "https://github.com/Seunadex/Doc-Manager/issues"
   },
-  "homepage": "https://github.com/Seunadex/Doc-Manager#readme"
+  "homepage": "https://github.com/Seunadex/Doc-Manager#readme",
+  "dependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "morgan": "^1.8.2",
+    "winston": "^2.3.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "nodemon": "^1.11.0"
+  }
 }
