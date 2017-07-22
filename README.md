@@ -3,7 +3,7 @@
 [![Code Climate](https://codeclimate.com/github/Seunadex/Doc-manager/badges/gpa.svg)](https://codeclimate.com/github/Seunadex/Doc-Manager)
 [![Build Status](https://travis-ci.org/Seunadex/Doc-Manager.svg?branch=staging)](https://travis-ci.org/Seunadex/Doc-Manager)
 [![Build Status](https://semaphoreci.com/api/v1/seunadex/doc-manager/branches/staging/badge.svg)](https://semaphoreci.com/seunadex/doc-manager)
-[![Build Status]
+
 
 ## Document Manager.
 A full stack document management system
