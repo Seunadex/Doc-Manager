@@ -1,6 +1,6 @@
 import http from 'http';
 import winston from 'winston';
-import app from '../server';
+import app from '../server/server';
 
 const port = parseInt(process.env.PORT, 10) || 8000;
 app.set('port', port);
