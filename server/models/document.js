@@ -49,15 +49,12 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     }
-  }, {
-    classMethods: {
-      associate: (models) => {
-        Document.belongsTo(models.User, {
-          foreignKey: 'UserId',
-          onDelete: 'CASCADE'
-        });
-      }
-    }
   });
+  Document.associate = (models) => {
+    Document.belongsTo(models.User, {
+      foreignKey: 'UserId',
+      onDelete: 'CASCADE'
+    });
+  };
   return Document;
 };
