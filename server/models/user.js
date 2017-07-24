@@ -57,19 +57,16 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     }
-  }, {
-    classMethods: {
-      associate: (models) => {
-        User.hasMany(models.Document, {
-          foreignKey: 'UserId',
-          as: 'document'
-        });
-        User.belongsTo(models.Role, {
-          foreignKey: 'RoleId',
-          onDelete: 'CASCADE'
-        });
-      }
-    }
   });
+  User.associate = (models) => {
+    User.hasMany(models.Document, {
+      foreignKey: 'UserId',
+      as: 'document'
+    });
+    User.belongsTo(models.Role, {
+      foreignKey: 'RoleId',
+      onDelete: 'CASCADE'
+    });
+  };
   return User;
 };
