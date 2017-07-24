@@ -17,11 +17,12 @@ module.exports = {
       },
       access: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 'public'
       },
-      userId: {
-        allowNull: false,
-        type: Sequelize.INTEGER
+      UserId: {
+        type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
       },
       createdAt: {
         allowNull: false,
@@ -32,7 +33,7 @@ module.exports = {
         type: Sequelize.DATE
       }
     }),
-  down: (queryInterface, Sequelize) =>
+  down: queryInterface =>
   queryInterface.dropTable('Documents')
 };
 
