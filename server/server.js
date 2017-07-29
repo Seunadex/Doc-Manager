@@ -1,10 +1,12 @@
 import dotenv from 'dotenv';
 import express from 'express';
+import expressValidator from 'express-validator';
 import http from 'http';
 import winston from 'winston';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
 import router from './routes';
+
 
 dotenv.config();
 // Set up the express app
@@ -17,6 +19,7 @@ app.use(logger('dev'));
 // Parse incoming requests data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(expressValidator());
 router(app);
 
 app.set('port', port);

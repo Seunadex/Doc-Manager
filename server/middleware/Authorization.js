@@ -13,10 +13,9 @@ class Authorization {
 
   /**
    *
-   *
    * @param {object} req
    * @param {object} res
-   * @param {function} next
+   * @param {callback} next
    * @memberof Authorization
    * @returns {void}
    */
@@ -44,7 +43,7 @@ class Authorization {
    *
    * @param {Object} req
    * @param {Object} res
-   * @param {Function} next
+   * @param {callback} next
    * @returns {void}
    * @memberof Authorization
    */
@@ -67,7 +66,7 @@ class Authorization {
   /**
    * @param {Object} req
    * @param {Object} res
-   * @param {function} next
+   * @param {callback} next
    * @returns {void}
    * @memberof Authorization
    */
@@ -84,7 +83,7 @@ class Authorization {
    *
    * @param {Object} req
    * @param {Object} res
-   * @param {Object} next
+   * @param {callback} next
    * @returns
    * @memberof Authorization
    */
@@ -95,7 +94,7 @@ class Authorization {
           return res.status(404).send({ message: 'Document not found' });
         }
 
-        if (res.locals.decoded.UserId !== document.id) {
+        if (res.locals.decoded.UserId === document.id) {
           return res.status(403).send({ message: 'Access denied' });
         }
 
