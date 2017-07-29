@@ -13,15 +13,12 @@ module.exports = {
       },
       username: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
       password: {
         allowNull: false,
-        type: Sequelize.INTEGER
-      },
-      phoneNo: {
-        allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       email: {
         allowNull: false,
@@ -29,8 +26,13 @@ module.exports = {
         type: Sequelize.STRING
       },
       RoleId: {
-        allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
+        references: {
+          model: 'Roles',
+          key: 'id',
+          as: 'roleId'
+        }
       },
       createdAt: {
         allowNull: false,
@@ -41,7 +43,7 @@ module.exports = {
         type: Sequelize.DATE
       }
     }),
-  down: (queryInterface, Sequelize) =>
+  down: queryInterface =>
     queryInterface.dropTable('Users'),
 };
 
