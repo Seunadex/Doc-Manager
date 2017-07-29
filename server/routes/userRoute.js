@@ -1,8 +1,9 @@
 import UserControllers from '../controllers/UserControllers';
 import Authorization from '../middleware/Authorization';
+import Validation from '../middleware/Validation';
 
 export default (router) => {
-  router.post('/api/v1/users', UserControllers.createUser);
+  router.post('/api/v1/users', Validation.validateUser, UserControllers.createUser);
   router.post('/api/v1/users/login', UserControllers.login);
   router.get('/api/v1/users/:id', Authorization.verifyUser, Authorization.AllowAdminOrUser, UserControllers.getUser);
   router.get('/api/v1/users', Authorization.verifyUser, Authorization.verifyAdmin, UserControllers.listUsers);
