@@ -84,7 +84,7 @@ class Authorization {
    * @param {Object} req
    * @param {Object} res
    * @param {callback} next
-   * @returns
+   * @returns {response} returns response object
    * @memberof Authorization
    */
   permitDocumentOwner(req, res, next) {
