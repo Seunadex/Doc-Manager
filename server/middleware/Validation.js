@@ -1,3 +1,5 @@
+const response = { error: {} };
+
 /**
  *
  * @class Validation
@@ -23,7 +25,6 @@ class Validation {
 
     const errors = req.validationErrors();
     if (errors) {
-      const response = { error: {} };
       errors.forEach((error) => {
         response.error[error.param] = error.msg;
       });
@@ -49,7 +50,6 @@ class Validation {
     const errors = req.validationErrors();
 
     if (errors) {
-      const response = { error: {} };
       errors.forEach((error) => {
         response.error[error.param] = error.msg;
       });

@@ -1,4 +1,3 @@
-
 const Document = require('../models').Document;
 const User = require('../models').User;
 
@@ -21,18 +20,18 @@ const DocumentControllers = {
 
   /**
    *
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns the list of documents available
    */
   listDocuments(req, res) {
     return User
-    .findAll({
+    .findAndCountAll({
       include: [{
         model: Document,
         as: 'documents',
       }],
+      attributes: ['fullname', 'username', 'email']
     })
     .then(user => res.status(200).send(user))
     .catch(error => res.status(400).send(error));
@@ -51,6 +50,7 @@ const DocumentControllers = {
         model: Document,
         as: 'documents',
       }],
+      attributes: ['fullname', 'username', 'email']
     })
     .then((user) => {
       if (!user) {
@@ -87,7 +87,7 @@ const DocumentControllers = {
       .then((document) => {
         if (!document) {
           return res.status(404).send({
-            message: 'The Document Does not Exist',
+            message: 'The Document does not exist',
           });
         }
         if (req.body.title) {
@@ -141,6 +141,43 @@ const DocumentControllers = {
     })
     .catch(error => res.status(400).send(error));
   },
+
+  /**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Response} Response object
+   */
+  searchDocument(req, res) {
+    const searchKey = `%${req.query.q}%` || `%${req.body.search}%`;
+    const verifiedRoleId = res.locals.decoded.userRoleId;
+    const userId = res.locals.decoded.UserId;
+    const searchAttributes = verifiedRoleId === 1 ? {
+      $or: [{ title: { $iLike: searchKey } }]
+    }
+    :
+    {
+      $or: [{ access: { $or: ['public', 'role'] } }, { userId }],
+      title: { $iLike: searchKey }
+    };
+    return Document.findAll({
+      attributes: ['title', 'content', 'access', 'UserId', 'createdAt', 'updatedAt'],
+      where: searchAttributes,
+      include: [
+        {
+          model: User,
+          attributes: ['username', 'RoleId']
+        }
+      ]
+    })
+    .then(documents => res.status(200).send({
+      documents: documents.filter(document => !(document.User.RoleId === verifiedRoleId && document.User.RoleId === 'role')),
+    }))
+    .catch(() => res.status(403).send({
+      message: 'Forbidden'
+    }));
+  }
 };
 
 export default DocumentControllers;

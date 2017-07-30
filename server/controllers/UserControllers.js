@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import models from '../models';
 
 dotenv.config();
 
@@ -104,12 +103,27 @@ const UserControllers = {
   // },
 
   listUsers(req, res) {
+    let searchKey = '%%';
+    if (req.query.q) searchKey = `%${req.query.q}%`;
     return User
-    .all()
-    .then(user => res.status(200).send({
+    .findAll({
+      where: { username: {
+        $iLike: searchKey
+      } },
+      order: [['createdAt', 'DESC']]
+    })
+    .then(users => res.status(200).send({
       status: 'OK',
-      count: user.length,
-      user,
+      count: users.length,
+      userList: users.map(user => (
+        {
+          id: user.id,
+          fullname: user.fullname,
+          username: user.username,
+          email: user.email,
+          role: user.RoleId,
+          created_at: user.createdAt
+        }))
     }))
     .catch(error => res.status(400).send(error));
   },

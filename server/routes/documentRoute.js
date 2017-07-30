@@ -8,4 +8,5 @@ export default (router) => {
   router.post('/api/v1/documents', Validation.validateDocuments, Authorization.verifyUser, DocumentControllers.create);
   router.put('/api/v1/documents/:id', DocumentControllers.updateDocument);
   router.delete('/api/v1/documents/:id', DocumentControllers.destroy);
+  router.get('/api/v1/search/documents/', Authorization.verifyUser, Authorization.verifyAdmin, DocumentControllers.searchDocument);
 };
