@@ -1,3 +1,5 @@
+import pagination from '../helper/pagination';
+
 const Document = require('../models').Document;
 const User = require('../models').User;
 
@@ -25,16 +27,21 @@ const DocumentControllers = {
    * @returns {Object} returns the list of documents available
    */
   listDocuments(req, res) {
-    return User
-    .findAndCountAll({
-      include: [{
-        model: Document,
-        as: 'documents',
-      }],
-      attributes: ['fullname', 'username', 'email']
-    })
-    .then(user => res.status(200).send(user))
-    .catch(error => res.status(400).send(error));
+    if (req.query) {
+      const limit = req.query.limit || 10;
+      const offset = req.query.offset || 0;
+      return Document.findAndCount({
+        limit,
+        offset,
+      })
+    .then(document => res.status(200).send({
+      pagination: {
+        row: document.rows,
+        paginationDetails: pagination(document.count, limit, offset)
+      }
+    }))
+    .catch(error => res.status(403).send(error));
+    }
   },
 
   /**

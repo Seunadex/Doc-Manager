@@ -1,16 +1,25 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import pagination from '../helper/pagination';
 
 dotenv.config();
 
 const User = require('../models/').User;
 const Document = require('../models/').Document;
+// const Role = require('../models/role');
 
 
 const secret = process.env.SECRET;
 
 const UserControllers = {
+  /**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object
+   */
   createUser(req, res) {
     if (req.body.RoleId === '1') {
       return res.status(401).send({
@@ -45,7 +54,13 @@ const UserControllers = {
     })
     .catch(error => res.status(400).send(error));
   },
-
+/**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object containing the user's login details
+   */
   login(req, res) {
     return User
       .findOne({
@@ -80,29 +95,32 @@ const UserControllers = {
       })
       .catch(error => res.send(error));
   },
-
-  // listUsers(req, res) {
-  //   Roles.findById(req.decoded.RoleId)
-  //     .then(() => {
-  //       if (req.decoded.RoleId === 1) {
-  //         return User
-  //           .findAll({
-  //             attributes: ['id', 'email', 'username', 'RoleId', 'createdAt'],
-  //           })
-  //           .then(user => res.status(200).send(user))
-  //           .catch(() => res.status(400).send({ message: 'Connection Error' }));
-  //       } else if (req.decoded.userRoleId === 2) {
-  //         return res.status(400).send({
-  //           message: 'You do not have enough access'
-  //         });
-  //       }
-  //       return res.status(400).send({
-  //         message: 'Access Denied'
-  //       });
-  //     });
-  // },
-
   listUsers(req, res) {
+    const limit = req.query.limit || 10;
+    const offset = req.query.offset || 0;
+    return User.findAndCount({
+      limit,
+      offset,
+      attributes: ['id', 'fullname', 'username', 'email', 'RoleId'],
+    })
+    .then(user => res.status(200).send({
+      pagination: {
+        row: user.rows,
+        paginationDetails: pagination(user.count, limit, offset)
+      }
+    }))
+    .catch(error => res.status(403).send(error));
+  },
+
+
+  /**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object containing the list of user registered
+   */
+  searchUsers(req, res) {
     let searchKey = '%%';
     if (req.query.q) searchKey = `%${req.query.q}%`;
     return User
@@ -128,6 +146,13 @@ const UserControllers = {
     .catch(error => res.status(400).send(error));
   },
 
+  /**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object
+   */
   getUser(req, res) {
     if (isNaN(req.params.id)) {
       return res.status(400).send({
@@ -150,6 +175,13 @@ const UserControllers = {
     .catch(error => res.status(400).send(error));
   },
 
+  /**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object
+   */
   updateUser(req, res) {
     if (isNaN(req.params.id)) {
       return res.status(400).send({
@@ -180,53 +212,13 @@ const UserControllers = {
     .catch(error => res.status(400).send(error));
   },
 
-  getUserDocuments(req, res) {
-    // return models.Document.findAll({
-    //   where: { UserId: res.locals.user.id },
-    //   include: [{
-    //     model: models.User,
-    //     attributes: ['userUsername', 'userRoleId'] }],
-    // })
-    // .then((documents) => {
-    //   res.status(200).send(documents);
-    // })
-    // .catch(error => res.status(400).send(error));
-    if (isNaN(parseInt(req.params.id, 10))) {
-      return res.status(400).send({
-        status: 'error',
-        message: 'Param must be a number'
-      });
-    }
-
-    User.findById(req.params.id)
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({
-          status: 'error',
-          message: 'User not found'
-        });
-      }
-
-      Document.findAll({
-        where: {
-          UserId: req.params.id,
-          RoleId: res.locals.decoded.userRoleId
-        }
-      })
-        .then((documents) => {
-          if (documents.length === 0) {
-            return res.status(404).send({
-              status: 'ok',
-              message: 'No document found for this user'
-            });
-          }
-          return res.status(200).json(documents);
-        })
-        .catch(error => res.status(400).send(error));
-    })
-    .catch(error => res.status(400).send(error));
-  },
-
+  /**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object showing a user has been deleted
+   */
   destroy(req, res) {
     return User
     .findById(req.params.id)
@@ -246,6 +238,42 @@ const UserControllers = {
     })
     .catch(error => res.status(400).send(error));
   },
+
+  /**
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object
+   * containing the list documents belonging to a certain user.
+   */
+  listUserDocuments(req, res) {
+    if (isNaN(req.params.id)) {
+      return res.status(400).send({
+        status: 'error',
+        message: 'ID must be a number'
+      });
+    }
+    return Document.findAll({
+      where: { UserId: req.params.id },
+      include: [{
+        model: User,
+        attributes: ['id', 'username'] }],
+    })
+    .then((document) => {
+      if (res.locals.decoded.UserId === document[0].UserId ||
+        res.locals.decoded.userRoleId === 1) {
+        return res.status(200).json({
+          count: document.length,
+          document,
+        });
+      }
+      return res.status(403).send({
+        message: 'Access denied'
+      });
+    })
+    .catch(error => res.status(403).send(error));
+  }
+
 };
 
 export default UserControllers;
