@@ -2,6 +2,13 @@ const Document = require('../models').Document;
 const User = require('../models').User;
 
 const DocumentControllers = {
+  /**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object.
+   */
   create(req, res) {
     const authorId = res.locals.decoded.UserId;
     return Document.create({
@@ -31,7 +38,7 @@ const DocumentControllers = {
         model: Document,
         as: 'documents',
       }],
-      attributes: ['fullname', 'username', 'email']
+      attributes: ['username', 'email']
     })
     .then(user => res.status(200).send(user))
     .catch(error => res.status(400).send(error));
