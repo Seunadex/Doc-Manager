@@ -52,13 +52,12 @@ class Authorization {
       .then((user) => {
         if (!user) return res.status(404).send({ message: 'User not found' });
 
-        if (res.locals.decoded.userRoleId !== 1
-          && res.locals.decoded.UserId !== user.id) {
-          return res.status(403).send({ message: 'Access denied' });
+        if (res.locals.decoded.userRoleId === 1
+          || res.locals.decoded.UserId === user.id) {
+          res.locals.user = user;
+          return next();
         }
-
-        res.locals.user = user;
-        return next();
+        return res.status(403).send({ message: 'Access denied' });
       })
       .catch(() => res.status(403).send({ message: 'Access denied' }));
   }
@@ -87,21 +86,21 @@ class Authorization {
    * @returns {response} returns response object
    * @memberof Authorization
    */
-  permitDocumentOwner(req, res, next) {
-    return models.Document.findById(req.params.id)
-      .then((document) => {
-        if (!document) {
-          return res.status(404).send({ message: 'Document not found' });
-        }
+  // permitDocumentOwner(req, res, next) {
+  //   return models.Document.findById(req.params.id)
+  //     .then((document) => {
+  //       if (!document) {
+  //         return res.status(404).send({ message: 'Document not found' });
+  //       }
 
-        if (res.locals.decoded.UserId === document.id) {
-          return res.status(403).send({ message: 'Access denied' });
-        }
+  //       if (res.locals.decoded.UserId === document.id) {
+  //         return res.status(403).send({ message: 'Access denied' });
+  //       }
 
-        res.locals.document = document;
-        return next();
-      })
-      .catch(() => res.status(403).send({ message: 'Access denied' }));
-  }
+  //       res.locals.document = document;
+  //       return next();
+  //     })
+  //     .catch(() => res.status(403).send({ message: 'Access denied' }));
+  // }
 }
 export default new Authorization();

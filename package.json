@@ -4,6 +4,8 @@
   "description": "Document manager",
   "main": "server.js",
   "scripts": {
+    "postinstall": "gulp dev",
+    "start": "node build/app.js",
     "start:dev": "nodemon ./server/server.js --exec babel-node --presets es2015,stage-2",
     "dev": "NODE_ENV=development nodemon --watch server --exec babel-node -- server/server.js",
     "test": "gulp dev &&  gulp coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",

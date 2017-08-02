@@ -38,7 +38,9 @@ gulp.task('coverage', ['dev'], (cb) => {
       gulp.src('./server/tests/**/*.js')
         .pipe(babel())
         .pipe(injectModules())
-        .pipe(jasmine())
+        .pipe(jasmine({
+          verbose: true
+        }))
         .pipe(istanbul.writeReports())
         .pipe(istanbul.enforceThresholds({ thresholds: { global: 10 } }))
         .on('end', cb)

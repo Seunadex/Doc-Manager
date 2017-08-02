@@ -1,16 +1,25 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import pagination from '../helper/pagination';
 
 dotenv.config();
 
 const User = require('../models/').User;
 const Document = require('../models/').Document;
+// const Role = require('../models/role');
 
 
 const secret = process.env.SECRET;
 
 const UserControllers = {
+  /**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object
+   */
   createUser(req, res) {
     if (req.body.RoleId === '1') {
       return res.status(401).send({
@@ -45,7 +54,13 @@ const UserControllers = {
     })
     .catch(error => res.status(400).send(error));
   },
-
+/**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object containing the user's login details
+   */
   login(req, res) {
     return User
       .findOne({
@@ -79,8 +94,34 @@ const UserControllers = {
       })
       .catch(error => res.send(error.message));
   },
-
   listUsers(req, res) {
+    const limit = req.query.limit || 10;
+    const offset = req.query.offset || 0;
+    return User.findAndCount({
+      limit,
+      offset,
+      attributes: ['id', 'fullname', 'username', 'email', 'RoleId'],
+    })
+    .then(user => res.status(200).send({
+      pagination: {
+        row: user.rows,
+        paginationDetails: pagination(user.count, limit, offset)
+      }
+    }))
+    .catch(() => res.status(403).send({
+      message: 'limit and offset should be numbers'
+    }));
+  },
+
+
+  /**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object containing the list of user registered
+   */
+  searchUsers(req, res) {
     let searchKey = '%%';
     if (req.query.q) searchKey = `%${req.query.q}%`;
     return User
@@ -106,6 +147,13 @@ const UserControllers = {
     .catch(error => res.status(400).send(error));
   },
 
+  /**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object
+   */
   getUser(req, res) {
     if (isNaN(req.params.id)) {
       return res.status(400).send({
@@ -119,15 +167,30 @@ const UserControllers = {
       if (!user) {
         return res.status(404).send({
           status: 'error',
-          message: 'User Not Found',
+          message: 'User not found',
         });
       }
       req.user = user;
-      return res.status(200).send(user);
+      return res.status(200).send({
+        id: user.id,
+        fullname: user.fullname,
+        username: user.username,
+        email: user.email,
+        role: user.RoleId,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      });
     })
     .catch(error => res.status(400).send(error));
   },
 
+  /**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object
+   */
   updateUser(req, res) {
     if (isNaN(req.params.id)) {
       return res.status(400).send({
@@ -207,11 +270,11 @@ const UserControllers = {
           return res.status(200).send(documents);
         })
         .catch(() => res.status(400).send({
-          message: 'error 1'
+          message: 'error in connection'
         }));
     })
     .catch(() => res.status(400).send({
-      message: 'error 2'
+      message: 'error in connection'
     }));
   },
 
@@ -234,6 +297,42 @@ const UserControllers = {
     })
     .catch(error => res.status(400).send(error));
   },
+
+  /**
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object
+   * containing the list documents belonging to a certain user.
+   */
+  listUserDocuments(req, res) {
+    if (isNaN(req.params.id)) {
+      return res.status(400).send({
+        status: 'error',
+        message: 'ID must be a number'
+      });
+    }
+    return Document.findAll({
+      where: { UserId: req.params.id },
+      include: [{
+        model: User,
+        attributes: ['id', 'username'] }],
+    })
+    .then((document) => {
+      if (res.locals.decoded.UserId === document[0].UserId ||
+        res.locals.decoded.userRoleId === 1) {
+        return res.status(200).json({
+          count: document.length,
+          document,
+        });
+      }
+      return res.status(403).send({
+        message: 'Access denied'
+      });
+    })
+    .catch(error => res.status(403).send(error));
+  }
+
 };
 
 export default UserControllers;
