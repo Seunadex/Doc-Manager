@@ -5,11 +5,14 @@
   "main": "server.js",
   "scripts": {
     "postinstall": "gulp dev",
-    "start": "node build/app.js",
+    "start": "node build/server.js",
     "start:dev": "nodemon ./server/server.js --exec babel-node --presets es2015,stage-2",
-    "dev": "NODE_ENV=development nodemon --watch server --exec babel-node -- server/server.js",
+    "dev": "NODE_ENV=test nodemon --watch server --exec babel-node -- server/server.js",
     "test": "NODE_ENV=production gulp dev &&  gulp coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "coverage": "gulp coverage"
+    "coverage": "gulp coverage",
+    "testmigrate": "NODE_ENV=test sequelize db:migrate",
+    "undo": "sequelize db:migrate:undo:all",
+    "seed": "sequelize db:seed:all"
   },
   "repository": {
     "type": "git",
@@ -43,8 +46,8 @@
     "gulp-jasmine-node": "^1.0.7",
     "gulp-nodemon": "^2.2.1",
     "jsonwebtoken": "^7.4.1",
+    "moment": "^2.18.1",
     "morgan": "^1.8.2",
-    "nyc": "^11.1.0",
     "path": "^0.12.7",
     "pg": "^6.4.1",
     "pg-hstore": "^2.3.2",
@@ -56,7 +59,6 @@
   "devDependencies": {
     "chai": "^4.1.0",
     "coveralls": "^2.13.1",
-    "mocha": "^3.4.2",
     "nodemon": "^1.11.0",
     "supertest": "^3.0.0"
   }

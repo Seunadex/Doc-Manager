@@ -52,7 +52,9 @@ const UserControllers = {
         token,
       });
     })
-    .catch(error => res.status(400).send(error));
+    .catch(() => res.status(400).send({
+      message: 'User credentials already exist',
+    }));
   },
 /**
    *
@@ -181,7 +183,9 @@ const UserControllers = {
         updatedAt: user.updatedAt
       });
     })
-    .catch(error => res.status(400).send(error));
+    .catch(() => res.status(400).send({
+      message: 'Invalid param'
+    }));
   },
 
   /**
@@ -200,8 +204,8 @@ const UserControllers = {
     return User
     .findById(req.params.id)
     .then((user) => {
-      if (user.id !== Number(req.params.id)) {
-        return res.status(400).send({
+      if (Number(req.params.id) !== user.id) {
+        return res.status(403).send({
           message: 'Access denied',
         });
       }
@@ -232,9 +236,14 @@ const UserControllers = {
           status: 'Successfully updated',
           user,
         }))
-        .catch(error => res.status(400).send(error));
+        .catch(() => res.status(404).send({
+          message: 'User not found'
+        }
+        ));
         })
-    .catch(error => res.status(400).send(error));
+    .catch(() => res.status(400).send({
+      message: 'User not found'
+    }));
     }
     );
   },
@@ -283,7 +292,7 @@ const UserControllers = {
     .findById(req.params.id)
     .then((user) => {
       if (!user) {
-        return res.status(400).send({
+        return res.status(404).send({
           message: 'User Not Found',
         });
       }
@@ -293,9 +302,13 @@ const UserControllers = {
           status: 'ok',
           message: 'You have successfully deleted a user'
         }))
-        .catch(error => res.status(400).send(error));
+        .catch(() => res.status(400).send({
+          message: 'Please check your input'
+        }));
     })
-    .catch(error => res.status(400).send(error));
+    .catch(() => res.status(400).send({
+      message: 'Bad request'
+    }));
   },
 
   /**
