@@ -303,7 +303,7 @@ const UserControllers = {
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object
-   * containing the list documents belonging to a certain user.
+   * containing the list to documents belonging to a certain user.
    */
   listUserDocuments(req, res) {
     if (isNaN(req.params.id)) {
