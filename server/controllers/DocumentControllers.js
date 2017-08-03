@@ -4,6 +4,13 @@ const Document = require('../models').Document;
 const User = require('../models').User;
 
 const DocumentControllers = {
+  /**
+   *
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object.
+   */
   create(req, res) {
     const authorId = res.locals.decoded.UserId;
     return Document.create({

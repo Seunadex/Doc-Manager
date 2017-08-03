@@ -3,9 +3,6 @@ module.exports = (sequelize, DataTypes) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: {
-        args: true,
-        msg: 'Role already exist' }
     },
   });
   Role.associate = (models) => {

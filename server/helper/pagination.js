@@ -7,12 +7,12 @@
  */
 export default (count, limit, offset) => {
   const page = Math.floor(offset / limit) + 1;
-  const numberOfPages = Math.ceil(count / limit);
+  const pageCount = Math.ceil(count / limit);
   const pageSize = (count - offset) > limit ? limit : (count - offset);
 
   return {
     page,
-    numberOfPages,
+    pageCount,
     pageSize,
     totalCount: count
   };

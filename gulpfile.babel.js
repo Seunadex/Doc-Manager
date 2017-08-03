@@ -1,18 +1,12 @@
 import gulp from 'gulp';
 import nodemon from 'gulp-nodemon';
 import babel from 'gulp-babel';
-import jasmineNode from 'gulp-jasmine-node';
+import jasmine from 'gulp-jasmine';
 import istanbul from 'gulp-istanbul';
 import injectModules from 'gulp-inject-modules';
 import exit from 'gulp-exit';
 
 process.env.NODE_ENV = 'test';
-
-const jasmineNodeOpts = {
-  timeout: 90000,
-  includeStackTrace: false,
-  color: true
-};
 
 gulp.task('nodemon', () => {
   nodemon({
@@ -30,23 +24,25 @@ gulp.task('dev', () => gulp.src('server/**/*.js')
   .pipe(gulp.dest('build')));
 
 gulp.task('test', () => {
-  gulp.src('./tests/**/*.js')
+  gulp.src('./server/tests/**/*.js')
     .pipe(babel())
-    .pipe(jasmineNode(jasmineNodeOpts))
+    .pipe(jasmine())
     .pipe(exit());
 });
 
-gulp.task('coverage', (cb) => {
-  gulp.src('build/routes/*.js')
+gulp.task('coverage', ['dev'], (cb) => {
+  gulp.src('build/**/*.js')
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', () => {
-      gulp.src('./tests/**/*.js')
+      gulp.src('./server/tests/**/*.js')
         .pipe(babel())
         .pipe(injectModules())
-        .pipe(jasmineNode())
+        .pipe(jasmine({
+          verbose: true
+        }))
         .pipe(istanbul.writeReports())
-        .pipe(istanbul.enforceThresholds({ thresholds: { global: 0 } }))
+        .pipe(istanbul.enforceThresholds({ thresholds: { global: 10 } }))
         .on('end', cb)
         .pipe(exit());
     });

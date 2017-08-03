@@ -45,14 +45,16 @@ const UserControllers = {
       }, secret, {
         expiresIn: '72h'
       });
-      res.status(201).send({
+      return res.status(201).send({
         message: 'User successfully created',
         success: true,
         user,
         token,
       });
     })
-    .catch(error => res.status(400).send(error));
+    .catch(() => res.status(400).send({
+      message: 'User credentials already exist',
+    }));
   },
 /**
    *
@@ -69,7 +71,7 @@ const UserControllers = {
         }
       }).then((user) => {
         if (!user) {
-          res.status(400).send({ message: 'User not found' });
+          return res.status(400).send({ message: 'User not found' });
         }
         const passkey = bcrypt.compareSync(req.body.password, user.password);
         if (passkey) {
@@ -82,18 +84,17 @@ const UserControllers = {
           }, secret, {
             expiresIn: '24h'
           });
-          res.status(200).send({
+          return res.status(200).send({
             status: 'ok',
             success: true,
             message: 'Token generated. Login Successful',
             UserId: user.id,
             token,
           });
-        } else {
-          res.status(400).send({ message: 'Incorrect password' });
         }
+        return res.status(400).send({ message: 'Incorrect password' });
       })
-      .catch(error => res.send(error));
+      .catch(error => res.send(error.message));
   },
   listUsers(req, res) {
     const limit = req.query.limit || 10;
@@ -109,7 +110,9 @@ const UserControllers = {
         paginationDetails: pagination(user.count, limit, offset)
       }
     }))
-    .catch(error => res.status(403).send(error));
+    .catch(() => res.status(403).send({
+      message: 'limit and offset should be numbers'
+    }));
   },
 
 
@@ -166,13 +169,23 @@ const UserControllers = {
       if (!user) {
         return res.status(404).send({
           status: 'error',
-          message: 'User Not Found',
+          message: 'User not found',
         });
       }
       req.user = user;
-      res.status(200).send(user);
+      return res.status(200).send({
+        id: user.id,
+        fullname: user.fullname,
+        username: user.username,
+        email: user.email,
+        role: user.RoleId,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      });
     })
-    .catch(error => res.status(400).send(error));
+    .catch(() => res.status(400).send({
+      message: 'Invalid param'
+    }));
   },
 
   /**
@@ -185,10 +198,96 @@ const UserControllers = {
   updateUser(req, res) {
     if (isNaN(req.params.id)) {
       return res.status(400).send({
-        status: 'error',
         message: 'Id must be a number'
       });
     }
+    return User
+    .findById(req.params.id)
+    .then((user) => {
+      if (Number(req.params.id) !== user.id) {
+        return res.status(403).send({
+          message: 'Access denied',
+        });
+      }
+      User.findAll({
+        where: {
+          $or: [{
+            email: req.body.email
+          }, {
+            username: req.body.username
+          }]
+        }
+      })
+        .then((AuthenticatedUser) => {
+          if (AuthenticatedUser.length !== 0
+            && (AuthenticatedUser[0].dataValues.id !== parseInt(req.params.id, 10))) {
+            return res.status(400).send({
+              message: 'A user exist with same email or username'
+            });
+          }
+          return user
+        .update({
+          fullname: req.body.fullname || user.fullname,
+          username: req.body.username || user.username,
+          email: req.body.email || user.email,
+          password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10)) || user.password,
+        })
+        .then(() => res.status(200).send({
+          status: 'Successfully updated',
+          user,
+        }))
+        .catch(() => res.status(404).send({
+          message: 'User not found'
+        }
+        ));
+        })
+    .catch(() => res.status(400).send({
+      message: 'User not found'
+    }));
+    }
+    );
+  },
+
+  getUserDocuments(req, res) {
+    if (isNaN(parseInt(req.params.id, 10))) {
+      return res.status(400).send({
+        message: 'Param must be a number'
+      });
+    }
+
+    User.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({
+          message: 'User not found'
+        });
+      }
+
+      Document.findAll({
+        where: {
+          UserId: req.params.id,
+          RoleId: res.locals.decoded.userRoleId
+        }
+      })
+        .then((documents) => {
+          if (documents.length === 0) {
+            return res.status(404).send({
+              status: 'ok',
+              message: 'No document found for this user'
+            });
+          }
+          return res.status(200).send(documents);
+        })
+        .catch(() => res.status(400).send({
+          message: 'error in connection'
+        }));
+    })
+    .catch(() => res.status(400).send({
+      message: 'error in connection'
+    }));
+  },
+
+  destroy(req, res) {
     return User
     .findById(req.params.id)
     .then((user) => {
@@ -198,45 +297,18 @@ const UserControllers = {
         });
       }
       return user
-        .update({
-          fullname: req.body.fullname || user.fullname,
-          username: req.body.username || user.username,
-          password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10)) || user.password,
-        })
-        .then(() => res.status(200).send({
-          status: 'Successfully updated',
-          user,
-        }))
-        .catch(error => res.status(400).send(error));
-    })
-    .catch(error => res.status(400).send(error));
-  },
-
-  /**
-   *
-   *
-   * @param {Object} req
-   * @param {Object} res
-   * @returns {Object} returns a response object showing a user has been deleted
-   */
-  destroy(req, res) {
-    return User
-    .findById(req.params.id)
-    .then((user) => {
-      if (!user) {
-        return res.status(400).send({
-          message: 'User Not Found',
-        });
-      }
-      return user
         .destroy()
         .then(() => res.status(200).send({
           status: 'ok',
           message: 'You have successfully deleted a user'
         }))
-        .catch(error => res.status(400).send(error));
+        .catch(() => res.status(400).send({
+          message: 'Please check your input'
+        }));
     })
-    .catch(error => res.status(400).send(error));
+    .catch(() => res.status(400).send({
+      message: 'Bad request'
+    }));
   },
 
   /**
@@ -244,7 +316,7 @@ const UserControllers = {
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object
-   * containing the list documents belonging to a certain user.
+   * containing the list to documents belonging to a certain user.
    */
   listUserDocuments(req, res) {
     if (isNaN(req.params.id)) {

@@ -18,6 +18,23 @@ module.exports = {
     RoleId: '2',
     createdAt: new Date(),
     updatedAt: new Date()
+  },
+  {
+    username: 'maxpayne',
+    fullname: 'max payne',
+    email: 'maxpayne@gmail.com',
+    password: bcrypt.hashSync('maxpayne', bcrypt.genSaltSync(10)),
+    RoleId: '2',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }, {
+    username: 'cr7',
+    fullname: 'cristiano ronaldo',
+    email: 'cr7@gmail.com',
+    password: bcrypt.hashSync('ronaldo', bcrypt.genSaltSync(10)),
+    RoleId: '2',
+    createdAt: new Date(),
+    updatedAt: new Date()
   }], {}),
 
   down: queryInterface =>
