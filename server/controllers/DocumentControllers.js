@@ -24,7 +24,9 @@ const DocumentControllers = {
       document,
     })
     )
-    .catch(error => res.status(400).send(error));
+    .catch(() => res.status(400).send({
+      message: 'Verify your input'
+    }));
   },
 
   /**
@@ -34,9 +36,14 @@ const DocumentControllers = {
    * @returns {Object} returns the list of documents available
    */
   listDocuments(req, res) {
+    const limit = req.query.limit || 10;
+    const offset = req.query.offset || 0;
+    if (isNaN(limit) || isNaN(offset)) {
+      return res.status(400).send({
+        message: 'limit and offset must be an integer'
+      });
+    }
     if (req.query) {
-      const limit = req.query.limit || 10;
-      const offset = req.query.offset || 0;
       return Document.findAndCount({
         limit,
         offset,
@@ -47,7 +54,9 @@ const DocumentControllers = {
         paginationDetails: pagination(document.count, limit, offset)
       }
     }))
-    .catch(error => res.status(403).send(error));
+    .catch(() => res.status(403).send({
+      message: 'limits and offsets must be number'
+    }));
     }
   },
 
@@ -58,6 +67,11 @@ const DocumentControllers = {
    * @returns {Object} returns the requested document
    */
   getDocument(req, res) {
+    if (isNaN(req.params.id)) {
+      return res.status(400).send({
+        message: 'id must be an integer'
+      });
+    }
     return User
     .findById(res.locals.decoded.UserId, {
       include: [{
@@ -118,11 +132,11 @@ const DocumentControllers = {
             document,
           }))
           .catch(() => res.status(400).send({
-            message: 'Connection Error',
+            message: 'Document not found',
           }));
       })
       .catch(() => res.status(400).send({
-        message: 'Connection Error',
+        message: 'Connection Error, please try again',
       }));
   },
 
@@ -134,6 +148,11 @@ const DocumentControllers = {
    * @returns {void}
    */
   destroy(req, res) {
+    if (!Number.isInteger(Number(req.params.id))) {
+      return res.status(400).json({
+        message: 'Invalid document id'
+      });
+    }
     return Document
     .find({
       where: {
@@ -153,7 +172,9 @@ const DocumentControllers = {
         }))
         .catch(error => res.status(400).send(error));
     })
-    .catch(error => res.status(400).send(error));
+    .catch(() => res.status(400).send({
+      message: 'connection error, please try again'
+    }));
   },
 
   /**

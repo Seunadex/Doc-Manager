@@ -99,6 +99,12 @@ const UserControllers = {
   listUsers(req, res) {
     const limit = req.query.limit || 10;
     const offset = req.query.offset || 0;
+
+    if (isNaN(limit) || isNaN(offset)) {
+      return res.status(400).send({
+        message: 'limit and offset must be an integer'
+      });
+    }
     return User.findAndCount({
       limit,
       offset,
@@ -125,7 +131,10 @@ const UserControllers = {
    */
   searchUsers(req, res) {
     let searchKey = '%%';
-    if (req.query.q) searchKey = `%${req.query.q}%`;
+    if (req.query.q) {
+      searchKey = `%${req.query.q}%`;
+    }
+
     return User
     .findAll({
       where: { username: {

@@ -224,25 +224,26 @@ describe('User controllers', () => {
       });
       });
     });
+  });
 
-    describe('GET /api/v1/users/:id', () => {
-      beforeEach((done) => {
-        User.create({
-          fullname: 'jesse lingard',
-          username: 'jesse14',
-          password: passwordHash('jesselingard'),
-          email: 'jesse14@gmail.com',
-          RoleId: 2
-        }).then((err) => {
-          if (!err) {
+  describe('GET /api/v1/users/:id', () => {
+    beforeEach((done) => {
+      User.create({
+        fullname: 'jesse lingard',
+        username: 'jesse14',
+        password: passwordHash('jesselingard'),
+        email: 'jesse14@gmail.com',
+        RoleId: 2
+      }).then((err) => {
+        if (!err) {
           //
-          }
-          done();
-        });
+        }
+        done();
       });
+    });
 
-      it('should get a user by id', (done) => {
-        request
+    it('should get a user by id', (done) => {
+      request
         .get('/api/v1/users/1')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -251,10 +252,10 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
+    });
 
-      it('should return an error message for invalid token', (done) => {
-        request
+    it('should return an error message for invalid token', (done) => {
+      request
         .get('/api/v1/users/3')
         .set('Authorization', invalidToken)
         .set('Accept', 'application/json')
@@ -265,11 +266,11 @@ describe('User controllers', () => {
           expect(res.status).to.equal(401);
           done();
         });
-        done();
-      });
+      done();
+    });
 
-      it('should return error 404 when user not found', (done) => {
-        request
+    it('should return error 404 when user not found', (done) => {
+      request
         .get('/api/v1/users/33')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -280,10 +281,10 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
+    });
 
-      it('should return error with param not an integer', (done) => {
-        request
+    it('should return error with param not an integer', (done) => {
+      request
         .get('/api/v1/users/sd')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -293,10 +294,10 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
+    });
 
-      it('should return error with invalid param', (done) => {
-        request
+    it('should return error with invalid param', (done) => {
+      request
         .get('/api/v1/users/3765198265650198250128756019856187056187569487512')
         .set('Authorization', token)
         .end((err, res) => {
@@ -306,39 +307,39 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
     });
+  });
 
-    describe('GET /api/v1/users/:id/documents', () => {
-      beforeEach((done) => {
-        User.bulkCreate([{
-          fullname: 'antonio valencia',
-          username: 'valencia',
-          password: passwordHash('valencia'),
-          email: 'valencia@gmail.com',
-          RoleId: 1
-        }, {
-          fullname: 'paul pogba',
-          username: 'pogback',
-          password: passwordHash('pogback'),
-          email: 'pogback6@gmail.com',
-          RoleId: 2
-        }]).then(() => {
-          Document.create({
-            title: 'testing',
-            content: 'just testing this stuff',
-            UserId: 1,
-            RoleId: 1,
-            access: 'public'
-          })
+  describe('GET /api/v1/users/:id/documents', () => {
+    beforeEach((done) => {
+      User.bulkCreate([{
+        fullname: 'antonio valencia',
+        username: 'valencia',
+        password: passwordHash('valencia'),
+        email: 'valencia@gmail.com',
+        RoleId: 1
+      }, {
+        fullname: 'paul pogba',
+        username: 'pogback',
+        password: passwordHash('pogback'),
+        email: 'pogback6@gmail.com',
+        RoleId: 2
+      }]).then(() => {
+        Document.create({
+          title: 'testing',
+          content: 'just testing this stuff',
+          UserId: 1,
+          RoleId: 1,
+          access: 'public'
+        })
           .then(() => {
             done();
           });
-        });
       });
+    });
 
-      it('should return error on non-existing input param', (done) => {
-        request
+    it('should return error on non-existing input param', (done) => {
+      request
         .get('/api/v1/users/33/documents')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -347,10 +348,10 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
+    });
 
-      it('should return error on invalid id', (done) => {
-        request
+    it('should return error on invalid id', (done) => {
+      request
         .get('/api/v1/users/dd/documents')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -359,9 +360,9 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
-      it('should return all documents belonging to a user', (done) => {
-        request
+    });
+    it('should return all documents belonging to a user', (done) => {
+      request
         .get('/api/v1/users/1/documents')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -370,9 +371,9 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
-      it('should return empty object when user has no document', (done) => {
-        request
+    });
+    it('should return empty object when user has no document', (done) => {
+      request
         .get('/api/v1/users/2/documents')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -381,68 +382,68 @@ describe('User controllers', () => {
           }
           done();
         });
+    });
+  });
+
+  describe('GET /api/v1/users', () => {
+    beforeEach((done) => {
+      User.bulkCreate([{
+        fullname: 'delima ronaldo',
+        username: 'ronaldo9',
+        password: passwordHash('ronaldo'),
+        email: 'ronaldo9@gmail.com',
+        RoleId: 1
+      }, {
+        fullname: 'robin hood',
+        username: 'robinhood',
+        password: passwordHash('robinhood'),
+        email: 'robinhood@gmail.com',
+        RoleId: 2
+      }]).then(() => {
+        done();
       });
     });
-
-    describe('GET /api/users', () => {
-      beforeEach((done) => {
-        User.bulkCreate([{
-          fullname: 'delima ronaldo',
-          username: 'ronaldo9',
-          password: passwordHash('ronaldo'),
-          email: 'ronaldo9@gmail.com',
-          RoleId: 1
-        }, {
-          fullname: 'robin hood',
-          username: 'robinhood',
-          password: passwordHash('robinhood'),
-          email: 'robinhood@gmail.com',
-          RoleId: 2
-        }]).then(() => {
-          done();
-        });
-      });
-      it('should return error with incorrect data', (done) => {
-        request
-        .get('/api/v1/users/?limit=w&offset=0')
-        .set({ Authorization: adminToken })
+    it('should return error with incorrect data', (done) => {
+      request
+        .get('/api/v1/users/?limit=yu&offset=0')
+        .set({ Authorization: token })
         .end((err, res) => {
-          expect(res.status).to.equal(403);
-          expect(res.body.message).to.equal('limit and offset should be numbers');
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal('limit and offset must be an integer');
           done();
         });
-      });
+    });
 
-      it('should return correct data with valid limit and offset', (done) => {
-        request
+    it('should return correct data with valid limit and offset', (done) => {
+      request
         .get('/api/v1/users/?limit=3&offset=0')
         .set({ Authorization: adminToken })
         .end((err, res) => {
           expect(res.status).to.equal(200);
           done();
         });
+    });
+
+    it('should return a 403 status with no token set', (done) => {
+      User.destroy({
+        where: {},
+        truncate: true,
+        cascade: true,
+        restartIdentity: true
+      }).then((err) => {
+        if (!err) {
+          Role.destroy({
+            where: {},
+            truncate: true,
+            cascade: true,
+            restartIdentity: true
+          }).then(() => {
+            //
+          });
+        }
       });
 
-      it('should return a 403 status with no token set', (done) => {
-        User.destroy({
-          where: {},
-          truncate: true,
-          cascade: true,
-          restartIdentity: true
-        }).then((err) => {
-          if (!err) {
-            Role.destroy({
-              where: {},
-              truncate: true,
-              cascade: true,
-              restartIdentity: true
-            }).then(() => {
-            //
-            });
-          }
-        });
-
-        request
+      request
         .get('/api/v1/users')
         .set('Accept', 'application/json')
         .end((err, res) => {
@@ -453,26 +454,26 @@ describe('User controllers', () => {
           }
           done();
         });
+    });
+  });
+
+  describe('GET /api/v1/search/users', () => {
+    beforeEach((done) => {
+      User.create({
+        fullname: 'just me',
+        username: 'justme',
+        password: passwordHash('seunadekunle'),
+        email: 'justme@gmail.com',
+        RoleId: 2
+      }).then((err) => {
+        if (!err) {
+          //
+        }
+        done();
       });
     });
-
-    describe('GET /api/v1/search/users', () => {
-      beforeEach((done) => {
-        User.create({
-          fullname: 'just me',
-          username: 'justme',
-          password: passwordHash('seunadekunle'),
-          email: 'justme@gmail.com',
-          RoleId: 2
-        }).then((err) => {
-          if (!err) {
-          //
-          }
-          done();
-        });
-      });
-      it('should return an array of users if found', (done) => {
-        request
+    it('should return an array of users if found', (done) => {
+      request
         .get('/api/v1/search/users/?q=just')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -484,10 +485,10 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
+    });
 
-      it('should return an error for invalid token', (done) => {
-        request
+    it('should return an error for invalid token', (done) => {
+      request
         .get('/api/v1/search/users/?q=just')
         .set('Authorization', invalidToken)
         .end((err, res) => {
@@ -497,9 +498,9 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
-      it('should return an empty array if user is not found', (done) => {
-        request
+    });
+    it('should return an empty array if user is not found', (done) => {
+      request
         .get('/api/v1/search/users/?q=hgjvqwhgj')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -510,27 +511,27 @@ describe('User controllers', () => {
           }
           done();
         });
+    });
+  });
+
+  describe('Update user: PUT /api/v1/users/:id', () => {
+    beforeEach((done) => {
+      User.create({
+        fullname: 'adekunle oladele',
+        username: 'eldee',
+        password: passwordHash('eldee'),
+        email: 'eldee@gmail.com',
+        RoleId: 2
+      }).then((err) => {
+        if (!err) {
+          //
+        }
+        done();
       });
     });
 
-    describe('Update user: PUT /api/v1/users/:id', () => {
-      beforeEach((done) => {
-        User.create({
-          fullname: 'adekunle oladele',
-          username: 'eldee',
-          password: passwordHash('eldee'),
-          email: 'eldee@gmail.com',
-          RoleId: 2
-        }).then((err) => {
-          if (!err) {
-          //
-          }
-          done();
-        });
-      });
-
-      it('should return error for invalid param', (done) => {
-        request
+    it('should return error for invalid param', (done) => {
+      request
         .put('/api/v1/users/hh')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -539,10 +540,64 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
+    });
+    it('updates a user by id', (done) => {
+      request
+        .put('/api/v1/users/1')
+        .set('Authorization', adminToken)
+        .send({
+          fullname: 'Nwaorgu',
+        })
+        .end((err, res) => {
+          if (!err) {
+            console.log(res.body);
+          }
+          done();
+        });
+    });
 
-      it('should return error unauthorized access', (done) => {
-        request
+    it('should update user with correct data ', (done) => {
+      User.create({
+        fullname: 'adekunle oladele',
+        username: 'eld',
+        password: passwordHash('eldee'),
+        email: 'eld@gmail.com',
+        RoleId: 2
+      })
+        .then(() => {
+          //
+        });
+      request
+        .put('/api/v1/users/1')
+        .set('Authorization', token)
+        .send({
+          fullname: 'adekunle',
+          username: 'elde',
+          RoleId: 2
+        })
+        .end((err, res) => {
+          if (!err) {
+            console.log(res.body);
+            // expect(res.status).to.equal(200);
+            // expect(res.body.message).to.equal('The Document successfully updated');
+          }
+          done();
+        });
+    });
+
+    it('should return error unauthorized access', (done) => {
+      request
+        .put('/api/v1/users/1')
+        .set('Authorization', adminToken)
+        .expect(403)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal('User not found');
+          done();
+        });
+    });
+    it('should return error unauthorized access', (done) => {
+      request
         .put('/api/v1/users/1')
         .set('Authorization', token)
         .expect(403)
@@ -551,39 +606,39 @@ describe('User controllers', () => {
           expect(res.body.message).to.equal('Access denied');
           done();
         });
-      });
+    });
 
-      it('should return error when user not found', (done) => {
-        request
+    it('should return error when user not found', (done) => {
+      request
         .put('/api/v1/users/3')
         .set('Authorization', adminToken)
         .expect(403)
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.equal(404);
           expect(res.body.message).to.equal('User not found');
           done();
         });
+    });
+  });
+
+  describe('DELETE user: /api/v1/users', () => {
+    beforeEach((done) => {
+      User.create({
+        fullname: 'new user',
+        username: 'newuser',
+        password: passwordHash('newuser'),
+        email: 'newuser@gmail.com',
+        RoleId: 2
+      }).then((err) => {
+        if (!err) {
+          //
+        }
+        done();
       });
     });
 
-    describe('DELETE user: /api/v1/users', () => {
-      beforeEach((done) => {
-        User.create({
-          fullname: 'new user',
-          username: 'newuser',
-          password: passwordHash('newuser'),
-          email: 'newuser@gmail.com',
-          RoleId: 2
-        }).then((err) => {
-          if (!err) {
-          //
-          }
-          done();
-        });
-      });
-
-      it('should return an error 404 for user not found', (done) => {
-        request
+    it('should return an error 404 for user not found', (done) => {
+      request
         .delete('/api/v1/users/10')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -593,9 +648,9 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
-      it('should return an error for bad request', (done) => {
-        request
+    });
+    it('should return an error for bad request', (done) => {
+      request
         .delete('/api/v1/users/10876529837465908475874659485764')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -605,10 +660,10 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
+    });
 
-      it('should delete a user by id', (done) => {
-        request
+    it('should delete a user by id', (done) => {
+      request
         .delete('/api/v1/users/1')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -619,7 +674,6 @@ describe('User controllers', () => {
           }
           done();
         });
-      });
     });
   });
 });

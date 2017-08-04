@@ -7,7 +7,7 @@
     "port": 5432,
     "dialect": "postgres"
   },
-  "test": {
+  "devtest": {
     "username": "postgres",
     "password": null,
     "database": "test_db",
@@ -15,6 +15,9 @@
     "port": 5432,
     "dialect": "postgres",
     "logging": false
+  },
+  "test": {
+    "use_env_variable": "DATABASE_URL"
   },
   "production": {
     "use_env_variable": "DATABASE_URL"
