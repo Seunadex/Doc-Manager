@@ -10,7 +10,7 @@
   "test": {
     "username": "postgres",
     "password": null,
-    "database": "test_db",
+    "database": "test_db_test",
     "host": "127.0.0.1",
     "port": 5432,
     "dialect": "postgres",
