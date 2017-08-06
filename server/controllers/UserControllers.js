@@ -7,7 +7,6 @@ dotenv.config();
 
 const User = require('../models/').User;
 const Document = require('../models/').Document;
-// const Role = require('../models/role');
 
 
 const secret = process.env.SECRET;
@@ -58,7 +57,6 @@ const UserControllers = {
   },
 /**
    *
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object containing the user's login details
@@ -96,9 +94,23 @@ const UserControllers = {
       })
       .catch(error => res.send(error.message));
   },
+
+
+  /**
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object containing list of users with pagination
+   */
   listUsers(req, res) {
     const limit = req.query.limit || 10;
     const offset = req.query.offset || 0;
+
+    if (isNaN(limit) || isNaN(offset)) {
+      return res.status(400).send({
+        message: 'limit and offset must be an integer'
+      });
+    }
     return User.findAndCount({
       limit,
       offset,
@@ -125,7 +137,10 @@ const UserControllers = {
    */
   searchUsers(req, res) {
     let searchKey = '%%';
-    if (req.query.q) searchKey = `%${req.query.q}%`;
+    if (req.query.q) {
+      searchKey = `%${req.query.q}%`;
+    }
+
     return User
     .findAll({
       where: { username: {
@@ -248,6 +263,12 @@ const UserControllers = {
     );
   },
 
+  /**
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object containing a user's documents
+   */
   getUserDocuments(req, res) {
     if (isNaN(parseInt(req.params.id, 10))) {
       return res.status(400).send({
@@ -287,6 +308,12 @@ const UserControllers = {
     }));
   },
 
+  /**
+   *
+   * @param {Object} req
+   * @param {Object} res
+   * @returns {Object} returns a response object containing a message that a user has been deleted
+   */
   destroy(req, res) {
     return User
     .findById(req.params.id)

@@ -1,16 +1,16 @@
 language: node_js
 node_js: 
   - "node"
+services:
+  - postgresql
 cache:
   directories:
     - node_modules
-install: [ "npm install"]
 before_script:
 - npm install -g gulp-cli
-install: npm install
-script: npm test
-after_script:
-  - ./node_modules/.bin/gulp coveralls
+- psql -c 'create database test_db;' -U postgres
+- NODE_ENV=test sequelize db:migrate
 after_success:
   - npm install -g codeclimate-test-reporter
-  - codeclimate-test-reporter < lcov.info
+  - codeclimate-test-reporter < ./coverage/lcov.info
+  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
