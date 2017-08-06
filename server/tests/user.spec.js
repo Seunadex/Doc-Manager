@@ -546,7 +546,7 @@ describe('User controllers', () => {
         .put('/api/v1/users/1')
         .set('Authorization', adminToken)
         .send({
-          fullname: 'Nwaorgu',
+          fullname: 'adex',
         })
         .end((err, res) => {
           if (!err) {

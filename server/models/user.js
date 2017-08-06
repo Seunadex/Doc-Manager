@@ -1,5 +1,4 @@
 // /* eslint no-underscore-dangle: 0 no-lone-blocks: 0*/
-// const bcrypt = require('bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
