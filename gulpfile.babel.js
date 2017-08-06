@@ -6,7 +6,7 @@ import istanbul from 'gulp-istanbul';
 import injectModules from 'gulp-inject-modules';
 import exit from 'gulp-exit';
 
-process.env.NODE_ENV = 'test';
+process.env.NODE_ENV = 'devtest';
 
 gulp.task('nodemon', () => {
   nodemon({

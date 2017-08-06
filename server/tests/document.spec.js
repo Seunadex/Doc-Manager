@@ -237,7 +237,7 @@ describe('Document controller', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
-            expect(res.body.message).to.equal('Verify your input');
+            expect(res.body.message).to.equal('Please verify your input');
           }
           done();
         });
@@ -356,7 +356,7 @@ describe('Document controller', () => {
           done();
         });
     });
-    it('should return error', (done) => {
+    it('should return error with a bad request', (done) => {
       const document = {
         title: 'Doc',
         content: 'document with invalid id',
@@ -374,7 +374,7 @@ describe('Document controller', () => {
           .end((err, res) => {
             if (!err) {
               expect(res.status).to.equal(400);
-              expect(res.body.message).to.equal('Connection Error, please try again');
+              expect(res.body.message).to.equal('We encountered some problems, please try again');
             }
             done();
           });

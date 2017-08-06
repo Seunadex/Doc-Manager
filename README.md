@@ -1,17 +1,56 @@
-[![Coverage Status](https://coveralls.io/repos/github/Seunadex/Doc-Manager/badge.svg)](https://coveralls.io/github/Seunadex/Doc-Manager)
+[![Coverage Status](https://coveralls.io/repos/github/Seunadex/Doc-Manager/badge.svg?branch=chore%2Fstaging)](https://coveralls.io/github/Seunadex/Doc-Manager?branch=chore%2Fadd-document-test)
 [![Code Climate](https://codeclimate.com/github/Seunadex/Doc-manager/badges/gpa.svg)](https://codeclimate.com/github/Seunadex/Doc-Manager)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.org/Seunadex/Doc-Manager.svg?branch=staging)](https://travis-ci.org/Seunadex/Doc-Manager)
 [![Build Status](https://semaphoreci.com/api/v1/seunadex/doc-manager/branches/staging/badge.svg)](https://semaphoreci.com/seunadex/doc-manager)
-[![CircleCI](https://circleci.com/gh/Seunadex/Doc-Manager.svg?style=svg)](https://circleci.com/gh/Seunadex/Doc-Manager)
+
 
 
 ## Document Manager.
-A full stack document management system
+A document management system
 
 ### Features
+* Users can signup.
+* Users can Login.
+* Users can update their profile.
+* Users can view their profile.
+* Users can create documents.
+* Users can update and search for documents.
+* Users can delete their personal documents.
 
 ### Dependencies
+* Babel-cli
+* Babel-core
+* Babel-plugin-istanbul
+* Babel-preset- es2015
+* Babel-preset-stage-2
+* Babel-register
+* Bcryptjs
+* Body-parser
+* Dotenv
+* Express
+* Express-validator
+* Gulp
+* Gulp-babel
+* Gulp-exit
+* Gulp-inject-modules
+* Gulp-instabul
+* Gulp-jasmine
+* Gulp-nodemon
+* Jsonwebtoken
+* Moment
+* Morgan
+* Path
+* Pg
+* pg-hstore
+* Sequelize
+* Winston
+
+### Development dependecies
+* Chai
+* Coveralls
+* Nodemon
+* Supertest
 
 ### Installation and setup
 

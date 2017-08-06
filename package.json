@@ -36,7 +36,6 @@
     "dotenv": "^4.0.0",
     "express": "^4.15.3",
     "express-validator": "^3.2.1",
-    "faker": "^4.1.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-exit": "0.0.2",

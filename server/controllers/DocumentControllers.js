@@ -25,7 +25,7 @@ const DocumentControllers = {
     })
     )
     .catch(() => res.status(400).send({
-      message: 'Verify your input'
+      message: 'Please verify your input'
     }));
   },
 
@@ -35,6 +35,7 @@ const DocumentControllers = {
    * @param {Object} res
    * @returns {Object} returns the list of documents available
    */
+
   listDocuments(req, res) {
     const limit = req.query.limit || 10;
     const offset = req.query.offset || 0;
@@ -136,7 +137,7 @@ const DocumentControllers = {
           }));
       })
       .catch(() => res.status(400).send({
-        message: 'Connection Error, please try again',
+        message: 'We encountered some problems, please try again',
       }));
   },
 
