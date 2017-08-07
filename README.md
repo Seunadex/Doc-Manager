@@ -3,11 +3,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.org/Seunadex/Doc-Manager.svg?branch=staging)](https://travis-ci.org/Seunadex/Doc-Manager)
 
-
-
-
 ## Document Manager.
-A document management system
+A document management system (API endpoints) that allows users to create and manage documents and also comes with API endpoint for creating and managing users.
 
 ### Features
 * Users can signup.
@@ -18,45 +15,68 @@ A document management system
 * Users can update and search for documents.
 * Users can delete their personal documents.
 
+### Documentation
+* View documentation **[here]()**
+
 ### Dependencies
-* Babel-cli
-* Babel-core
-* Babel-plugin-istanbul
-* Babel-preset- es2015
-* Babel-preset-stage-2
-* Babel-register
-* Bcryptjs
-* Body-parser
-* Dotenv
-* Express
-* Express-validator
-* Gulp
-* Gulp-babel
-* Gulp-exit
-* Gulp-inject-modules
-* Gulp-instabul
-* Gulp-jasmine
-* Gulp-nodemon
-* Jsonwebtoken
-* Moment
-* Morgan
-* Path
-* Pg
-* pg-hstore
-* Sequelize
-* Winston
+* **[Babel-cli](https://www.npmjs.com/package/babel-cli)** - Tool for transpiling the code through the command line.
+* **[Babel-plugin-istanbul](https://www.npmjs.com/package/babel-plugin-istanbul)** - A Babel plugin that instruments your code with Istanbul coverage.
+* **[Babel-preset- es2015](https://www.npmjs.com/package/babel-preset-es2015)** - Provides Babel presets for es2015 plugin
+* **[Babel-preset-stage-2](https://www.npmjs.com/package/babel-preset-stage-2)** - Provide Babel presets for stage-2 plugin
+* **[Babel-register](https://www.npmjs.com/package/babel-register)** - Used to transpile code on the fly.
+* **[Bcryptjs](https://www.npmjs.com/package/bcryptjs)** - Use for hashing passwords
+* **[Body-parser](https://www.npmjs.com/package/body-parser)** - Node.js body parsing middleware. Parse incoming request bodies in a middleware before your handlers, available under the req.body property.
+* **[Dotenv](https://www.npmjs.com/package/dotenv)** - It loads environment variables from a .env file
+* **[Express](https://www.npmjs.com/package/express)** - Used as the web server for this application
+* **[Express-validator](https://www.npmjs.com/package/express-validator)** - Used in validating user input.
+* **[Gulp](https://www.npmjs.com/package/gulp)** - Toolkit that helps you automate painful or time-consuming tasks in your development workflow
+* **[Gulp-babel](https://www.npmjs.com/package/gulp-babel)** - Use next generation JavaScript, today, with Babel
+* **[Gulp-exit](https://www.npmjs.com/package/gulp-exit)** - `gulp-exit` ensures that the task is terminated after finishing.
+* **[Gulp-inject-modules](https://www.npmjs.com/package/gulp-inject-modules)** - Loads JavaScript files on-demand from a Gulp stream into Node's module loader.
+* **[Gulp-istanbul](https://www.npmjs.com/package/gulp-istanbul)** - Istanbul unit test coverage plugin for gulp.
+* **[Gulp-jasmine](https://www.npmjs.com/package/gulp-jasmine)** - Basic implementation of a gulp task for jasmine
+* **[Gulp-nodemon](https://www.npmjs.com/package/gulp-nodemon)** - It's gulp + nodemon + convenience, it looks almost exactly like regular nodemon, but it's made for use with gulp tasks.
+* **[Jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)** - Generates and verify JWT token
+* **[Moment](https://www.npmjs.com/package/moment)** - A lightweight JavaScript date library for parsing, validating, manipulating, and formatting dates.
+* **[Morgan](https://www.npmjs.com/package/morgan)** - HTTP request logger middleware for node.js
+* **[Path](https://www.npmjs.com/package/path)** - This is an exact copy of the NodeJS ’path’ module published to the NPM registry.
+* **[Pg](https://www.npmjs.com/package/pg)** - Non-blocking PostgreSQL client for node.js
+* **[pg-hstore](https://www.npmjs.com/package/pg-hstore)** - Node package for serializing and deserializing JSON data to hstore format.
+* **[Sequelize](https://www.npmjs.com/package/sequelize)** - Its a promise-based ORM for Node.js v4 and up. It supports the dialect PostgreSQL
+* **[Winston](https://www.npmjs.com/package/winston)** - A multi-transport async logging library for node.js.
 
 ### Development dependecies
-* Chai
-* Coveralls
-* Nodemon
-* Supertest
+* **[Chai](https://www.npmjs.com/package/chai)** - Chai is a BDD / TDD assertion library for node and the browser that can be delightfully paired with any javascript testing framework.
+* **[Coveralls](https://www.npmjs.com/package/coveralls)** - Coveralls.io support for node.js. Get the great coverage reporting of coveralls.io and add a cool coverage button ( like the one above ) to your README
+* **[Nodemon](https://www.npmjs.com/package/nodemon)** - Nodemon will watch the files in the directory in which nodemon was started, and if any files change, it will automatically restart your node application
+* **[Supertest](https://www.npmjs.com/package/supertest)** - HTTP assertions made easy via superagent.
 
 ### Installation and setup
+* Clone the repository using your favorite terminal with the command `git clone https://github.com/Seunadex/Doc-Manager.git`
+* Navigate into the directory and run `$ cd Doc-Manager`
+* Install all dependencies by running `$ npm install`
+* Replace the variables in `.env.example` with a personalized ones.
+* Remove `.example` from the filename and save.
+* Start the app by running `$ npm start`.
+
+### Tests
+* All tests were written with `chai` and `supertest`.
+* Test coverage generated with `gulp-istanbul`.
+* To run test, navigate to the root directory and run `$ npm test`.
 
 ### FAQ
+* Absolutely yes, check `How to contribute` below.
 
-### Can I contribute?
+### How to contribute.
+* Fork the repo.
+* Open a new branch for the feature to add.
+* Follow the correct style guide **[Airbnb](https://github.com/airbnb/javascript)** for consistency.
+* Use the eslint configuration in this app.
+* Create a pull request.
+  * Write a short description of what the PR does.
+  * Write areas of the app that is affected by the PR.
+  * Provide a screenshot (if applicable).
+  * Write how to manually test the feature.
 
 ### License
 
