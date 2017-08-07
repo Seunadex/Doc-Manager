@@ -19,38 +19,38 @@ A document management system
 * Users can delete their personal documents.
 
 ### Dependencies
-* Babel-cli
-* Babel-core
-* Babel-plugin-istanbul
-* Babel-preset- es2015
-* Babel-preset-stage-2
-* Babel-register
-* Bcryptjs
-* Body-parser
-* Dotenv
-* Express
-* Express-validator
-* Gulp
-* Gulp-babel
-* Gulp-exit
-* Gulp-inject-modules
-* Gulp-instabul
-* Gulp-jasmine
-* Gulp-nodemon
-* Jsonwebtoken
-* Moment
-* Morgan
-* Path
-* Pg
-* pg-hstore
-* Sequelize
-* Winston
+* **[Babel-cli](https://www.npmjs.com/package/babel-cli)** - tool for transpiling the code through the command line
+* **[Babel-core](https://www.npmjs.com/package/babel-core)** - 
+* **[Babel-plugin-istanbul](https://www.npmjs.com/package/babel-plugin-istanbul)** - A Babel plugin that instruments your code with Istanbul coverage
+* **[Babel-preset- es2015](https://www.npmjs.com/package/babel-preset-es2015)** - Provides Babel presets for es2015 plugin
+* **[Babel-preset-stage-2](https://www.npmjs.com/package/babel-preset-stage-2)** - Provide Babel presets for stage-2 plugin
+* **[Babel-register](https://www.npmjs.com/package/babel-register)** - Used to transpile code on the fly.
+* **[Bcryptjs](https://www.npmjs.com/package/bcryptjs)** - Use for hashing passwords
+* **[Body-parser](https://www.npmjs.com/package/body-parser)** - Node.js body parsing middleware. Parse incoming request bodies in a middleware before your handlers, available under the req.body property.
+* **[Dotenv](https://www.npmjs.com/package/dotenv)** - It loads environment variables from a .env file
+* **[Express](https://www.npmjs.com/package/express)** - Used as the web server for this application
+* **[Express-validator](https://www.npmjs.com/package/express-validator)** - Used in validating user input.
+* **[Gulp](https://www.npmjs.com/package/gulp)** - Toolkit that helps you automate painful or time-consuming tasks in your development workflow
+* **[Gulp-babel](https://www.npmjs.com/package/gulp-babel)** - 
+* **[Gulp-exit](https://www.npmjs.com/package/gulp-exit)** -
+* **[Gulp-inject-modules](https://www.npmjs.com/package/Gulp-inject-modules)** -
+* **[Gulp-instabul](https://www.npmjs.com/package/Gulp-instabul)** -
+* **[Gulp-jasmine](https://www.npmjs.com/package/Gulp-jasmine)** -
+* **[Gulp-nodemon](https://www.npmjs.com/package/Gulp-nodemon)** -
+* **[Jsonwebtoken](https://www.npmjs.com/package/Jsonwebtoken)** - Generates and verify JWT token
+* **[Moment](https://www.npmjs.com/package/Moment)** -
+* **[Morgan](https://www.npmjs.com/package/Morgan)** - Used for logging
+* **[Path](https://www.npmjs.com/package/Path)** -
+* **[Pg](https://www.npmjs.com/package/Pg)** -
+* **[pg-hstore](https://www.npmjs.com/package/pg-hstore)** -
+* **[Sequelize](https://www.npmjs.com/package/Sequelize)** - Its a promise-based ORM for Node.js v4 and up. It supports the dialect PostgreSQL
+* **[Winston](https://www.npmjs.com/package/Winston)** - 
 
 ### Development dependecies
-* Chai
-* Coveralls
-* Nodemon
-* Supertest
+* **[Chai](https://www.npmjs.com/package/chai)** -
+* **[Coveralls](https://www.npmjs.com/package/coveralls)** -
+* **[Nodemon](https://www.npmjs.com/package/nodemon)** -
+* **[Supertest](supertest)** -
 
 ### Installation and setup
 
