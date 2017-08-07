@@ -11,6 +11,6 @@ export default (router) => {
   router.get('/api/v1/search/users', Authorization.verifyUser, Authorization.verifyAdmin, UserControllers.searchUsers);
   router.get('/api/v1/users/:id/documents', Authorization.verifyUser, Authorization.AllowAdminOrUser, UserControllers.listUserDocuments);
 
-  router.put('/api/v1/users/:id', Authorization.verifyUser, Authorization.AllowAdminOrUser, UserControllers.updateUser);
+  router.put('/api/v1/users/:id', Authorization.verifyUser, UserControllers.updateUser);
   router.delete('/api/v1/users/:id', Authorization.verifyUser, Authorization.verifyAdmin, UserControllers.destroy);
 };

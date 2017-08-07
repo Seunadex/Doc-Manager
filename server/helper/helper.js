@@ -2,8 +2,6 @@ import moment from 'moment';
 import bcrypt from 'bcryptjs';
 
 /**
- *
- *
  * @export
  * @param {String} password
  * @returns {String} password
@@ -14,8 +12,6 @@ export function passwordHash(password) {
 }
 
 /**
- *
- *
  * @export
  * @param {String} date
  * @returns {Date} date

@@ -5,8 +5,6 @@ const User = require('../models').User;
 
 const DocumentControllers = {
   /**
-   *
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object.
@@ -30,7 +28,6 @@ const DocumentControllers = {
   },
 
   /**
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns the list of documents available
@@ -39,6 +36,7 @@ const DocumentControllers = {
   listDocuments(req, res) {
     const limit = req.query.limit || 10;
     const offset = req.query.offset || 0;
+
     if (isNaN(limit) || isNaN(offset)) {
       return res.status(400).send({
         message: 'limit and offset must be an integer'
@@ -62,7 +60,6 @@ const DocumentControllers = {
   },
 
   /**
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns the requested document
@@ -70,7 +67,7 @@ const DocumentControllers = {
   getDocument(req, res) {
     if (isNaN(req.params.id)) {
       return res.status(400).send({
-        message: 'id must be an integer'
+        message: 'Id must be an integer'
       });
     }
     return User
@@ -92,11 +89,12 @@ const DocumentControllers = {
         user,
       });
     })
-    .catch(error => res.status(400).send(error));
+    .catch(() => res.status(400).send({
+      message: 'Oops! something went wrong, Please try again'
+    }));
   },
 
   /**
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns the updated document
@@ -137,16 +135,14 @@ const DocumentControllers = {
           }));
       })
       .catch(() => res.status(400).send({
-        message: 'We encountered some problems, please try again',
+        message: 'Problem encountered, please try again',
       }));
   },
 
   /**
-   *
-   *
    * @param {Object} req
    * @param {Object} res
-   * @returns {void}
+   * @returns {Object} returns a message indicating that a document has been deleted
    */
   destroy(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
@@ -171,7 +167,9 @@ const DocumentControllers = {
           message: 'Document succesfully deleted',
           status: 'No content',
         }))
-        .catch(error => res.status(400).send(error));
+        .catch(() => res.status(400).send({
+          message: 'Problem encountered, please try again'
+        }));
     })
     .catch(() => res.status(400).send({
       message: 'connection error, please try again'
@@ -179,8 +177,6 @@ const DocumentControllers = {
   },
 
   /**
-   *
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Response} Response object
@@ -189,7 +185,7 @@ const DocumentControllers = {
     const searchKey = `%${req.query.q}%` || `%${req.body.search}%`;
     const verifiedRoleId = res.locals.decoded.userRoleId;
     const userId = res.locals.decoded.UserId;
-    const searchAttributes = verifiedRoleId === 1 ? {
+    const searchParam = verifiedRoleId === 1 ? {
       $or: [{ title: { $iLike: searchKey } }]
     }
     :
@@ -199,7 +195,7 @@ const DocumentControllers = {
     };
     return Document.findAll({
       attributes: ['title', 'content', 'access', 'UserId', 'createdAt', 'updatedAt'],
-      where: searchAttributes,
+      where: searchParam,
       include: [
         {
           model: User,

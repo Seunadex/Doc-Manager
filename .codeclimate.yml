@@ -4,7 +4,10 @@ engines:
     config:
       config: .eslintrc.json
   duplication:
-    enabled: false
+    enabled: true
+    checks:
+      Similar code:
+        enabled: false
     config:
       languages:
         javascript:

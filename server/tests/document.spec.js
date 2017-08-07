@@ -374,7 +374,7 @@ describe('Document controller', () => {
           .end((err, res) => {
             if (!err) {
               expect(res.status).to.equal(400);
-              expect(res.body.message).to.equal('We encountered some problems, please try again');
+              expect(res.body.message).to.equal('Problem encountered, please try again');
             }
             done();
           });
@@ -463,7 +463,7 @@ describe('Document controller', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
-            expect(res.body.message).to.equal('id must be an integer');
+            expect(res.body.message).to.equal('Id must be an integer');
           }
           done();
         });
