@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import express from 'express';
+import path from 'path';
 import expressValidator from 'express-validator';
 import http from 'http';
 import winston from 'winston';
@@ -15,6 +16,7 @@ const port = parseInt(process.env.PORT, 10) || 8000;
 
 // Log requests to the console.
 app.use(logger('dev'));
+app.use(express.static(path.resolve(`${__dirname}./../public`)));
 
 // Parse incoming requests data
 app.use(bodyParser.json());
@@ -24,14 +26,11 @@ router(app);
 
 app.set('port', port);
 
-app.get('/api/v1', (req, res) => res.status(200).json({
-  message: 'Welcome to Document Management System'
-}
-));
+app.get('/', (req, res) => res.status(200).render('index.html'));
 
 const server = http.createServer(app);
 server.listen(port);
 winston.info('server is running');
 
-module.exports = app;
+export default app;
 
