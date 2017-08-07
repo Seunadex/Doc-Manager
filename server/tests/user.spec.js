@@ -219,7 +219,7 @@ describe('User controllers', () => {
       .expect(200)
       .end((err, res) => {
         expect(res.status).to.equal(200);
-        expect(res.body.message).to.equal('Token generated. Login Successful');
+        expect(res.body.message).to.equal('You are successfully logged in');
         done();
       });
       });
@@ -536,81 +536,71 @@ describe('User controllers', () => {
         .set('Authorization', adminToken)
         .end((err, res) => {
           if (!err) {
-            expect(res.body.message).to.equal('Access denied');
+            expect(res.body.message).to.equal('Id must be a number');
           }
           done();
         });
     });
-    it('updates a user by id', (done) => {
-      request
-        .put('/api/v1/users/1')
-        .set('Authorization', adminToken)
-        .send({
-          fullname: 'adex',
-        })
-        .end((err, res) => {
-          if (!err) {
-            console.log(res.body);
-          }
-          done();
-        });
-    });
-
-    it('should update user with correct data ', (done) => {
-      User.create({
-        fullname: 'adekunle oladele',
-        username: 'eld',
-        password: passwordHash('eldee'),
-        email: 'eld@gmail.com',
-        RoleId: 2
-      })
+    it('returns an error status for already existing username or email', (done) => {
+      User.bulkCreate([{
+        username: 'firstuser',
+        fullname: 'firstuser',
+        password: passwordHash('pword'),
+        email: 'firstuser@gmail.com',
+        RoleId: 1,
+      }, {
+        username: 'seconduser',
+        fullname: 'seconduser',
+        password: passwordHash('pword'),
+        email: 'seconduser@yahoo.com',
+        RoleId: 2,
+      }])
         .then(() => {
-          //
+          request
+            .put('/api/v1/users/1')
+            .set('Authorization', adminToken)
+            .send({
+              email: 'seconduser@yahoo.com',
+            })
+            .end((err, res) => {
+              expect(res.status).to.equal(400);
+              expect(res.body.message).to.equal('A user exist with same email or username');
+              done();
+            });
         });
-      request
-        .put('/api/v1/users/1')
-        .set('Authorization', token)
-        .send({
-          fullname: 'adekunle',
-          username: 'elde',
-          RoleId: 2
-        })
-        .end((err, res) => {
-          if (!err) {
-            console.log(res.body);
-            // expect(res.status).to.equal(200);
-            // expect(res.body.message).to.equal('The Document successfully updated');
-          }
-          done();
+    });
+    it('returns error', (done) => {
+      User.bulkCreate([{
+        username: 'firstuser',
+        fullname: 'firstuser',
+        password: passwordHash('test'),
+        email: 'firstuser@gmail.com',
+        RoleId: 1,
+      }, {
+        username: 'seconduser',
+        fullname: 'seconduser',
+        password: passwordHash('test'),
+        email: 'seconduser@yahoo.com',
+        RoleId: 2,
+      }])
+        .then(() => {
+          request
+            .put('/api/v1/users/rty')
+            .set('Authorization', adminToken)
+            .send({
+              email: 'firstuser@gmail.com',
+            })
+            .end((err, res) => {
+              expect(res.status).to.equal(400);
+              expect(res.body.message).to.equal('Id must be a number');
+              done();
+            });
         });
     });
 
-    it('should return error unauthorized access', (done) => {
+    it('should return error on non-existing document', (done) => {
       request
         .put('/api/v1/users/1')
-        .set('Authorization', adminToken)
-        .expect(403)
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal('User not found');
-          done();
-        });
-    });
-    it('should return error unauthorized access', (done) => {
-      request
-        .put('/api/v1/users/1')
-        .set('Authorization', token)
-        .expect(403)
-        .end((err, res) => {
-          expect(res.status).to.equal(403);
-          expect(res.body.message).to.equal('Access denied');
-          done();
-        });
-    });
-
-    it('should return error when user not found', (done) => {
-      request
-        .put('/api/v1/users/3')
         .set('Authorization', adminToken)
         .expect(403)
         .end((err, res) => {
@@ -619,6 +609,45 @@ describe('User controllers', () => {
           done();
         });
     });
+    it('returns error on unauthorized access', (done) => {
+      User.bulkCreate([{
+        username: 'firstuser',
+        fullname: 'firstuser',
+        password: passwordHash('test'),
+        email: 'firstuser@gmail.com',
+        RoleId: 1,
+      }, {
+        username: 'seconduser',
+        fullname: 'seconduser',
+        password: passwordHash('test'),
+        email: 'seconduser@yahoo.com',
+        RoleId: 2,
+      }])
+        .then(() => {
+          request
+            .put('/api/v1/users/2')
+            .set('Authorization', adminToken)
+            .send({
+              username: 'moses',
+            })
+            .end((err, res) => {
+              expect(res.status).to.equal(404);
+              done();
+            });
+        });
+    });
+
+  //   it('should return error when user not found', (done) => {
+  //     request
+  //       .put('/api/v1/users/3')
+  //       .set('Authorization', adminToken)
+  //       .expect(403)
+  //       .end((err, res) => {
+  //         expect(res.status).to.equal(404);
+  //         expect(res.body.message).to.equal('User not found');
+  //         done();
+  //       });
+  //   });
   });
 
   describe('DELETE user: /api/v1/users', () => {
@@ -677,4 +706,3 @@ describe('User controllers', () => {
     });
   });
 });
-

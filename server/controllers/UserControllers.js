@@ -8,13 +8,10 @@ dotenv.config();
 const User = require('../models/').User;
 const Document = require('../models/').Document;
 
-
 const secret = process.env.SECRET;
 
 const UserControllers = {
   /**
-   *
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object
@@ -56,7 +53,6 @@ const UserControllers = {
     }));
   },
 /**
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object containing the user's login details
@@ -85,7 +81,7 @@ const UserControllers = {
           return res.status(200).send({
             status: 'ok',
             success: true,
-            message: 'Token generated. Login Successful',
+            message: 'You are successfully logged in',
             UserId: user.id,
             token,
           });
@@ -97,7 +93,6 @@ const UserControllers = {
 
 
   /**
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object containing list of users with pagination
@@ -122,15 +117,11 @@ const UserControllers = {
         paginationDetails: pagination(user.count, limit, offset)
       }
     }))
-    .catch(() => res.status(403).send({
-      message: 'limit and offset should be numbers'
-    }));
+    .catch(error => res.status(403).send(error.message));
   },
 
 
   /**
-   *
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object containing the list of user registered
@@ -161,12 +152,10 @@ const UserControllers = {
           created_at: user.createdAt
         }))
     }))
-    .catch(error => res.status(400).send(error));
+    .catch(error => res.status(400).send(error.message));
   },
 
   /**
-   *
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object
@@ -204,8 +193,6 @@ const UserControllers = {
   },
 
   /**
-   *
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object
@@ -240,13 +227,12 @@ const UserControllers = {
               message: 'A user exist with same email or username'
             });
           }
-          return user
-        .update({
-          fullname: req.body.fullname || user.fullname,
-          username: req.body.username || user.username,
-          email: req.body.email || user.email,
-          password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10)) || user.password,
-        })
+          return user.update({
+            fullname: req.body.fullname || user.fullname,
+            username: req.body.username || user.username,
+            email: req.body.email || user.email,
+            password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10)) || user.password,
+          })
         .then(() => res.status(200).send({
           status: 'Successfully updated',
           user,
@@ -256,7 +242,7 @@ const UserControllers = {
         }
         ));
         })
-    .catch(() => res.status(400).send({
+    .catch(() => res.status(404).send({
       message: 'User not found'
     }));
     }
@@ -264,7 +250,6 @@ const UserControllers = {
   },
 
   /**
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object containing a user's documents
@@ -299,17 +284,16 @@ const UserControllers = {
           }
           return res.status(200).send(documents);
         })
-        .catch(() => res.status(400).send({
+        .catch(() => res.status(500).send({
           message: 'error in connection'
         }));
     })
-    .catch(() => res.status(400).send({
+    .catch(() => res.status(500).send({
       message: 'error in connection'
     }));
   },
 
   /**
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object containing a message that a user has been deleted
@@ -339,7 +323,6 @@ const UserControllers = {
   },
 
   /**
-   *
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object
