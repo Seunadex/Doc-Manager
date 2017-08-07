@@ -1,8 +1,8 @@
-[![Coverage Status](https://coveralls.io/repos/github/Seunadex/Doc-Manager/badge.svg?branch=chore%2Fstaging)](https://coveralls.io/github/Seunadex/Doc-Manager?branch=chore%2Fadd-document-test)
-[![Code Climate](https://codeclimate.com/github/Seunadex/Doc-manager/badges/gpa.svg)](https://codeclimate.com/github/Seunadex/Doc-Manager)
+[![Coverage Status](https://coveralls.io/repos/github/Seunadex/Doc-Manager/badge.svg?branch=staging)](https://coveralls.io/github/Seunadex/Doc-Manager?branch=staging)
+[![Code Climate](https://codeclimate.com/github/Seunadex/Doc-Manager/badges/gpa.svg)](https://codeclimate.com/github/Seunadex/Doc-Manager)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.org/Seunadex/Doc-Manager.svg?branch=staging)](https://travis-ci.org/Seunadex/Doc-Manager)
-[![Build Status](https://semaphoreci.com/api/v1/seunadex/doc-manager/branches/staging/badge.svg)](https://semaphoreci.com/seunadex/doc-manager)
+
 
 
 
