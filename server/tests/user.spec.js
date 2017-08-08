@@ -2,10 +2,7 @@ import { expect } from 'chai';
 import supertest from 'supertest';
 import { passwordHash } from '../helper/helper';
 import app from '../../build/server';
-
-const User = require('../models/').User;
-const Document = require('../models').Document;
-const Role = require('../models').Role;
+import { User, Document, Role } from '../models';
 
 const adminToken = process.env.ADMIN_TOKEN;
 const token = process.env.TOKEN;
@@ -80,7 +77,6 @@ describe('User controllers', () => {
           expect(res.body.error.fullname).to.equal('Fullname must be not be empty');
           expect(res.body.error.username).to.equal('username is required');
           expect(res.body.error.password).to.equal('password is required');
-          expect(res.body.error.RoleId).to.equal('Please enter the RoleId');
           expect(res.body.error).to.not.have.property('email');
         }
         done();
@@ -124,27 +120,6 @@ describe('User controllers', () => {
           expect(res.body).to.have.property('message');
           expect(res.body.message).to.equal('User successfully created');
           expect(res.body).to.have.property('token');
-        }
-        done();
-      });
-    });
-
-    it('should return error 400 with an non-existing roleID', (done) => {
-      const userDetails = {
-        fullname: 'lionel messi',
-        username: 'lionelmessi',
-        password: passwordHash('lionelmessi'),
-        email: 'lionelmessi@gmail.com',
-        RoleId: 90
-      };
-      request
-      .post('/api/v1/users')
-      .send(userDetails)
-      .end((err, res) => {
-        if (!err) {
-          expect(res.status).to.equal(400);
-          expect(res.body).to.have.property('message');
-          expect(res.body.message).to.equal('User credentials already exist');
         }
         done();
       });
@@ -449,7 +424,7 @@ describe('User controllers', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(403);
-            expect(res.body.message).to.equal('Please Login');
+            expect(res.body.message).to.equal('Please Log in');
             expect(res.body.status).to.equal('Forbidden');
           }
           done();
@@ -521,7 +496,6 @@ describe('User controllers', () => {
         username: 'eldee',
         password: passwordHash('eldee'),
         email: 'eldee@gmail.com',
-        RoleId: 2
       }).then((err) => {
         if (!err) {
           //
@@ -631,23 +605,12 @@ describe('User controllers', () => {
               username: 'moses',
             })
             .end((err, res) => {
-              expect(res.status).to.equal(404);
+              expect(res.status).to.equal(403);
+              expect(res.body.message).to.equal('Oops! You are not allowed to update the user');
               done();
             });
         });
     });
-
-  //   it('should return error when user not found', (done) => {
-  //     request
-  //       .put('/api/v1/users/3')
-  //       .set('Authorization', adminToken)
-  //       .expect(403)
-  //       .end((err, res) => {
-  //         expect(res.status).to.equal(404);
-  //         expect(res.body.message).to.equal('User not found');
-  //         done();
-  //       });
-  //   });
   });
 
   describe('DELETE user: /api/v1/users', () => {

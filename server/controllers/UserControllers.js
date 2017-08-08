@@ -2,11 +2,10 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import pagination from '../helper/pagination';
+import { User, Document } from '../models';
+import { passwordHash } from '../helper/helper';
 
 dotenv.config();
-
-const User = require('../models/').User;
-const Document = require('../models/').Document;
 
 const secret = process.env.SECRET;
 
@@ -16,20 +15,13 @@ const UserControllers = {
    * @param {Object} res
    * @returns {Object} returns a response object
    */
-  createUser(req, res) {
-    if (req.body.RoleId === '1') {
-      return res.status(401).send({
-        message: 'Invalid roleId'
-      });
-    }
+  create(req, res) {
     const password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
-    return User
-    .create({
+    return User.create({
       fullname: req.body.fullname,
       username: req.body.username,
       password,
       email: req.body.email,
-      RoleId: req.body.RoleId,
     })
     .then((user) => {
       const token = jwt.sign({
@@ -58,36 +50,35 @@ const UserControllers = {
    * @returns {Object} returns a response object containing the user's login details
    */
   login(req, res) {
-    return User
-      .findOne({
-        where: {
-          username: req.body.username
-        }
-      }).then((user) => {
-        if (!user) {
-          return res.status(400).send({ message: 'User not found' });
-        }
-        const passkey = bcrypt.compareSync(req.body.password, user.password);
-        if (passkey) {
-          const token = jwt.sign({
-            UserId: user.id,
-            userFullname: user.fullname,
-            userUsername: user.username,
-            userEmail: user.email,
-            userRoleId: user.RoleId,
-          }, secret, {
-            expiresIn: '24h'
-          });
-          return res.status(200).send({
-            status: 'ok',
-            success: true,
-            message: 'You are successfully logged in',
-            UserId: user.id,
-            token,
-          });
-        }
-        return res.status(400).send({ message: 'Incorrect password' });
-      })
+    return User.findOne({
+      where: {
+        username: req.body.username
+      }
+    }).then((user) => {
+      if (!user) {
+        return res.status(400).send({ message: 'User not found' });
+      }
+      const passkey = bcrypt.compareSync(req.body.password, user.password);
+      if (passkey) {
+        const token = jwt.sign({
+          UserId: user.id,
+          userFullname: user.fullname,
+          userUsername: user.username,
+          userEmail: user.email,
+          userRoleId: user.RoleId,
+        }, secret, {
+          expiresIn: '24h'
+        });
+        return res.status(200).send({
+          status: 'ok',
+          success: true,
+          message: 'You are successfully logged in',
+          UserId: user.id,
+          token,
+        });
+      }
+      return res.status(400).send({ message: 'Incorrect password' });
+    })
       .catch(error => res.send(error.message));
   },
 
@@ -97,7 +88,7 @@ const UserControllers = {
    * @param {Object} res
    * @returns {Object} returns a response object containing list of users with pagination
    */
-  listUsers(req, res) {
+  index(req, res) {
     const limit = req.query.limit || 10;
     const offset = req.query.offset || 0;
 
@@ -126,7 +117,7 @@ const UserControllers = {
    * @param {Object} res
    * @returns {Object} returns a response object containing the list of user registered
    */
-  searchUsers(req, res) {
+  search(req, res) {
     let searchKey = '%%';
     if (req.query.q) {
       searchKey = `%${req.query.q}%`;
@@ -160,15 +151,14 @@ const UserControllers = {
    * @param {Object} res
    * @returns {Object} returns a response object
    */
-  getUser(req, res) {
+  show(req, res) {
     if (isNaN(req.params.id)) {
       return res.status(400).send({
         status: 'error',
         message: 'id must be a number'
       });
     }
-    return User
-    .findById(req.params.id)
+    return User.findById(req.params.id)
     .then((user) => {
       if (!user) {
         return res.status(404).send({
@@ -197,20 +187,9 @@ const UserControllers = {
    * @param {Object} res
    * @returns {Object} returns a response object
    */
-  updateUser(req, res) {
-    if (isNaN(req.params.id)) {
-      return res.status(400).send({
-        message: 'Id must be a number'
-      });
-    }
-    return User
-    .findById(req.params.id)
+  update(req, res) {
+    User.findById(req.params.id)
     .then((user) => {
-      if (Number(req.params.id) !== user.id) {
-        return res.status(403).send({
-          message: 'Access denied',
-        });
-      }
       User.findAll({
         where: {
           $or: [{
@@ -220,19 +199,19 @@ const UserControllers = {
           }]
         }
       })
-        .then((AuthenticatedUser) => {
-          if (AuthenticatedUser.length !== 0
-            && (AuthenticatedUser[0].dataValues.id !== parseInt(req.params.id, 10))) {
-            return res.status(400).send({
-              message: 'A user exist with same email or username'
-            });
-          }
-          return user.update({
-            fullname: req.body.fullname || user.fullname,
-            username: req.body.username || user.username,
-            email: req.body.email || user.email,
-            password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10)) || user.password,
-          })
+      .then((authenticatedUser) => {
+        if (authenticatedUser.length
+            && (authenticatedUser[0].dataValues.id !== parseInt(req.params.id, 10))) {
+          return res.status(400).send({
+            message: 'A user exist with same email or username'
+          });
+        }
+        return user.update({
+          fullname: req.body.fullname || user.fullname,
+          username: req.body.username || user.username,
+          email: req.body.email || user.email,
+          password: passwordHash(req.body.password) || user.password,
+        })
         .then(() => res.status(200).send({
           status: 'Successfully updated',
           user,
@@ -241,7 +220,7 @@ const UserControllers = {
           message: 'User not found'
         }
         ));
-        })
+      })
     .catch(() => res.status(404).send({
       message: 'User not found'
     }));
@@ -252,63 +231,17 @@ const UserControllers = {
   /**
    * @param {Object} req
    * @param {Object} res
-   * @returns {Object} returns a response object containing a user's documents
-   */
-  getUserDocuments(req, res) {
-    if (isNaN(parseInt(req.params.id, 10))) {
-      return res.status(400).send({
-        message: 'Param must be a number'
-      });
-    }
-
-    User.findById(req.params.id)
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({
-          message: 'User not found'
-        });
-      }
-
-      Document.findAll({
-        where: {
-          UserId: req.params.id,
-          RoleId: res.locals.decoded.userRoleId
-        }
-      })
-        .then((documents) => {
-          if (documents.length === 0) {
-            return res.status(404).send({
-              status: 'ok',
-              message: 'No document found for this user'
-            });
-          }
-          return res.status(200).send(documents);
-        })
-        .catch(() => res.status(500).send({
-          message: 'error in connection'
-        }));
-    })
-    .catch(() => res.status(500).send({
-      message: 'error in connection'
-    }));
-  },
-
-  /**
-   * @param {Object} req
-   * @param {Object} res
    * @returns {Object} returns a response object containing a message that a user has been deleted
    */
   destroy(req, res) {
-    return User
-    .findById(req.params.id)
+    return User.findById(req.params.id)
     .then((user) => {
       if (!user) {
         return res.status(404).send({
           message: 'User Not Found',
         });
       }
-      return user
-        .destroy()
+      return user.destroy()
         .then(() => res.status(200).send({
           status: 'ok',
           message: 'You have successfully deleted a user'
@@ -355,7 +288,6 @@ const UserControllers = {
     })
     .catch(error => res.status(403).send(error));
   }
-
 };
 
 export default UserControllers;

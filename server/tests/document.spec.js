@@ -338,7 +338,7 @@ describe('Document controller', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('The Document successfully updated');
+            expect(res.body.message).to.equal('The document has been successfully updated');
           }
           done();
         });

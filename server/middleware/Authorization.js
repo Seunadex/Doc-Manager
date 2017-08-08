@@ -4,7 +4,6 @@ import models from '../models';
 
 dotenv.config();
 
-
 /**
  * authorization class
  * @class Authorization
@@ -33,7 +32,7 @@ class Authorization {
     } else {
       return res.status(403).send({
         status: 'Forbidden',
-        message: 'Please Login'
+        message: 'Please Log in'
       });
     }
   }
@@ -74,6 +73,28 @@ class Authorization {
       return next();
     }
     return res.status(403).send({ message: 'Only Admin permitted' });
+  }
+
+
+  /**
+   * @param {Object} req
+   * @param {Object} res
+   * @param {callback} next
+   * @returns {void}
+   * @memberof Authorization
+   */
+  checkUser(req, res, next) {
+    if (isNaN(req.params.id)) {
+      return res.status(400).send({
+        message: 'Id must be a number'
+      });
+    }
+    if (Number(req.params.id) === parseInt(res.locals.decoded.UserId, 10)) {
+      return next();
+    }
+    return res.status(403).send({
+      message: 'Oops! You are not allowed to update the user'
+    });
   }
 }
 export default new Authorization();

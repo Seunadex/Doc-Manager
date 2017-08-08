@@ -20,8 +20,6 @@ class Validation {
     req.checkBody('password', 'password is required').notEmpty();
     req.checkBody('email', 'Invalid email').isEmail();
     req.checkBody('email', 'email is required').notEmpty();
-    req.checkBody('RoleId', 'RoleId must be an integer').isInt();
-    req.checkBody('RoleId', 'Please enter the RoleId').notEmpty();
 
     const errors = req.validationErrors();
     if (errors) {
