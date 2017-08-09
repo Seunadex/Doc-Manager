@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import supertest from 'supertest';
-import bcrypt from 'bcryptjs';
 import passwordHash from '../helper/helper';
 import app from '../../build/server';
 import { User, Document, Role } from '../models';
