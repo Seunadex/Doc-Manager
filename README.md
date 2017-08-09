@@ -16,7 +16,30 @@ A document management system (API endpoints) that allows users to create and man
 * Users can delete their personal documents.
 
 ### Documentation
-* View documentation **[here]()**
+* View full documentation **[here](https://doc-man-staging.herokuapp.com/#introduction)**
+#### Below are the API endpoints and their functions
+EndPoint                        |   Functionality
+------------------------------  |------------------------
+POST /api/v1/users/login         |   Logs a user in.
+POST /api/v1/users/              |   Creates a new user.
+GET /api/v1/users/               |   Find matching instances of user.
+GET /api/v1/users-docs/          |    Find matching instances of users and documents
+GET /api/v1/users/<id>           |   Find user.
+PUT /api/v1/users/<id>           |   Update user attributes.
+DELETE /api/v1/users/<id>        |   Delete user.
+POST /api/v1/documents/          |   Creates a new document instance.
+POST /api/v1/roles/              |   Creates a new role instance.
+GET /api/v1/roles/               |   Find matching instances of role
+GET /api/v1/roles-users/         |   Find matching instances of roles and users
+GET /api/v1/documents/           |   Find matching instances of document.
+GET /api/v1/documents/<id>       |   Find document.
+PUT /api/v1/documents/<id>       |   Update document attributes.
+DELETE /api/v1/documents/<id>    |   Delete document.
+GET /api/v1/users/<id>/documents |   Find all documents belonging to the user.
+GET /api/v1/search/users/<searchkey>      |   Gets all users with username, fullname matching or containing the searcht erm
+GET /api/v1/search/documents/<searchkey> | Gets all documents with title or content matching or containing the search key
+GET /api/v1/users/page/?limit={integer}&offset={integer} | Pagination for users.
+GET /api/v1/documents/page/?limit={integer}&offset={integer} | Pagination for docs.
 
 ### Dependencies
 * **[Babel-cli](https://www.npmjs.com/package/babel-cli)** - Tool for transpiling the code through the command line.
