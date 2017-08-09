@@ -1,11 +1,9 @@
 import { expect } from 'chai';
 import supertest from 'supertest';
-import { passwordHash } from '../helper/helper';
+import bcrypt from 'bcryptjs';
+import passwordHash from '../helper/helper';
 import app from '../../build/server';
-
-const User = require('../models/').User;
-const Document = require('../models').Document;
-const Role = require('../models').Role;
+import { User, Document, Role } from '../models';
 
 const adminToken = process.env.ADMIN_TOKEN;
 const token = process.env.TOKEN;
@@ -55,7 +53,7 @@ describe('User controllers', () => {
         username: 'seunadex',
         password: passwordHash('seunadex'),
         email: 'seunadex@gmail.com',
-        RoleId: 1
+        roleId: 1
       }).then((err) => {
         if (!err) {
           //
@@ -80,7 +78,6 @@ describe('User controllers', () => {
           expect(res.body.error.fullname).to.equal('Fullname must be not be empty');
           expect(res.body.error.username).to.equal('username is required');
           expect(res.body.error.password).to.equal('password is required');
-          expect(res.body.error.RoleId).to.equal('Please enter the RoleId');
           expect(res.body.error).to.not.have.property('email');
         }
         done();
@@ -93,7 +90,7 @@ describe('User controllers', () => {
         username: 'seunadex',
         password: passwordHash('seunadex'),
         email: 'seunadex@gmail.com',
-        RoleId: 1
+        roleId: 1
       };
       request
       .post('/api/v1/users')
@@ -113,7 +110,7 @@ describe('User controllers', () => {
         username: 'lionelmessi',
         password: passwordHash('lionelmessi'),
         email: 'lionelmessi@gmail.com',
-        RoleId: 1
+        roleId: 1
       };
       request
       .post('/api/v1/users')
@@ -128,27 +125,6 @@ describe('User controllers', () => {
         done();
       });
     });
-
-    it('should return error 400 with an non-existing roleID', (done) => {
-      const userDetails = {
-        fullname: 'lionel messi',
-        username: 'lionelmessi',
-        password: passwordHash('lionelmessi'),
-        email: 'lionelmessi@gmail.com',
-        RoleId: 90
-      };
-      request
-      .post('/api/v1/users')
-      .send(userDetails)
-      .end((err, res) => {
-        if (!err) {
-          expect(res.status).to.equal(400);
-          expect(res.body).to.have.property('message');
-          expect(res.body.message).to.equal('User credentials already exist');
-        }
-        done();
-      });
-    });
   });
 
   describe('Login: POST /api/users/login', () => {
@@ -158,13 +134,13 @@ describe('User controllers', () => {
         username: 'cr7',
         password: passwordHash('ronaldo'),
         email: 'cr7@gmail.com',
-        RoleId: 1
+        roleId: 1
       }, {
         fullname: 'kun aguero',
         username: 'sergioaguero',
         password: passwordHash('aguero'),
         email: 'kunaguero@gmail.com',
-        RoleId: 2
+        roleId: 2
       }]).then(() => {
         done();
       });
@@ -208,7 +184,7 @@ describe('User controllers', () => {
         email: 'johndoe@gmail.com',
         username: 'johndoe',
         password: passwordHash('johndoe'),
-        RoleId: 2
+        roleId: 2
       }).then(() => {
         request
       .post('/api/v1/users/login')
@@ -233,7 +209,7 @@ describe('User controllers', () => {
         username: 'jesse14',
         password: passwordHash('jesselingard'),
         email: 'jesse14@gmail.com',
-        RoleId: 2
+        roleId: 2
       }).then((err) => {
         if (!err) {
           //
@@ -317,19 +293,19 @@ describe('User controllers', () => {
         username: 'valencia',
         password: passwordHash('valencia'),
         email: 'valencia@gmail.com',
-        RoleId: 1
+        roleId: 1
       }, {
         fullname: 'paul pogba',
         username: 'pogback',
         password: passwordHash('pogback'),
         email: 'pogback6@gmail.com',
-        RoleId: 2
+        roleId: 2
       }]).then(() => {
         Document.create({
           title: 'testing',
           content: 'just testing this stuff',
-          UserId: 1,
-          RoleId: 1,
+          userId: 1,
+          roleId: 1,
           access: 'public'
         })
           .then(() => {
@@ -392,13 +368,13 @@ describe('User controllers', () => {
         username: 'ronaldo9',
         password: passwordHash('ronaldo'),
         email: 'ronaldo9@gmail.com',
-        RoleId: 1
+        roleId: 1
       }, {
         fullname: 'robin hood',
         username: 'robinhood',
         password: passwordHash('robinhood'),
         email: 'robinhood@gmail.com',
-        RoleId: 2
+        roleId: 2
       }]).then(() => {
         done();
       });
@@ -449,7 +425,7 @@ describe('User controllers', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(403);
-            expect(res.body.message).to.equal('Please Login');
+            expect(res.body.message).to.equal('Please Log in');
             expect(res.body.status).to.equal('Forbidden');
           }
           done();
@@ -464,7 +440,7 @@ describe('User controllers', () => {
         username: 'justme',
         password: passwordHash('seunadekunle'),
         email: 'justme@gmail.com',
-        RoleId: 2
+        roleId: 2
       }).then((err) => {
         if (!err) {
           //
@@ -521,12 +497,42 @@ describe('User controllers', () => {
         username: 'eldee',
         password: passwordHash('eldee'),
         email: 'eldee@gmail.com',
-        RoleId: 2
       }).then((err) => {
         if (!err) {
           //
         }
         done();
+      });
+    });
+
+    it('should return message for user not found', (done) => {
+      User.create({
+        fullname: 'seun',
+        email: 'seun@admin.com',
+        username: 'seun',
+        password: passwordHash('seun'),
+        roleId: 1
+      }).then(() => {
+        request
+          .post('/api/v1/users/login')
+          .send({
+            username: 'seun',
+            password: 'seun',
+          })
+      .expect(400)
+      .end((err, res) => {
+        const tokens = res.body.token;
+        request
+          .put('/api/v1/users/2')
+          .set('Authorization', `${tokens}`)
+          .set('Accept', 'application/json')
+          .expect(200)
+          .end((err, res) => {
+            expect(res.status).to.equal(404);
+            expect(res.body.message).to.equal('User not found');
+            done();
+          });
+      });
       });
     });
 
@@ -541,87 +547,48 @@ describe('User controllers', () => {
           done();
         });
     });
-    it('returns an error status for already existing username or email', (done) => {
-      User.bulkCreate([{
-        username: 'firstuser',
-        fullname: 'firstuser',
-        password: passwordHash('pword'),
-        email: 'firstuser@gmail.com',
-        RoleId: 1,
-      }, {
-        username: 'seconduser',
-        fullname: 'seconduser',
-        password: passwordHash('pword'),
-        email: 'seconduser@yahoo.com',
-        RoleId: 2,
-      }])
-        .then(() => {
-          request
-            .put('/api/v1/users/1')
-            .set('Authorization', adminToken)
-            .send({
-              email: 'seconduser@yahoo.com',
-            })
-            .end((err, res) => {
-              expect(res.status).to.equal(400);
-              expect(res.body.message).to.equal('A user exist with same email or username');
-              done();
-            });
-        });
-    });
     it('returns error', (done) => {
       User.bulkCreate([{
         username: 'firstuser',
         fullname: 'firstuser',
         password: passwordHash('test'),
         email: 'firstuser@gmail.com',
-        RoleId: 1,
+        roleId: 1,
       }, {
         username: 'seconduser',
         fullname: 'seconduser',
         password: passwordHash('test'),
         email: 'seconduser@yahoo.com',
-        RoleId: 2,
+        roleId: 2,
       }])
         .then(() => {
           request
-            .put('/api/v1/users/rty')
+            .put('/api/v1/users/1')
             .set('Authorization', adminToken)
             .send({
               email: 'firstuser@gmail.com',
             })
             .end((err, res) => {
-              expect(res.status).to.equal(400);
-              expect(res.body.message).to.equal('Id must be a number');
+              expect(res.status).to.equal(403);
+              expect(res.body.message).to.equal('Oops! You are not allowed to update the user');
               done();
             });
         });
     });
 
-    it('should return error on non-existing document', (done) => {
-      request
-        .put('/api/v1/users/1')
-        .set('Authorization', adminToken)
-        .expect(403)
-        .end((err, res) => {
-          expect(res.status).to.equal(404);
-          expect(res.body.message).to.equal('User not found');
-          done();
-        });
-    });
     it('returns error on unauthorized access', (done) => {
       User.bulkCreate([{
         username: 'firstuser',
         fullname: 'firstuser',
         password: passwordHash('test'),
         email: 'firstuser@gmail.com',
-        RoleId: 1,
+        roleId: 1,
       }, {
         username: 'seconduser',
         fullname: 'seconduser',
         password: passwordHash('test'),
         email: 'seconduser@yahoo.com',
-        RoleId: 2,
+        roleId: 2,
       }])
         .then(() => {
           request
@@ -631,23 +598,12 @@ describe('User controllers', () => {
               username: 'moses',
             })
             .end((err, res) => {
-              expect(res.status).to.equal(404);
+              expect(res.status).to.equal(403);
+              expect(res.body.message).to.equal('Oops! You are not allowed to update the user');
               done();
             });
         });
     });
-
-  //   it('should return error when user not found', (done) => {
-  //     request
-  //       .put('/api/v1/users/3')
-  //       .set('Authorization', adminToken)
-  //       .expect(403)
-  //       .end((err, res) => {
-  //         expect(res.status).to.equal(404);
-  //         expect(res.body.message).to.equal('User not found');
-  //         done();
-  //       });
-  //   });
   });
 
   describe('DELETE user: /api/v1/users', () => {
@@ -657,7 +613,7 @@ describe('User controllers', () => {
         username: 'newuser',
         password: passwordHash('newuser'),
         email: 'newuser@gmail.com',
-        RoleId: 2
+        roleId: 2
       }).then((err) => {
         if (!err) {
           //

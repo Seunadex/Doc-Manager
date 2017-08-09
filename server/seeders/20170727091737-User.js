@@ -7,7 +7,7 @@ module.exports = {
     fullname: 'Administrator',
     email: 'admin@admin.com',
     password: bcrypt.hashSync('admin', bcrypt.genSaltSync(10)),
-    RoleId: '1',
+    roleId: '1',
     createdAt: new Date(),
     updatedAt: new Date()
   }, {
@@ -15,7 +15,7 @@ module.exports = {
     fullname: 'Seun Adekunle',
     email: 'seunadekunle@gmail.com',
     password: bcrypt.hashSync('seunadekunle', bcrypt.genSaltSync(10)),
-    RoleId: '2',
+    roleId: '2',
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -24,7 +24,7 @@ module.exports = {
     fullname: 'max payne',
     email: 'maxpayne@gmail.com',
     password: bcrypt.hashSync('maxpayne', bcrypt.genSaltSync(10)),
-    RoleId: '2',
+    roleId: '2',
     createdAt: new Date(),
     updatedAt: new Date()
   }, {
@@ -32,7 +32,7 @@ module.exports = {
     fullname: 'cristiano ronaldo',
     email: 'cr7@gmail.com',
     password: bcrypt.hashSync('ronaldo', bcrypt.genSaltSync(10)),
-    RoleId: '2',
+    roleId: '2',
     createdAt: new Date(),
     updatedAt: new Date()
   }], {}),

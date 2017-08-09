@@ -19,14 +19,14 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    UserId: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
   });
   Document.associate = (models) => {
     Document.belongsTo(models.User, {
-      foreignKey: 'UserId',
+      foreignKey: 'userId',
       onDelete: 'CASCADE'
     });
   };

@@ -20,7 +20,7 @@ module.exports = {
         type: Sequelize.STRING,
         defaultValue: 'public'
       },
-      UserId: {
+      userId: {
         type: Sequelize.INTEGER,
         onDelete: 'CASCADE',
       },

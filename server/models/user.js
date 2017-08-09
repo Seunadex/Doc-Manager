@@ -26,18 +26,18 @@ module.exports = (sequelize, DataTypes) => {
         msg: 'Email already used'
       }
     },
-    RoleId: {
+    roleId: {
       type: DataTypes.STRING,
       defaultValue: 2,
     }
   });
   User.associate = (models) => {
     User.hasMany(models.Document, {
-      foreignKey: 'UserId',
+      foreignKey: 'userId',
       as: 'documents'
     });
     User.belongsTo(models.Role, {
-      foreignKey: 'RoleId',
+      foreignKey: 'roleId',
       onDelete: 'CASCADE'
     });
   };

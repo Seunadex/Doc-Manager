@@ -1,7 +1,5 @@
 import pagination from '../helper/pagination';
-
-const Document = require('../models').Document;
-const User = require('../models').User;
+import { Document, User } from '../models';
 
 const DocumentControllers = {
   /**
@@ -10,21 +8,22 @@ const DocumentControllers = {
    * @returns {Object} returns a response object.
    */
   create(req, res) {
-    const authorId = res.locals.decoded.UserId;
+    const authorId = res.locals.decoded.userId;
     return Document.create({
       title: req.body.title,
       content: req.body.content,
-      UserId: authorId,
+      userId: authorId,
       access: req.body.access
     })
-    .then(document => res.status(201).send({
-      message: 'Document successfully created',
-      document,
-    })
-    )
-    .catch(() => res.status(400).send({
-      message: 'Please verify your input'
-    }));
+    .then(document => res.status(201).send(
+      {
+        message: 'The document has been successfully created',
+        document,
+      }))
+    .catch(() => res.status(400).send(
+      {
+        message: 'Please verify your input'
+      }));
   },
 
   /**
@@ -33,7 +32,7 @@ const DocumentControllers = {
    * @returns {Object} returns the list of documents available
    */
 
-  listDocuments(req, res) {
+  index(req, res) {
     const limit = req.query.limit || 10;
     const offset = req.query.offset || 0;
 
@@ -64,14 +63,13 @@ const DocumentControllers = {
    * @param {Object} res
    * @returns {Object} returns the requested document
    */
-  getDocument(req, res) {
+  show(req, res) {
     if (isNaN(req.params.id)) {
       return res.status(400).send({
         message: 'Id must be an integer'
       });
     }
-    return User
-    .findById(res.locals.decoded.UserId, {
+    return User.findById(res.locals.decoded.userId, {
       include: [{
         model: Document,
         as: 'documents',
@@ -90,7 +88,7 @@ const DocumentControllers = {
       });
     })
     .catch(() => res.status(400).send({
-      message: 'Oops! something went wrong, Please try again'
+      message: 'Oops! Something went wrong, Please try again'
     }));
   },
 
@@ -99,31 +97,22 @@ const DocumentControllers = {
    * @param {Object} res
    * @returns {Object} returns the updated document
    */
-  updateDocument(req, res) {
-    if (!Number.isInteger(Number(req.params.id))) {
+  update(req, res) {
+    if (isNaN(Number(req.params.id))) {
       return res.status(400).json({
         message: 'Invalid document id'
       });
     }
-    return Document
-      .find({
-        where: {
-          id: req.params.id,
-        },
-      })
+    return Document.find({
+      where: {
+        id: req.params.id,
+      },
+    })
       .then((document) => {
-        if (!document) {
-          return res.status(404).send({
-            message: 'The Document does not exist',
-          });
-        }
-        if (req.body.title) {
-          req.body.title = (req.body.title).toLowerCase();
-        }
-        return document
-          .update(req.body, { fields: Object.keys(req.body) })
+        if (document) {
+          return document.update(req.body, { fields: Object.keys(req.body) })
           .then(() => res.status(200).send({
-            message: 'The Document successfully updated',
+            message: 'The document has been successfully updated',
             id: document.id,
             title: document.title,
             content: document.content,
@@ -133,6 +122,13 @@ const DocumentControllers = {
           .catch(() => res.status(400).send({
             message: 'Document not found',
           }));
+        }
+        if (req.body.title) {
+          req.body.title = (req.body.title).toLowerCase();
+        }
+        return res.status(404).send({
+          message: 'The Document does not exist',
+        });
       })
       .catch(() => res.status(400).send({
         message: 'Problem encountered, please try again',
@@ -145,13 +141,12 @@ const DocumentControllers = {
    * @returns {Object} returns a message indicating that a document has been deleted
    */
   destroy(req, res) {
-    if (!Number.isInteger(Number(req.params.id))) {
+    if (isNaN(Number(req.params.id))) {
       return res.status(400).json({
         message: 'Invalid document id'
       });
     }
-    return Document
-    .find({
+    return Document.find({
       where: {
         id: req.params.id,
       },
@@ -181,10 +176,10 @@ const DocumentControllers = {
    * @param {Object} res
    * @returns {Response} Response object
    */
-  searchDocument(req, res) {
+  search(req, res) {
     const searchKey = `%${req.query.q}%` || `%${req.body.search}%`;
     const verifiedRoleId = res.locals.decoded.userRoleId;
-    const userId = res.locals.decoded.UserId;
+    const userId = res.locals.decoded.userId;
     const searchParam = verifiedRoleId === 1 ? {
       $or: [{ title: { $iLike: searchKey } }]
     }
@@ -194,17 +189,17 @@ const DocumentControllers = {
       title: { $iLike: searchKey }
     };
     return Document.findAll({
-      attributes: ['title', 'content', 'access', 'UserId', 'createdAt', 'updatedAt'],
+      attributes: ['title', 'content', 'access', 'userId', 'createdAt', 'updatedAt'],
       where: searchParam,
       include: [
         {
           model: User,
-          attributes: ['username', 'RoleId']
+          attributes: ['username', 'roleId']
         }
       ]
     })
     .then(documents => res.status(200).send({
-      documents: documents.filter(document => !(document.User.RoleId === verifiedRoleId && document.User.RoleId === 'role')),
+      documents: documents.filter(document => !(document.User.roleId === verifiedRoleId && document.User.roleId === 'role')),
     }))
     .catch(() => res.status(403).send({
       message: 'Forbidden'

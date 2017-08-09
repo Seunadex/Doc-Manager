@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import supertest from 'supertest';
 import app from '../../build/server';
-import { passwordHash } from '../helper/helper';
+import passwordHash from '../helper/helper';
 
 const Role = require('../../build/models/index').Role;
 const Document = require('../../build/models/index').Document;
@@ -62,7 +62,7 @@ describe('Document controller', () => {
         username: 'temilaj',
         password: passwordHash('temilaj'),
         email: 'temilaj@email.com',
-        RoleId: 1
+        roleId: 1
       }).then((err) => {
         if (!err) {
           //
@@ -76,8 +76,8 @@ describe('Document controller', () => {
         title: 'test doc',
         content: 'test running it',
         access: 'public',
-        UserId: 1,
-        RoleId: 1
+        userId: 1,
+        roleId: 1
       })
         .then(() => {
           //
@@ -101,20 +101,20 @@ describe('Document controller', () => {
         title: 'document one',
         content: 'just one document',
         access: 'public',
-        UserId: 1,
-        RoleId: 1,
+        userId: 1,
+        roleId: 1,
       }, {
         title: 'document two',
         content: 'jkhfaskldjabksjd',
         access: 'public',
-        UserId: 1,
-        RoleId: 1,
+        userId: 1,
+        roleId: 1,
       }, {
         title: 'document three',
         content: 'lkajksdhlvkdjsnlkd',
         access: 'public',
-        UserId: 1,
-        RoleId: 1,
+        userId: 1,
+        roleId: 1,
       }]).then(() => {
         //
       });
@@ -135,20 +135,20 @@ describe('Document controller', () => {
         title: 'document one',
         content: 'just one document',
         access: 'public',
-        UserId: 1,
-        RoleId: 1,
+        userId: 1,
+        roleId: 1,
       }, {
         title: 'document two',
         content: 'jkhfaskldjabksjd',
         access: 'public',
-        UserId: 1,
-        RoleId: 1,
+        userId: 1,
+        roleId: 1,
       }, {
         title: 'document three',
         content: 'lkajksdhlvkdjsnlkd',
         access: 'public',
-        UserId: 1,
-        RoleId: 1,
+        userId: 1,
+        roleId: 1,
       }]).then(() => {
         //
       });
@@ -196,7 +196,7 @@ describe('Document controller', () => {
         username: 'georgebush',
         password: passwordHash('georgebush'),
         email: 'georgebush@gmail.com',
-        RoleId: 1
+        roleId: 1
       };
 
       User.create(user).then(() => {
@@ -243,23 +243,41 @@ describe('Document controller', () => {
         });
     });
 
-    it('should create document with valid data', (done) => {
-      const document = {
-        title: 'my document',
-        content: 'this is a valid document',
-        access: 'public'
-      };
-      request
-        .post('/api/v1/documents')
-        .set('Authorization', token)
-        .send(document)
-        .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(201);
-            expect(res.body.message).to.equal('Document successfully created');
-          }
-          done();
-        });
+    it('should create a new document', (done) => {
+      const password = passwordHash('admin');
+      User.create({
+        fullname: 'admin',
+        email: 'admin@admin.com',
+        username: 'admin',
+        password,
+        roleId: 1
+      }).then((res) => {
+        request
+      .post('/api/v1/users/login')
+      .send({
+        username: 'admin',
+        password: 'admin',
+      })
+      .expect(200)
+      .end((err, res) => {
+        const tokens = res.body.token;
+        request
+            .post('/api/v1/documents')
+            .send({
+              title: 'New doc',
+              content: 'the future is now',
+              access: 'public'
+            })
+            .set('Authorization', `${tokens}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(400)
+                .end((err, res) => {
+                  expect(res.body.message).to.equal('The document has been successfully created');
+                  done();
+                });
+      });
+      });
     });
   });
 
@@ -270,13 +288,13 @@ describe('Document controller', () => {
         username: 'tommy',
         password: passwordHash('tommy'),
         email: 'tommy@gmail.com',
-        RoleId: 1
+        roleId: 1
       }, {
         fullname: 'funny name',
         username: 'funny',
         password: passwordHash('funny'),
         email: 'funny@gmail.com',
-        RoleId: 2
+        roleId: 2
       }]).then(() => {
         done();
       });
@@ -302,8 +320,8 @@ describe('Document controller', () => {
         .send({
           title: 'Test',
           content: 'Running Tests with invalid id',
-          UserId: 1,
-          RoleId: 1
+          userId: 1,
+          roleId: 1
         })
         .end((err, res) => {
           if (!err) {
@@ -318,8 +336,8 @@ describe('Document controller', () => {
       Document.create({
         title: 'Real test',
         content: 'This one should update',
-        UserId: 1,
-        RoleId: 1,
+        userId: 1,
+        roleId: 1,
         access: 'public'
       })
         .then(() => {
@@ -332,13 +350,13 @@ describe('Document controller', () => {
         .send({
           title: 'Test',
           content: 'Running Tests with invalid id',
-          UserId: 1,
-          RoleId: 1
+          userId: 1,
+          roleId: 1
         })
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('The Document successfully updated');
+            expect(res.body.message).to.equal('The document has been successfully updated');
           }
           done();
         });
@@ -361,8 +379,8 @@ describe('Document controller', () => {
         title: 'Doc',
         content: 'document with invalid id',
         access: 'private',
-        UserId: 1,
-        RoleId: 1
+        userId: 1,
+        roleId: 1
       };
       Document.create(document).then(() => {
         request
@@ -389,7 +407,7 @@ describe('Document controller', () => {
         username: 'spidey000',
         password: passwordHash('spidey'),
         email: 'spidey@gmail.com',
-        RoleId: 1
+        roleId: 1
       }).then((err) => {
         if (!err) {
           //
@@ -403,8 +421,8 @@ describe('Document controller', () => {
         title: 'Search docs',
         content: 'Search documents routes test',
         access: 'public',
-        UserId: 1,
-        RoleId: 1
+        userId: 1,
+        roleId: 1
       }).then(() => {
         //
       });
@@ -430,32 +448,61 @@ describe('Document controller', () => {
           fullname: 'John',
           password: passwordHash('johnny'),
           email: 'johnny@gmail.com',
-          RoleId: 1
+          roleId: 1
         }, {
           username: 'cage',
           fullname: 'cage',
           password: passwordHash('johnny'),
           email: 'johnncagey@gmail.com',
-          RoleId: 2
+          roleId: 2
         }
       ]).then(() => {
         done();
       });
     });
 
-    it('should return the document if found', (done) => {
-      request
-        .get('/api/v1/documents/1')
-        .set('Authorization', adminToken)
-        .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(200);
-            expect(res.body).to.have.property('message');
-          }
-          done();
-        });
+    it('should retrieve document if found', (done) => {
+      const password = passwordHash('blessing');
+      User.create({
+        fullname: 'blessing',
+        email: 'blessing@blessing.com',
+        username: 'blessing',
+        password,
+        roleId: 2
+      }).then((res) => {
+        request
+      .post('/api/v1/users/login')
+      .send({
+        username: 'blessing',
+        password: 'blessing',
+      })
+      .expect(200)
+       .end((err, res) => {
+         const tokens = res.body.token;
+         request
+          .post('/api/v1/documents/')
+          .send({
+            title: 'title',
+            content: 'content',
+            access: 'public'
+          })
+           .set('Authorization', `${tokens}`)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .end((err, res) => {
+            request
+            .get('/api/v1/documents/1')
+            .set('Authorization', `${tokens}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+                .end((err, res) => {
+                  expect(res.status).to.equal(200);
+                  done();
+                });
+          });
+       });
+      });
     });
-
     it('should return error for id not an integer', (done) => {
       request
         .get('/api/v1/documents/ee')
@@ -478,13 +525,13 @@ describe('Document controller', () => {
           fullname: 'John',
           password: passwordHash('johnny'),
           email: 'johnny@gmail.com',
-          RoleId: 1
+          roleId: 1
         }, {
           username: 'cage',
           fullname: 'cage',
           password: passwordHash('johnny'),
           email: 'johnncagey@gmail.com',
-          RoleId: 2
+          roleId: 2
         }
       ]).then(() => {
         done();
@@ -498,8 +545,8 @@ describe('Document controller', () => {
         .send({
           title: 'Test',
           content: 'Running Tests with invalid id',
-          UserId: 1,
-          RoleId: 1
+          userId: 1,
+          roleId: 1
         })
         .end((err, res) => {
           if (!err) {
@@ -517,8 +564,8 @@ describe('Document controller', () => {
         .send({
           title: 'Test',
           content: 'Running Tests with unavailable id',
-          UserId: 1,
-          RoleId: 1
+          userId: 1,
+          roleId: 1
         })
         .end((err, res) => {
           if (!err) {
@@ -534,8 +581,8 @@ describe('Document controller', () => {
         title: 'DELETE',
         content: 'this document will be deleted soon, maybe not',
         access: 'public',
-        UserId: 1,
-        RoleId: 1
+        userId: 1,
+        roleId: 1
       }).then(() => {
         request
         .delete('/api/v1/documents/4586580090997876757645745')
@@ -543,8 +590,8 @@ describe('Document controller', () => {
         .send({
           title: 'Test',
           content: 'Running Tests with valid id',
-          UserId: 1,
-          RoleId: 1
+          userId: 1,
+          roleId: 1
         })
         .end((err, res) => {
           if (!err) {
@@ -561,8 +608,8 @@ describe('Document controller', () => {
         title: 'DELETE',
         content: 'this document will be deleted soon',
         access: 'public',
-        UserId: 1,
-        RoleId: 1
+        userId: 1,
+        roleId: 1
       })
         .then(() => {
           request
