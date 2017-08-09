@@ -7,7 +7,7 @@ you can login with the following default admin settings:
 username: admin
 password: admin
 Please login and change the default root password.`,
-      UserId: 1,
+      userId: 1,
       access: 'public',
       createdAt: new Date(),
       updatedAt: new Date()
@@ -20,7 +20,7 @@ Chett felt it too, biting through his layers of black wool and boiled leather.
 It was too bloody cold for man or beast, but here they were. His mouth twisted, and he could almost feel the boils that covered his cheeks and neck growing red and angry.
 I should be safe back at the Wall, tending the bloody ravens and making fires for old Maester Aemon. It was the bastard Jon Snow who had taken that from him, him and his fat friend Sam Tarly.
 It was their fault he was here, freezing his bloody balls off with a pack of hounds deep in the haunted forest.`,
-      UserId: 2,
+      userId: 2,
       access: 'public',
       createdAt: new Date(),
       updatedAt: new Date()
@@ -30,7 +30,7 @@ It was their fault he was here, freezing his bloody balls off with a pack of hou
 It was too bloody cold for man or beast, but here they were. His mouth twisted, and he could almost feel the boils that covered his cheeks and neck growing red and angry.
 I should be safe back at the Wall, tending the bloody ravens and making fires for old Maester Aemon. It was the bastard Jon Snow who had taken that from him, him and his fat friend Sam Tarly.
 It was their fault he was here, freezing his bloody balls off with a pack of hounds deep in the haunted forest.`,
-      UserId: 2,
+      userId: 2,
       access: 'private',
       createdAt: new Date(),
       updatedAt: new Date()

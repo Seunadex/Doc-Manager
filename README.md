@@ -37,7 +37,6 @@ A document management system (API endpoints) that allows users to create and man
 * **[Gulp-jasmine](https://www.npmjs.com/package/gulp-jasmine)** - Basic implementation of a gulp task for jasmine
 * **[Gulp-nodemon](https://www.npmjs.com/package/gulp-nodemon)** - It's gulp + nodemon + convenience, it looks almost exactly like regular nodemon, but it's made for use with gulp tasks.
 * **[Jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)** - Generates and verify JWT token
-* **[Moment](https://www.npmjs.com/package/moment)** - A lightweight JavaScript date library for parsing, validating, manipulating, and formatting dates.
 * **[Morgan](https://www.npmjs.com/package/morgan)** - HTTP request logger middleware for node.js
 * **[Path](https://www.npmjs.com/package/path)** - This is an exact copy of the NodeJS ’path’ module published to the NPM registry.
 * **[Pg](https://www.npmjs.com/package/pg)** - Non-blocking PostgreSQL client for node.js

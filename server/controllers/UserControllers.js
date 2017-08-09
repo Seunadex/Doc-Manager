@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import pagination from '../helper/pagination';
 import { User, Document } from '../models';
-import { passwordHash } from '../helper/helper';
 
 dotenv.config();
 
@@ -18,18 +17,18 @@ const UserControllers = {
   create(req, res) {
     const password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
     return User.create({
+      password,
       fullname: req.body.fullname,
       username: req.body.username,
-      password,
       email: req.body.email,
     })
     .then((user) => {
       const token = jwt.sign({
-        UserId: user.id,
+        userId: user.id,
         userFullname: user.fullname,
         userUsername: user.username,
         userEmail: user.email,
-        userRoleId: user.RoleId,
+        userRoleId: user.roleId,
       }, secret, {
         expiresIn: '72h'
       });
@@ -61,11 +60,11 @@ const UserControllers = {
       const passkey = bcrypt.compareSync(req.body.password, user.password);
       if (passkey) {
         const token = jwt.sign({
-          UserId: user.id,
+          userId: user.id,
           userFullname: user.fullname,
           userUsername: user.username,
           userEmail: user.email,
-          userRoleId: user.RoleId,
+          userRoleId: user.roleId,
         }, secret, {
           expiresIn: '24h'
         });
@@ -73,7 +72,7 @@ const UserControllers = {
           status: 'ok',
           success: true,
           message: 'You are successfully logged in',
-          UserId: user.id,
+          userId: user.id,
           token,
         });
       }
@@ -100,7 +99,7 @@ const UserControllers = {
     return User.findAndCount({
       limit,
       offset,
-      attributes: ['id', 'fullname', 'username', 'email', 'RoleId'],
+      attributes: ['id', 'fullname', 'username', 'email', 'roleId'],
     })
     .then(user => res.status(200).send({
       pagination: {
@@ -139,7 +138,7 @@ const UserControllers = {
           fullname: user.fullname,
           username: user.username,
           email: user.email,
-          role: user.RoleId,
+          role: user.roleId,
           created_at: user.createdAt
         }))
     }))
@@ -172,7 +171,7 @@ const UserControllers = {
         fullname: user.fullname,
         username: user.username,
         email: user.email,
-        role: user.RoleId,
+        role: user.roleId,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
       });
@@ -210,7 +209,7 @@ const UserControllers = {
           fullname: req.body.fullname || user.fullname,
           username: req.body.username || user.username,
           email: req.body.email || user.email,
-          password: passwordHash(req.body.password) || user.password,
+          password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10)) || user.password,
         })
         .then(() => res.status(200).send({
           status: 'Successfully updated',
@@ -269,13 +268,13 @@ const UserControllers = {
       });
     }
     return Document.findAll({
-      where: { UserId: req.params.id },
+      where: { userId: req.params.id },
       include: [{
         model: User,
         attributes: ['id', 'username'] }],
     })
     .then((document) => {
-      if (res.locals.decoded.UserId === document[0].UserId ||
+      if (res.locals.decoded.userId === document[0].userId ||
         res.locals.decoded.userRoleId === 1) {
         return res.status(200).json({
           count: document.length,

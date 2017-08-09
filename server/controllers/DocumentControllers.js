@@ -8,16 +8,16 @@ const DocumentControllers = {
    * @returns {Object} returns a response object.
    */
   create(req, res) {
-    const authorId = res.locals.decoded.UserId;
+    const authorId = res.locals.decoded.userId;
     return Document.create({
       title: req.body.title,
       content: req.body.content,
-      UserId: authorId,
+      userId: authorId,
       access: req.body.access
     })
     .then(document => res.status(201).send(
       {
-        message: 'Document successfully created',
+        message: 'The document has been successfully created',
         document,
       }))
     .catch(() => res.status(400).send(
@@ -69,7 +69,7 @@ const DocumentControllers = {
         message: 'Id must be an integer'
       });
     }
-    return User.findById(res.locals.decoded.UserId, {
+    return User.findById(res.locals.decoded.userId, {
       include: [{
         model: Document,
         as: 'documents',
@@ -179,7 +179,7 @@ const DocumentControllers = {
   search(req, res) {
     const searchKey = `%${req.query.q}%` || `%${req.body.search}%`;
     const verifiedRoleId = res.locals.decoded.userRoleId;
-    const userId = res.locals.decoded.UserId;
+    const userId = res.locals.decoded.userId;
     const searchParam = verifiedRoleId === 1 ? {
       $or: [{ title: { $iLike: searchKey } }]
     }
@@ -189,17 +189,17 @@ const DocumentControllers = {
       title: { $iLike: searchKey }
     };
     return Document.findAll({
-      attributes: ['title', 'content', 'access', 'UserId', 'createdAt', 'updatedAt'],
+      attributes: ['title', 'content', 'access', 'userId', 'createdAt', 'updatedAt'],
       where: searchParam,
       include: [
         {
           model: User,
-          attributes: ['username', 'RoleId']
+          attributes: ['username', 'roleId']
         }
       ]
     })
     .then(documents => res.status(200).send({
-      documents: documents.filter(document => !(document.User.RoleId === verifiedRoleId && document.User.RoleId === 'role')),
+      documents: documents.filter(document => !(document.User.roleId === verifiedRoleId && document.User.roleId === 'role')),
     }))
     .catch(() => res.status(403).send({
       message: 'Forbidden'

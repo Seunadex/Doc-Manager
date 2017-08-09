@@ -52,7 +52,7 @@ class Authorization {
         if (!user) return res.status(404).send({ message: 'User not found' });
 
         if (res.locals.decoded.userRoleId === 1
-          || res.locals.decoded.UserId === user.id) {
+          || res.locals.decoded.userId === user.id) {
           res.locals.user = user;
           return next();
         }
@@ -89,7 +89,7 @@ class Authorization {
         message: 'Id must be a number'
       });
     }
-    if (Number(req.params.id) === parseInt(res.locals.decoded.UserId, 10)) {
+    if (Number(req.params.id) === parseInt(res.locals.decoded.userId, 10)) {
       return next();
     }
     return res.status(403).send({
