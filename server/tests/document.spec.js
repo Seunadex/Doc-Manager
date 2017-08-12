@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import supertest from 'supertest';
 import app from '../../build/server';
-import passwordHash from '../helper/helper';
+import { passwordHash } from '../helper/helper';
 
 const Role = require('../../build/models/index').Role;
 const Document = require('../../build/models/index').Document;
@@ -70,6 +70,38 @@ describe('Document controller', () => {
         done();
       });
     });
+    it('should return a message on title conflict', (done) => {
+      Document.create({
+        title: 'test doc',
+        content: 'test running it',
+        access: 'public',
+        userId: 1,
+        roleId: 1
+      })
+        .then(() => {
+          //
+        });
+
+      request
+        .post('/api/v1/documents')
+        .send({
+          title: 'test doc',
+          content: 'test running it',
+          access: 'public',
+          userId: 2,
+          roleId: 1
+        })
+        .set('Authorization', adminToken)
+        .set('Accept', 'application/json')
+        .end((err, res) => {
+          if (!err) {
+            expect(res.status).to.equal(409);
+            expect(res.body.message).to.equal(
+              'A document already exist with same title');
+          }
+          done();
+        });
+    });
 
     it('should get all documents', (done) => {
       Document.create({
@@ -116,10 +148,7 @@ describe('Document controller', () => {
         userId: 1,
         roleId: 1,
       }]).then(() => {
-        //
-      });
-
-      request
+        request
         .get('/api/v1/documents/?limit=2&offset=0')
         .set('Authorization', adminToken)
         .end((err, res) => {
@@ -128,6 +157,7 @@ describe('Document controller', () => {
           }
           done();
         });
+      });
     });
 
     it('should return error with non-integer limit or offset', (done) => {
@@ -158,19 +188,8 @@ describe('Document controller', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
-            expect(res.body.message).to.equal('limit and offset must be an integer');
-          }
-          done();
-        });
-    });
-    it('should return error for unauthorized access', (done) => {
-      request
-        .get('/api/v1/documents/?limit=2&offset=0')
-        .set('Authorization', token)
-        .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(403);
-            expect(res.body.message).to.equal('Only Admin permitted');
+            expect(res.body.message).to.equal(
+              'limit and offset must be an integer');
           }
           done();
         });
@@ -218,7 +237,8 @@ describe('Document controller', () => {
           if (!err) {
             expect(res.status).to.equal(400);
             expect(res.body.error.content).to.equal('Content is required');
-            expect(res.body.error.title).to.equal('Document title must be entered');
+            expect(res.body.error.title).to.equal(
+              'Document title must be entered');
             expect(res.body.error.access).to.equal('Access is required');
           }
           done();
@@ -237,7 +257,8 @@ describe('Document controller', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
-            expect(res.body.message).to.equal('Please verify your input');
+            expect(res.body.message).to.equal(
+              'Access field must be either PUBLIC, PRIVATE or ROLE');
           }
           done();
         });
@@ -251,7 +272,7 @@ describe('Document controller', () => {
         username: 'admin',
         password,
         roleId: 1
-      }).then((res) => {
+      }).then(() => {
         request
       .post('/api/v1/users/login')
       .send({
@@ -271,9 +292,15 @@ describe('Document controller', () => {
             .set('Authorization', `${tokens}`)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .expect(400)
                 .end((err, res) => {
-                  expect(res.body.message).to.equal('The document has been successfully created');
+                  expect(res.status).to.equal(201);
+                  expect(res.body.document.id).to.equal(1);
+                  expect(res.body.document.title).to.equal('New doc');
+                  expect(res.body.document.content).to.equal(
+                    'the future is now');
+                  expect(res.body.document.access).to.equal('public');
+                  expect(res.body.document.userId).to.equal(2);
+
                   done();
                 });
       });
@@ -307,7 +334,7 @@ describe('Document controller', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(404);
-            expect(res.body.message).to.equal('The Document does not exist');
+            expect(res.body.message).to.equal('Document not found');
           }
           done();
         });
@@ -356,7 +383,12 @@ describe('Document controller', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('The document has been successfully updated');
+            expect(res.body.document.id).to.equal(1);
+            expect(res.body.document.title).to.equal('Test');
+            expect(res.body.document.content).to.equal(
+              'Running Tests with invalid id');
+            expect(res.body.document.access).to.equal('public');
+            expect(res.body.document.userId).to.equal(1);
           }
           done();
         });
@@ -391,8 +423,9 @@ describe('Document controller', () => {
           })
           .end((err, res) => {
             if (!err) {
-              expect(res.status).to.equal(400);
-              expect(res.body.message).to.equal('Problem encountered, please try again');
+              expect(res.status).to.equal(500);
+              expect(res.body.message).to.equal(
+                'Internal server error');
             }
             done();
           });
@@ -422,19 +455,14 @@ describe('Document controller', () => {
         content: 'Search documents routes test',
         access: 'public',
         userId: 1,
-        roleId: 1
       }).then(() => {
         //
       });
 
       request
-        .get('/api/v1/search/documents/?q=Search')
+        .get('/api/v1/search/documents/?q=S')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(200);
-            expect(res.body.documents.length).to.be.greaterThan(0);
-          }
           done();
         });
     });
@@ -461,20 +489,20 @@ describe('Document controller', () => {
       });
     });
 
-    it('should retrieve document if found', (done) => {
-      const password = passwordHash('blessing');
+    it('should return document if found', (done) => {
+      const password = passwordHash('blessed');
       User.create({
         fullname: 'blessing',
         email: 'blessing@blessing.com',
-        username: 'blessing',
+        username: 'blessed',
         password,
         roleId: 2
-      }).then((res) => {
+      }).then(() => {
         request
       .post('/api/v1/users/login')
       .send({
-        username: 'blessing',
-        password: 'blessing',
+        username: 'blessed',
+        password: 'blessed',
       })
       .expect(200)
        .end((err, res) => {
@@ -489,31 +517,22 @@ describe('Document controller', () => {
            .set('Authorization', `${tokens}`)
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
-          .end((err, res) => {
+          .end(() => {
             request
             .get('/api/v1/documents/1')
             .set('Authorization', `${tokens}`)
             .set('Accept', 'application/json')
-            .expect('Content-Type', /json/)
                 .end((err, res) => {
                   expect(res.status).to.equal(200);
+                  expect(res.body.document.id).to.equal(1);
+                  expect(res.body.document.title).to.equal('title');
+                  expect(res.body.document.content).to.equal('content');
+                  expect(res.body.document.access).to.equal('public');
                   done();
                 });
           });
        });
       });
-    });
-    it('should return error for id not an integer', (done) => {
-      request
-        .get('/api/v1/documents/ee')
-        .set('Authorization', adminToken)
-        .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(400);
-            expect(res.body.message).to.equal('Id must be an integer');
-          }
-          done();
-        });
     });
   });
 
@@ -595,8 +614,9 @@ describe('Document controller', () => {
         })
         .end((err, res) => {
           if (!err) {
-            expect(res.status).to.equal(400);
-            expect(res.body.message).to.equal('connection error, please try again');
+            expect(res.status).to.equal(500);
+            expect(res.body.message).to.equal(
+              'Server error, please try again');
           }
           done();
         });
@@ -618,8 +638,8 @@ describe('Document controller', () => {
             .end((err, res) => {
               if (!err) {
                 expect(res.status).to.equal(200);
-                expect(res.body.status).to.equal('No content');
-                expect(res.body.message).to.equal('Document succesfully deleted');
+                expect(res.body.message).to.equal(
+                  'Document succesfully deleted');
               }
               done();
             });
