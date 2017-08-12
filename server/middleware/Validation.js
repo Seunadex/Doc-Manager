@@ -15,7 +15,7 @@ class Validation {
    * @memberof Validation
    */
   validateUser(req, res, next) {
-    req.checkBody('fullname', 'Fullname must be not be empty').notEmpty();
+    req.checkBody('fullname', 'Fullname is required').notEmpty();
     req.checkBody('username', 'username is required').notEmpty();
     req.checkBody('password', 'password is required').notEmpty();
     req.checkBody('email', 'Invalid email').isEmail();
