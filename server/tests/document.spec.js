@@ -58,7 +58,7 @@ describe('Document controller', () => {
   describe('Get documents: GET /api/v1/documents', () => {
     beforeEach((done) => {
       User.create({
-        fullname: 'temi laj',
+        fullName: 'temi laj',
         username: 'temilaj',
         password: passwordHash('temilaj'),
         email: 'temilaj@email.com',
@@ -211,7 +211,7 @@ describe('Document controller', () => {
   describe('Create document: POST /api/v1/documents', () => {
     beforeEach((done) => {
       const user = {
-        fullname: 'george bush',
+        fullName: 'george bush',
         username: 'georgebush',
         password: passwordHash('georgebush'),
         email: 'georgebush@gmail.com',
@@ -267,7 +267,7 @@ describe('Document controller', () => {
     it('should create a new document', (done) => {
       const password = passwordHash('admin');
       User.create({
-        fullname: 'admin',
+        fullName: 'admin',
         email: 'admin@admin.com',
         username: 'admin',
         password,
@@ -311,13 +311,13 @@ describe('Document controller', () => {
   describe('Update document: PUT /api/v1/documents/:id', () => {
     beforeEach((done) => {
       User.bulkCreate([{
-        fullname: 'tommy',
+        fullName: 'tommy',
         username: 'tommy',
         password: passwordHash('tommy'),
         email: 'tommy@gmail.com',
         roleId: 1
       }, {
-        fullname: 'funny name',
+        fullName: 'funny name',
         username: 'funny',
         password: passwordHash('funny'),
         email: 'funny@gmail.com',
@@ -436,7 +436,7 @@ describe('Document controller', () => {
   describe('Search document: GET /api/v1/search/documents', () => {
     beforeEach((done) => {
       User.create({
-        fullname: 'Oluwaseun Adekunle',
+        fullName: 'Oluwaseun Adekunle',
         username: 'spidey000',
         password: passwordHash('spidey'),
         email: 'spidey@gmail.com',
@@ -473,13 +473,13 @@ describe('Document controller', () => {
       User.bulkCreate([
         {
           username: 'doc man',
-          fullname: 'John',
+          fullName: 'John',
           password: passwordHash('johnny'),
           email: 'johnny@gmail.com',
           roleId: 1
         }, {
           username: 'cage',
-          fullname: 'cage',
+          fullName: 'cage',
           password: passwordHash('johnny'),
           email: 'johnncagey@gmail.com',
           roleId: 2
@@ -492,7 +492,7 @@ describe('Document controller', () => {
     it('should return document if found', (done) => {
       const password = passwordHash('blessed');
       User.create({
-        fullname: 'blessing',
+        fullName: 'blessing',
         email: 'blessing@blessing.com',
         username: 'blessed',
         password,
@@ -541,13 +541,13 @@ describe('Document controller', () => {
       User.bulkCreate([
         {
           username: 'doc man',
-          fullname: 'John',
+          fullName: 'John',
           password: passwordHash('johnny'),
           email: 'johnny@gmail.com',
           roleId: 1
         }, {
           username: 'cage',
-          fullname: 'cage',
+          fullName: 'cage',
           password: passwordHash('johnny'),
           email: 'johnncagey@gmail.com',
           roleId: 2

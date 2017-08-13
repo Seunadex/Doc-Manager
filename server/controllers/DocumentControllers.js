@@ -1,5 +1,5 @@
 import pagination from '../helper/pagination';
-import { Document, User } from '../models';
+import { Document } from '../models';
 import { isUser } from '../helper/helper';
 
 const DocumentControllers = {
@@ -159,18 +159,23 @@ const DocumentControllers = {
    * @returns {Response} Response object
    */
   search(req, res) {
-    const searchKey = `%${req.query.q}%` || `%${req.body.search}%`;
     const verifiedRoleId = req.decoded.userRoleId;
-    const userId = res.decoded.userId;
+    const userId = req.decoded.userId;
+    let searchKey = '%%';
+    if (req.query.q) {
+      searchKey = `%${req.query.q}%` || `%${req.body.search}%`;
+    }
     const searchParam = verifiedRoleId === 1 ? {
       $or: [{ title: { $iLike: searchKey } }]
     }
-    :
+      :
     {
       $or: [{ access: { $or: ['public', 'role'] } }, { userId }],
       title: { $iLike: searchKey }
     };
-    return Document.findAll({
+
+    return Document
+    .findAll({
       attributes: [
         'title',
         'content',
@@ -179,22 +184,14 @@ const DocumentControllers = {
         'createdAt',
         'updatedAt'],
       where: searchParam,
-      include: [
-        {
-          model: User,
-          attributes: ['username', 'roleId']
-        }
-      ]
+      order: [['createdAt', 'DESC']]
     })
     .then(documents => res.status(200).send({
-      documents: documents.filter(document => !(
-        document.User.roleId === verifiedRoleId &&
-        document.User.roleId === 'role')),
+      count: documents.length,
+      documents
     }))
-    .catch(() => res.status(403).send({
-      message: 'Forbidden'
-    }));
-  }
+    .catch(error => res.status(400).send(error.message));
+  },
 };
 
 export default DocumentControllers;

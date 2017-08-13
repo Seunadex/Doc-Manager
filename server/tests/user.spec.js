@@ -48,7 +48,7 @@ describe('User controllers', () => {
   describe('Signup: POST /api/v1/users', () => {
     beforeEach((done) => {
       User.create({
-        fullname: 'seun adekunle',
+        fullName: 'seun adekunle',
         username: 'seunadex',
         password: passwordHash('seunadex'),
         email: 'seunadex@gmail.com',
@@ -62,7 +62,7 @@ describe('User controllers', () => {
     });
     it('should return error with incomplete user details', (done) => {
       const userDetails = {
-        fullname: '',
+        fullName: '',
         username: '',
         password: '',
         email: 'seun@gmail.com'
@@ -76,7 +76,7 @@ describe('User controllers', () => {
           expect(res.status).to.equal(400);
           expect(res.body.error.title).to.equal(
             'Document title must be entered');
-          expect(res.body.error.fullname).to.equal('Fullname is required');
+          expect(res.body.error.fullName).to.equal('Fullname is required');
           expect(res.body.error.username).to.equal('username is required');
           expect(res.body.error.password).to.equal('password is required');
           expect(res.body.error).to.not.have.property('email');
@@ -87,7 +87,7 @@ describe('User controllers', () => {
 
     it('should return error when user already exist', (done) => {
       const userDetails = {
-        fullname: 'seun adekunle',
+        fullName: 'seun adekunle',
         username: 'seunadex',
         password: passwordHash('seunadex'),
         email: 'seunadex@gmail.com',
@@ -99,6 +99,7 @@ describe('User controllers', () => {
       .send(userDetails)
       .end((err, res) => {
         if (!err) {
+          expect(res.status).to.equal(409);
           expect(res.body.message).to.equal('User credentials already exist');
         }
         done();
@@ -107,7 +108,7 @@ describe('User controllers', () => {
 
     it('should post valid user details', (done) => {
       const userDetails = {
-        fullname: 'lionel messi',
+        fullName: 'lionel messi',
         username: 'lionelmessi',
         password: passwordHash('lionelmessi'),
         email: 'lionelmessi@gmail.com',
@@ -121,7 +122,7 @@ describe('User controllers', () => {
           expect(res.status).to.equal(201);
           expect(res.body.userDetails.id).to.equal(2);
           expect(res.body.userDetails.roleId).to.equal(2);
-          expect(res.body.userDetails.fullname).to.equal('lionel messi');
+          expect(res.body.userDetails.fullName).to.equal('lionel messi');
           expect(res.body.userDetails.username).to.equal('lionelmessi');
           expect(res.body.userDetails.email).to.equal('lionelmessi@gmail.com');
           expect(res.body).to.have.property('token');
@@ -134,13 +135,13 @@ describe('User controllers', () => {
   describe('Login: POST /api/users/login', () => {
     beforeEach((done) => {
       User.bulkCreate([{
-        fullname: 'cristiano ronaldo',
+        fullName: 'cristiano ronaldo',
         username: 'cr7',
         password: passwordHash('ronaldo'),
         email: 'cr7@gmail.com',
         roleId: 1
       }, {
-        fullname: 'kun aguero',
+        fullName: 'kun aguero',
         username: 'sergioaguero',
         password: passwordHash('aguero'),
         email: 'kunaguero@gmail.com',
@@ -184,7 +185,7 @@ describe('User controllers', () => {
 
     it('should respond with a 200 to a valid login request', (done) => {
       User.create({
-        fullname: 'john doe',
+        fullName: 'john doe',
         email: 'johndoe@gmail.com',
         username: 'johndoe',
         password: passwordHash('johndoe'),
@@ -208,7 +209,7 @@ describe('User controllers', () => {
   describe('GET /api/v1/users/:id', () => {
     beforeEach((done) => {
       User.create({
-        fullname: 'jesse lingard',
+        fullName: 'jesse lingard',
         username: 'jesse14',
         password: passwordHash('jesselingard'),
         email: 'jesse14@gmail.com',
@@ -226,7 +227,7 @@ describe('User controllers', () => {
           if (!err) {
             expect(res.status).to.equal(200);
             expect(res.body.id).to.equal(1);
-            expect(res.body.fullname).to.equal('jesse lingard');
+            expect(res.body.fullName).to.equal('jesse lingard');
             expect(res.body.username).to.equal('jesse14');
             expect(res.body.email).to.equal('jesse14@gmail.com');
             expect(res.body.role).to.equal(2);
@@ -306,13 +307,13 @@ describe('User controllers', () => {
   describe('GET /api/v1/users/:id/documents', () => {
     beforeEach((done) => {
       User.bulkCreate([{
-        fullname: 'antonio valencia',
+        fullName: 'antonio valencia',
         username: 'valencia',
         password: passwordHash('valencia'),
         email: 'valencia@gmail.com',
         roleId: 1
       }, {
-        fullname: 'paul pogba',
+        fullName: 'paul pogba',
         username: 'pogback',
         password: passwordHash('pogback'),
         email: 'pogback6@gmail.com',
@@ -382,13 +383,13 @@ describe('User controllers', () => {
   describe('GET /api/v1/users', () => {
     beforeEach((done) => {
       User.bulkCreate([{
-        fullname: 'delima ronaldo',
+        fullName: 'delima ronaldo',
         username: 'ronaldo9',
         password: passwordHash('ronaldo'),
         email: 'ronaldo9@gmail.com',
         roleId: 1
       }, {
-        fullname: 'robin hood',
+        fullName: 'robin hood',
         username: 'robinhood',
         password: passwordHash('robinhood'),
         email: 'robinhood@gmail.com',
@@ -455,7 +456,7 @@ describe('User controllers', () => {
   describe('GET /api/v1/search/users', () => {
     beforeEach((done) => {
       User.create({
-        fullname: 'just me',
+        fullName: 'just me',
         username: 'justme',
         password: passwordHash('seunadekunle'),
         email: 'justme@gmail.com',
@@ -510,7 +511,7 @@ describe('User controllers', () => {
   describe('Update user: PUT /api/v1/users/:id', () => {
     beforeEach((done) => {
       User.create({
-        fullname: 'adekunle oladele',
+        fullName: 'adekunle oladele',
         username: 'eldee',
         password: passwordHash('eldee'),
         email: 'eldee@gmail.com',
@@ -521,7 +522,7 @@ describe('User controllers', () => {
     it('should return error message on email/username conflict', (done) => {
       const password = passwordHash('jack');
       User.create({
-        fullname: 'jabdjkhdb',
+        fullName: 'jabdjkhdb',
         email: 'daniel@daniel.com',
         username: 'daniel',
         password,
@@ -555,7 +556,7 @@ describe('User controllers', () => {
 
     it('should return message for user not found', (done) => {
       User.create({
-        fullname: 'seun',
+        fullName: 'seun',
         email: 'seun@admin.com',
         username: 'seun',
         password: passwordHash('seun'),
@@ -601,13 +602,13 @@ describe('User controllers', () => {
     it('returns error on unauthorized access', (done) => {
       User.bulkCreate([{
         username: 'firstuser',
-        fullname: 'firstuser',
+        fullName: 'firstuser',
         password: passwordHash('test'),
         email: 'firstuser@gmail.com',
         roleId: 1,
       }, {
         username: 'seconduser',
-        fullname: 'seconduser',
+        fullName: 'seconduser',
         password: passwordHash('test'),
         email: 'seconduser@yahoo.com',
         roleId: 2,
@@ -632,7 +633,7 @@ describe('User controllers', () => {
   describe('DELETE user: /api/v1/users', () => {
     beforeEach((done) => {
       User.create({
-        fullname: 'new user',
+        fullName: 'new user',
         username: 'newuser',
         password: passwordHash('newuser'),
         email: 'newuser@gmail.com',

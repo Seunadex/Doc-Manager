@@ -21,14 +21,14 @@ const UserControllers = {
     const password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
     return User.create({
       password,
-      fullname: req.body.fullname,
+      fullName: req.body.fullName,
       username: req.body.username,
       email: req.body.email,
     })
     .then((user) => {
       const token = jwt.sign({
         userId: user.id,
-        userFullname: user.fullname,
+        userFullName: user.fullName,
         userUsername: user.username,
         userEmail: user.email,
         userRoleId: user.roleId,
@@ -37,7 +37,7 @@ const UserControllers = {
       });
       const userDetails = _.pick(user, [
         'id',
-        'fullname',
+        'fullName',
         'username',
         'email',
         'roleId'
@@ -71,7 +71,7 @@ const UserControllers = {
       if (passkey) {
         const token = jwt.sign({
           userId: user.id,
-          userFullname: user.fullname,
+          userFullName: user.fullName,
           userUsername: user.username,
           userEmail: user.email,
           userRoleId: user.roleId,
@@ -81,7 +81,7 @@ const UserControllers = {
         return res.status(200).send({
           User: {
             id: user.id,
-            fullName: user.fullname,
+            fullName: user.fullName,
             username: user.username,
             email: user.email,
             role: user.roleId,
@@ -117,7 +117,7 @@ const UserControllers = {
       offset,
       attributes: [
         'id',
-        'fullname',
+        'fullName',
         'username',
         'email',
         'roleId',
@@ -157,7 +157,7 @@ const UserControllers = {
       userList: users.map(user => (
         {
           username: user.username,
-          fullname: user.fullname,
+          fullName: user.fullName,
           createdAt: user.createdAt
         }))
     }))
@@ -180,7 +180,7 @@ const UserControllers = {
     User.findById(req.params.id)
       .then(user => res.status(200).send({
         id: user.id,
-        fullname: user.fullname,
+        fullName: user.fullName,
         username: user.username,
         email: user.email,
         role: user.roleId,
@@ -219,13 +219,13 @@ const UserControllers = {
           });
         }
         const userDetails = _.pick(user, [
-          'fullname',
+          'fullName',
           'username',
           'email',
           'roleId'
         ]);
         return user.update({
-          fullname: req.body.fullname || user.fullname,
+          fullName: req.body.fullName || user.fullName,
           username: req.body.username || user.username,
           email: req.body.email || user.email,
           password: bcrypt.hashSync(req.body.password,
