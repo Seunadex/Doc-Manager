@@ -11,7 +11,7 @@ dotenv.config();
 class Authorization {
 
   /**
-   *
+   * @description verify authentication
    * @param {object} req
    * @param {object} res
    * @param {callback} next
@@ -26,7 +26,7 @@ class Authorization {
         if (err) {
           return res.status(401).send({ message: 'Invalid token' });
         }
-        res.locals.decoded = decoded;
+        req.decoded = decoded;
         next();
       });
     } else {
@@ -38,63 +38,84 @@ class Authorization {
   }
 
   /**
-   *
-   *
+   * @description finds user by id
    * @param {Object} req
    * @param {Object} res
-   * @param {callback} next
+   * @param {Object} next
    * @returns {void}
    * @memberof Authorization
    */
-  AllowAdminOrUser(req, res, next) {
-    return models.User.findById(req.params.id)
-      .then((user) => {
-        if (!user) return res.status(404).send({ message: 'User not found' });
-
-        if (res.locals.decoded.userRoleId === 1
-          || res.locals.decoded.userId === user.id) {
-          res.locals.user = user;
-          return next();
-        }
-        return res.status(403).send({ message: 'Access denied' });
-      })
-      .catch(() => res.status(403).send({ message: 'Access denied' }));
-  }
-
-  /**
-   * @param {Object} req
-   * @param {Object} res
-   * @param {callback} next
-   * @returns {void}
-   * @memberof Authorization
-   */
-  verifyAdmin(req, res, next) {
-    if (res.locals.decoded.userRoleId === 1) {
-      return next();
+  findById(req, res, next) {
+    if (isNaN(req.params.id)) {
+      return res.status(400).send({
+        message: 'id must be a number'
+      });
     }
-    return res.status(403).send({ message: 'Only Admin permitted' });
+    models.User.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({
+          message: 'User not found'
+        });
+      }
+      next();
+    })
+    .catch(() => res.status(500).send({
+      message: 'Internal server error'
+    }));
   }
 
 
   /**
+   * @description verify currently authenticated user
    * @param {Object} req
    * @param {Object} res
    * @param {callback} next
    * @returns {void}
    * @memberof Authorization
    */
-  checkUser(req, res, next) {
+  verifyCurrentUser(req, res, next) {
     if (isNaN(req.params.id)) {
       return res.status(400).send({
         message: 'Id must be a number'
       });
     }
-    if (Number(req.params.id) === parseInt(res.locals.decoded.userId, 10)) {
+    if (Number(req.params.id) === parseInt(req.decoded.userId, 10)) {
       return next();
     }
-    return res.status(403).send({
+    return res.status(401).send({
       message: 'Oops! You are not allowed to update the user'
     });
+  }
+
+  /**
+   *
+   * @description finds documents by id
+   * @param {Object} req
+   * @param {Object} res
+   * @param {Callback} next
+   * @returns {void}
+   * @memberof Authorization
+   */
+  findDocumentById(req, res, next) {
+    if (isNaN(Number(req.params.id))) {
+      return res.status(400).json({
+        message: 'Invalid document id'
+      });
+    }
+    models.Document.findById(req.params.id)
+      .then((document) => {
+        if (!document) {
+          return res.status(404).send({
+            message: 'Document not found'
+          });
+        }
+
+        next();
+      })
+      .catch(() => res.status(500).send({
+        message: 'Internal server error'
+      }));
   }
 }
 export default new Authorization();

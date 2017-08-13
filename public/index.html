@@ -311,25 +311,46 @@ Register and get a token to be inserted in the header</p>
 <p>Sample JSON structured response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-      <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="s2">"fullname"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
-      <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
-      <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"admin@admin.com"</span><span class="p">,</span>
-      <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">1</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-      <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-      <span class="s2">"fullname"</span><span class="p">:</span> <span class="s2">"Seun Adekunle"</span><span class="p">,</span>
-      <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"seunadex"</span><span class="p">,</span>
-      <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"seunadekunle@gmail.com"</span><span class="p">,</span>
-      <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-      <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-      <span class="s2">"fullname"</span><span class="p">:</span> <span class="s2">"max payne"</span><span class="p">,</span>
-      <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"maxpayne"</span><span class="p">,</span>
-      <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"maxpayne@gmail.com"</span><span class="p">,</span>
-      <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="s2">"Users"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
+            <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
+            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"admin@admin.com"</span><span class="p">,</span>
+            <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.573Z"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Seun Adekunle"</span><span class="p">,</span>
+            <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"seunadex"</span><span class="p">,</span>
+            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"seunadekunle@gmail.com"</span><span class="p">,</span>
+            <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.670Z"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"max payne"</span><span class="p">,</span>
+            <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"maxpayne"</span><span class="p">,</span>
+            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"maxpayne@gmail.com"</span><span class="p">,</span>
+            <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.767Z"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"cristiano ronaldo"</span><span class="p">,</span>
+            <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"cr7"</span><span class="p">,</span>
+            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"cr7@gmail.com"</span><span class="p">,</span>
+            <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.865Z"</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">"paginationDetails"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">4</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request'>Request</h3>
 <ul>
@@ -346,38 +367,39 @@ Register and get a token to be inserted in the header</p>
 <p>Sample JSON structured response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"pagination"</span><span class="p">:</span> <span class="p">{</span>
-      <span class="s2">"row"</span><span class="p">:</span> <span class="p">[</span>
-          <span class="p">{</span>
-              <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-              <span class="s2">"fullname"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
-              <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
-              <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"admin@admin.com"</span><span class="p">,</span>
-              <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">1</span>
-          <span class="p">},</span>
-          <span class="p">{</span>
-              <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-              <span class="s2">"fullname"</span><span class="p">:</span> <span class="s2">"Seun Adekunle"</span><span class="p">,</span>
-              <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"seunadex"</span><span class="p">,</span>
-              <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"seunadekunle@gmail.com"</span><span class="p">,</span>
-              <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span>
-          <span class="p">},</span>
-          <span class="p">{</span>
-              <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-              <span class="s2">"fullname"</span><span class="p">:</span> <span class="s2">"max payne"</span><span class="p">,</span>
-              <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"maxpayne"</span><span class="p">,</span>
-              <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"maxpayne@gmail.com"</span><span class="p">,</span>
-              <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span>
-          <span class="p">}</span>
-      <span class="p">],</span>
-      <span class="s2">"paginationDetails"</span><span class="p">:</span> <span class="p">{</span>
-          <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-          <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-          <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-          <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">3</span>
-      <span class="p">}</span>
-  <span class="p">}</span>
-  <span class="p">}</span>
+    <span class="s2">"Users"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
+            <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
+            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"admin@admin.com"</span><span class="p">,</span>
+            <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.573Z"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Seun Adekunle"</span><span class="p">,</span>
+            <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"seunadex"</span><span class="p">,</span>
+            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"seunadekunle@gmail.com"</span><span class="p">,</span>
+            <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.670Z"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"max payne"</span><span class="p">,</span>
+            <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"maxpayne"</span><span class="p">,</span>
+            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"maxpayne@gmail.com"</span><span class="p">,</span>
+            <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.767Z"</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">"paginationDetails"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">"pageSize"</span><span class="p">:</span> <span class="s2">"3"</span><span class="p">,</span>
+        <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">4</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre><h3 id='request-2'>Request</h3>
 <ul>
 <li>Endpoint: GET: <code>/api/v1/users/?limit=3&amp;offset=0</code></li>
@@ -412,7 +434,7 @@ Register and get a token to be inserted in the header</p>
 <p>Request:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"fullname"</span><span class="p">:</span> <span class="s2">"Adekunle bisola"</span><span class="p">,</span>
+  <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Adekunle bisola"</span><span class="p">,</span>
   <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"cutiebee"</span><span class="p">,</span>
   <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"victoria"</span><span class="p">,</span>
   <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"cutie@hotmail.com"</span>
@@ -422,11 +444,14 @@ Register and get a token to be inserted in the header</p>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-  <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"cutie@hotmail.com"</span><span class="p">,</span>
-  <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"cutiebee"</span><span class="p">,</span>
-  <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJrZW5wYWNoaSIsInJvbGVJZCI6MiwiaWF0IjoxNDk2MDAxNTE4LCJleHAiOjE0OTY2MDYzMTh9.GjmEBd_9LH9b_Gdabgdfit2HfkFBZfPshquUnAmRXV8"</span>
+    <span class="s2">"userDetails"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Adekunle bisola"</span><span class="p">,</span>
+        <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"cutiebee"</span><span class="p">,</span>
+        <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"cutie@hotmail.com"</span><span class="p">,</span>
+        <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="p">},</span>
+    <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsInVzZXJGdWxsTmFtZSI6IkFkZWt1bmxlIGJpc29sYSIsInVzZXJVc2VybmFtZSI6ImN1dGllYmVlIiwidXNlckVtYWlsIjoiY3V0aWVAaG90bWFpbC5jb20iLCJ1c2VyUm9sZUlkIjoyLCJpYXQiOjE1MDI1NDU3NDMsImV4cCI6MTUwMjgwNDk0M30.-GQztJ4O12gsZhuTg9cSIaGZuvu8aZRukbdNVdmpt7c"</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-3'>Request</h3>
 <ul>
@@ -443,15 +468,17 @@ Register and get a token to be inserted in the header</p>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="s2">"fullname"</span><span class="p">:</span> <span class="s2">"Ajax loading"</span>
-  <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"ajax@gmail.com"</span>
-  <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"ajaxloading"</span><span class="p">,</span>
-  <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">"id"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Adekunle bisola"</span><span class="p">,</span>
+    <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"cutiebee"</span><span class="p">,</span>
+    <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"cutie@hotmail.com"</span><span class="p">,</span>
+    <span class="s2">"role"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:49:03.114Z"</span><span class="p">,</span>
+    <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:49:03.114Z"</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-4'>Request</h3>
 <ul>
-<li>Endpoint: GET: <code>/ap1/v1/users/2</code></li>
+<li>Endpoint: GET: <code>/ap1/v1/users/5</code></li>
 <li>Requires: Authentication
 ### Response</li>
 <li>Status: <code>200: OK</code></li>
@@ -462,21 +489,25 @@ Register and get a token to be inserted in the header</p>
 <p>Request:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Adekunle Abosede"</span><span class="p">,</span>
+  <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"kutiebee"</span><span class="p">,</span>
+  <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"victoria"</span>
 <span class="p">}</span>
 </code></pre>
 <blockquote>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"seunadexy@gmail.com"</span><span class="p">,</span>
-  <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"adexbaba"</span><span class="p">,</span>
-  <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"userDetails"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Adekunle Abosede"</span><span class="p">,</span>
+        <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"kutiebee"</span><span class="p">,</span>
+        <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"cutie@hotmail.com"</span><span class="p">,</span>
+        <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-5'>Request</h3>
 <ul>
-<li>Endpoint: PUT: <code>/api/v1/users/2</code></li>
+<li>Endpoint: PUT: <code>/api/v1/users/5</code></li>
 <li>Requires: Authentication</li>
 <li>Body <code>(application/json)</code></li>
 </ul>
@@ -490,11 +521,11 @@ Register and get a token to be inserted in the header</p>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"You have successfully deleted a user"</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"User successfully deleted"</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-6'>Request</h3>
 <ul>
-<li>Endpoint: DELETE: <code>/api/v1/users/2</code></li>
+<li>Endpoint: DELETE: <code>/api/v1/users/5</code></li>
 <li>Requires: Authentication</li>
 </ul>
 <h3 id='response-5'>Response</h3>
@@ -506,21 +537,25 @@ Register and get a token to be inserted in the header</p>
 <blockquote>
 <p>Response:</p>
 </blockquote>
-<pre class="highlight javascript tab-javascript"><code><span class="p">[</span>
-  <span class="p">{</span>
-    <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Welcome Message"</span><span class="p">,</span>
-    <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Very important appplication"</span><span class="p">,</span>
-    <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
-    <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-05-28T22:19:08.870Z"</span><span class="p">,</span>
-    <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-05-28T22:58:17.249Z"</span><span class="p">,</span>
-    <span class="s2">"User"</span><span class="p">:</span> <span class="p">{</span>
-      <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
-      <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">1</span>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"documents"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Welcome"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Hello and welcome, if this is the first time running the app,\nyou can login with the following default admin settings:\nusername: admin\npassword: admin\nPlease login and change the default root password."</span><span class="p">,</span>
+            <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+            <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.871Z"</span><span class="p">,</span>
+            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.871Z"</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">"paginationDetails"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">3</span>
     <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">]</span>
+<span class="p">}</span>
 </code></pre><h3 id='request-7'>Request</h3>
 <ul>
 <li>Endpoint: GET: <code>/api/v1/users/1/documents</code></li>
@@ -581,15 +616,16 @@ Register and get a token to be inserted in the header</p>
 <p>Sample JSON structured response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"documents"</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
+    <span class="s2">"pagination"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"document"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
                 <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                 <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Welcome"</span><span class="p">,</span>
                 <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Hello and welcome, if this is the first time running the app,\nyou can login with the following default admin settings:\nusername: admin\npassword: admin\nPlease login and change the default root password."</span><span class="p">,</span>
                 <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
                 <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-09T11:25:25.892Z"</span><span class="p">,</span>
-                <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-09T11:25:25.892Z"</span>
+                <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.871Z"</span><span class="p">,</span>
+                <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.871Z"</span>
             <span class="p">},</span>
             <span class="p">{</span>
                 <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
@@ -597,8 +633,8 @@ Register and get a token to be inserted in the header</p>
                 <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"The day was grey and bitter cold, and the dogs would not take the scent.\nThe big black bitch had taken one sniff at the bear tracks, backed off, and skulked back to the pack with her tail between her legs.\nThe dogs huddled together miserably on the riverbank as the wind snapped at them.\nChett felt it too, biting through his layers of black wool and boiled leather.\nIt was too bloody cold for man or beast, but here they were. His mouth twisted, and he could almost feel the boils that covered his cheeks and neck growing red and angry.\nI should be safe back at the Wall, tending the bloody ravens and making fires for old Maester Aemon. It was the bastard Jon Snow who had taken that from him, him and his fat friend Sam Tarly.\nIt was their fault he was here, freezing his bloody balls off with a pack of hounds deep in the haunted forest."</span><span class="p">,</span>
                 <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
                 <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-                <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-09T11:25:25.892Z"</span><span class="p">,</span>
-                <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-09T11:25:25.892Z"</span>
+                <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.871Z"</span><span class="p">,</span>
+                <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.871Z"</span>
             <span class="p">},</span>
             <span class="p">{</span>
                 <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
@@ -606,10 +642,17 @@ Register and get a token to be inserted in the header</p>
                 <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Chett felt it too, biting through his layers of black wool and boiled leather.\nIt was too bloody cold for man or beast, but here they were. His mouth twisted, and he could almost feel the boils that covered his cheeks and neck growing red and angry.\nI should be safe back at the Wall, tending the bloody ravens and making fires for old Maester Aemon. It was the bastard Jon Snow who had taken that from him, him and his fat friend Sam Tarly.\nIt was their fault he was here, freezing his bloody balls off with a pack of hounds deep in the haunted forest."</span><span class="p">,</span>
                 <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"private"</span><span class="p">,</span>
                 <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-                <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-09T11:25:25.892Z"</span><span class="p">,</span>
-                <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-09T11:25:25.892Z"</span>
+                <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.871Z"</span><span class="p">,</span>
+                <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.871Z"</span>
             <span class="p">}</span>
-  <span class="p">]</span>
+        <span class="p">],</span>
+        <span class="s2">"paginationDetails"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">3</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request'>Request</h3>
 <ul>
@@ -696,10 +739,15 @@ Register and get a token to be inserted in the header</p>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
- <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"A day at andela"</span><span class="p">,</span>
-  <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"The best place ever."</span><span class="p">,</span>
-  <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+    <span class="s2">"document"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"A day at andela"</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"The best place ever."</span><span class="p">,</span>
+        <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+        <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T14:12:32.544Z"</span><span class="p">,</span>
+        <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T14:12:32.544Z"</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-3'>Request</h3>
 <ul>
@@ -716,14 +764,19 @@ Register and get a token to be inserted in the header</p>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
- <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"A day at andela"</span><span class="p">,</span>
-  <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"The best place ever."</span><span class="p">,</span>
-  <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+    <span class="s2">"document"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"A day at andela"</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"The best place ever."</span><span class="p">,</span>
+        <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+        <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T14:12:32.544Z"</span><span class="p">,</span>
+        <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T14:12:32.544Z"</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-4'>Request</h3>
 <ul>
-<li>Endpoint: GET: <code>/ap1/v1/document/3</code></li>
+<li>Endpoint: GET: <code>/ap1/v1/document/4</code></li>
 <li>Requires: Authentication
 ### Response</li>
 <li>Status: <code>200: OK</code></li>
@@ -741,14 +794,19 @@ Register and get a token to be inserted in the header</p>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
- <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Another day in Andela"</span><span class="p">,</span>
-  <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"The best place ever."</span><span class="p">,</span>
-  <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+    <span class="s2">"document"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Another day in Andela"</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"The best place ever."</span><span class="p">,</span>
+        <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+        <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T14:12:32.544Z"</span><span class="p">,</span>
+        <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T14:53:41.141Z"</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-5'>Request</h3>
 <ul>
-<li>Endpoint: PUT: <code>api/v1/documents/3</code></li>
+<li>Endpoint: PUT: <code>api/v1/documents/4</code></li>
 <li>Requires: Authentication</li>
 <li>Body <code>(application/json)</code></li>
 </ul>
@@ -763,7 +821,6 @@ Register and get a token to be inserted in the header</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
   <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document succesfully deleted"</span><span class="p">,</span>
-  <span class="s2">"status"</span><span class="p">:</span> <span class="s1">'No content'</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-6'>Request</h3>
 <ul>
@@ -780,14 +837,27 @@ Register and get a token to be inserted in the header</p>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"result"</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-         <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-         <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Another day in Andela"</span><span class="p">,</span>
-         <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"The best place ever."</span><span class="p">,</span>
-         <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span>
-    <span class="p">}</span>
-  <span class="p">],</span>
+    <span class="s2">"count"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">"documents"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Another day in Andela"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"The best place ever."</span><span class="p">,</span>
+            <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+            <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T14:12:32.544Z"</span><span class="p">,</span>
+            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T14:53:41.141Z"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Another doc"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Chett felt it too, biting through his layers of black wool and boiled leather.\nIt was too bloody cold for man or beast, but here they were. His mouth twisted, and he could almost feel the boils that covered his cheeks and neck growing red and angry.\nI should be safe back at the Wall, tending the bloody ravens and making fires for old Maester Aemon. It was the bastard Jon Snow who had taken that from him, him and his fat friend Sam Tarly.\nIt was their fault he was here, freezing his bloody balls off with a pack of hounds deep in the haunted forest."</span><span class="p">,</span>
+            <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"private"</span><span class="p">,</span>
+            <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.871Z"</span><span class="p">,</span>
+            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-12T13:33:34.871Z"</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-7'>Request</h3>
 <ul>
@@ -845,16 +915,16 @@ Register and get a token to be inserted in the header</p>
 <td>Forbidden -- Access denied.</td>
 </tr>
 <tr>
+<td>409</td>
+<td>Conflict -- Request already exist</td>
+</tr>
+<tr>
 <td>404</td>
-<td>Not Found -- The specified kitten could not be found.</td>
+<td>Not Found -- The specified request not be found.</td>
 </tr>
 <tr>
 <td>500</td>
 <td>Internal Server Error -- We had a problem with our server. Try again later.</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Service Unavailable -- We&#39;re temporarily offline for maintenance. Please try again later.</td>
 </tr>
 </tbody></table>
 

@@ -4,7 +4,7 @@ module.exports = {
   up: queryInterface =>
   queryInterface.bulkInsert('Users', [{
     username: 'admin',
-    fullname: 'Administrator',
+    fullName: 'Administrator',
     email: 'admin@admin.com',
     password: bcrypt.hashSync('admin', bcrypt.genSaltSync(10)),
     roleId: '1',
@@ -12,7 +12,7 @@ module.exports = {
     updatedAt: new Date()
   }, {
     username: 'seunadex',
-    fullname: 'Seun Adekunle',
+    fullName: 'Seun Adekunle',
     email: 'seunadekunle@gmail.com',
     password: bcrypt.hashSync('seunadekunle', bcrypt.genSaltSync(10)),
     roleId: '2',
@@ -21,7 +21,7 @@ module.exports = {
   },
   {
     username: 'maxpayne',
-    fullname: 'max payne',
+    fullName: 'max payne',
     email: 'maxpayne@gmail.com',
     password: bcrypt.hashSync('maxpayne', bcrypt.genSaltSync(10)),
     roleId: '2',
@@ -29,7 +29,7 @@ module.exports = {
     updatedAt: new Date()
   }, {
     username: 'cr7',
-    fullname: 'cristiano ronaldo',
+    fullName: 'cristiano ronaldo',
     email: 'cr7@gmail.com',
     password: bcrypt.hashSync('ronaldo', bcrypt.genSaltSync(10)),
     roleId: '2',

@@ -1,32 +1,46 @@
 import pagination from '../helper/pagination';
-import { Document, User } from '../models';
+import { Document } from '../models';
+import { isUser } from '../helper/helper';
 
 const DocumentControllers = {
   /**
+   * @description Creates a new document
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns a response object.
    */
   create(req, res) {
-    const authorId = res.locals.decoded.userId;
-    return Document.create({
-      title: req.body.title,
-      content: req.body.content,
-      userId: authorId,
-      access: req.body.access
+    const authorId = req.decoded.userId;
+    Document.findOne({
+      where: {
+        title: req.body.title
+      }
     })
+    .then((documents) => {
+      if (documents) {
+        return res.status(409).send({
+          message: 'A document already exist with same title',
+        });
+      }
+      Document.create({
+        title: req.body.title,
+        content: req.body.content,
+        userId: authorId,
+        access: req.body.access
+      })
     .then(document => res.status(201).send(
       {
-        message: 'The document has been successfully created',
         document,
       }))
     .catch(() => res.status(400).send(
       {
-        message: 'Please verify your input'
+        message: 'Access field must be either PUBLIC, PRIVATE or ROLE'
       }));
+    });
   },
 
   /**
+   * @description Fetch all documents
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns the list of documents available
@@ -46,63 +60,47 @@ const DocumentControllers = {
         limit,
         offset,
       })
-    .then(document => res.status(200).send({
-      pagination: {
-        row: document.rows,
-        paginationDetails: pagination(document.count, limit, offset)
-      }
-    }))
-    .catch(() => res.status(403).send({
-      message: 'limits and offsets must be number'
-    }));
+      .then(document => res.status(200).send({
+        pagination: {
+          document: document.rows,
+          paginationDetails: pagination(document.count, limit, offset)
+        }
+      }))
+      .catch(() => res.status(403).send({
+        message: 'limits and offsets must be number'
+      }));
     }
   },
 
   /**
+   * @description find document by id
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns the requested document
    */
   show(req, res) {
-    if (isNaN(req.params.id)) {
-      return res.status(400).send({
-        message: 'Id must be an integer'
-      });
-    }
-    return User.findById(res.locals.decoded.userId, {
-      include: [{
-        model: Document,
-        as: 'documents',
-      }],
-      attributes: ['fullname', 'username', 'email']
-    })
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({
-          message: 'User Not Found',
+    Document.findById(req.params.id)
+      .then((document) => {
+        if (isUser(document.userId, req.decoded.id) ||
+          document.access === 'private') {
+          return res.status(401).send({
+            message: "You don't have permission to access this document"
+          });
+        }
+
+        return res.status(200).send({
+          document,
         });
-      }
-      return res.status(200).send({
-        message: `These are the documents created by ${res.locals.decoded.userFullname}`,
-        user,
       });
-    })
-    .catch(() => res.status(400).send({
-      message: 'Oops! Something went wrong, Please try again'
-    }));
   },
 
   /**
+   * @description Updates the document
    * @param {Object} req
    * @param {Object} res
    * @returns {Object} returns the updated document
    */
   update(req, res) {
-    if (isNaN(Number(req.params.id))) {
-      return res.status(400).json({
-        message: 'Invalid document id'
-      });
-    }
     return Document.find({
       where: {
         id: req.params.id,
@@ -112,33 +110,17 @@ const DocumentControllers = {
         if (document) {
           return document.update(req.body, { fields: Object.keys(req.body) })
           .then(() => res.status(200).send({
-            message: 'The document has been successfully updated',
-            id: document.id,
-            title: document.title,
-            content: document.content,
-            access: document.access,
             document,
-          }))
-          .catch(() => res.status(400).send({
-            message: 'Document not found',
           }));
         }
-        if (req.body.title) {
-          req.body.title = (req.body.title).toLowerCase();
-        }
-        return res.status(404).send({
-          message: 'The Document does not exist',
-        });
-      })
-      .catch(() => res.status(400).send({
-        message: 'Problem encountered, please try again',
-      }));
+      });
   },
 
   /**
    * @param {Object} req
    * @param {Object} res
-   * @returns {Object} returns a message indicating that a document has been deleted
+   * @returns {Object} returns a message indicating
+   * that a document has been deleted
    */
   destroy(req, res) {
     if (isNaN(Number(req.params.id))) {
@@ -160,51 +142,56 @@ const DocumentControllers = {
       return document.destroy()
         .then(() => res.status(200).send({
           message: 'Document succesfully deleted',
-          status: 'No content',
         }))
         .catch(() => res.status(400).send({
           message: 'Problem encountered, please try again'
         }));
     })
-    .catch(() => res.status(400).send({
-      message: 'connection error, please try again'
+    .catch(() => res.status(500).send({
+      message: 'Server error, please try again'
     }));
   },
 
   /**
+   * @description Deletes a document
    * @param {Object} req
    * @param {Object} res
    * @returns {Response} Response object
    */
   search(req, res) {
-    const searchKey = `%${req.query.q}%` || `%${req.body.search}%`;
-    const verifiedRoleId = res.locals.decoded.userRoleId;
-    const userId = res.locals.decoded.userId;
+    const verifiedRoleId = req.decoded.userRoleId;
+    const userId = req.decoded.userId;
+    let searchKey = '%%';
+    if (req.query.q) {
+      searchKey = `%${req.query.q}%` || `%${req.body.search}%`;
+    }
     const searchParam = verifiedRoleId === 1 ? {
       $or: [{ title: { $iLike: searchKey } }]
     }
-    :
+      :
     {
       $or: [{ access: { $or: ['public', 'role'] } }, { userId }],
       title: { $iLike: searchKey }
     };
-    return Document.findAll({
-      attributes: ['title', 'content', 'access', 'userId', 'createdAt', 'updatedAt'],
+
+    return Document
+    .findAll({
+      attributes: [
+        'title',
+        'content',
+        'access',
+        'userId',
+        'createdAt',
+        'updatedAt'],
       where: searchParam,
-      include: [
-        {
-          model: User,
-          attributes: ['username', 'roleId']
-        }
-      ]
+      order: [['createdAt', 'DESC']]
     })
     .then(documents => res.status(200).send({
-      documents: documents.filter(document => !(document.User.roleId === verifiedRoleId && document.User.roleId === 'role')),
+      count: documents.length,
+      documents
     }))
-    .catch(() => res.status(403).send({
-      message: 'Forbidden'
-    }));
-  }
+    .catch(error => res.status(400).send(error.message));
+  },
 };
 
 export default DocumentControllers;

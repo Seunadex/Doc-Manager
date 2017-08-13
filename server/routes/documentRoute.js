@@ -3,13 +3,22 @@ import Authorization from '../middleware/Authorization';
 import Validation from '../middleware/Validation';
 
 export default (router) => {
-  router.get('/api/v1/documents', Authorization.verifyUser, Authorization.verifyAdmin, DocumentControllers.index);
-  router.get('/api/v1/documents/:id', Authorization.verifyUser, DocumentControllers.show);
-  router.get('/api/v1/search/documents', Authorization.verifyUser, Authorization.verifyAdmin, DocumentControllers.search);
+  router.get('/api/v1/documents', Authorization.verifyUser,
+  DocumentControllers.index);
 
-  router.post('/api/v1/documents', Validation.validateDocuments, Authorization.verifyUser, DocumentControllers.create);
+  router.get('/api/v1/documents/:id', Authorization.verifyUser,
+  DocumentControllers.show);
 
-  router.put('/api/v1/documents/:id', DocumentControllers.update);
+  router.get('/api/v1/search/documents', Authorization.verifyUser,
+  DocumentControllers.search);
 
-  router.delete('/api/v1/documents/:id', DocumentControllers.destroy);
+  router.post('/api/v1/documents', Validation.validateDocuments,
+  Authorization.verifyUser, DocumentControllers.create);
+
+  router.put('/api/v1/documents/:id', Authorization.findDocumentById,
+  Authorization.verifyUser,
+  DocumentControllers.update);
+
+  router.delete('/api/v1/documents/:id', Authorization.verifyUser,
+  DocumentControllers.destroy);
 };

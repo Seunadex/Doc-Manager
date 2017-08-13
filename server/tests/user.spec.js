@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import supertest from 'supertest';
-import passwordHash from '../helper/helper';
+import { passwordHash } from '../helper/helper';
 import app from '../../build/server';
 import { User, Document, Role } from '../models';
 
@@ -36,7 +36,7 @@ describe('User controllers', () => {
                 }
               ]).then((err) => {
                 if (!err) {
-                      //
+                  //
                 }
                 done();
               });
@@ -48,21 +48,18 @@ describe('User controllers', () => {
   describe('Signup: POST /api/v1/users', () => {
     beforeEach((done) => {
       User.create({
-        fullname: 'seun adekunle',
+        fullName: 'seun adekunle',
         username: 'seunadex',
         password: passwordHash('seunadex'),
         email: 'seunadex@gmail.com',
         roleId: 1
-      }).then((err) => {
-        if (!err) {
-          //
-        }
+      }).then(() => {
         done();
       });
     });
     it('should return error with incomplete user details', (done) => {
       const userDetails = {
-        fullname: '',
+        fullName: '',
         username: '',
         password: '',
         email: 'seun@gmail.com'
@@ -74,7 +71,9 @@ describe('User controllers', () => {
       .end((err, res) => {
         if (!err) {
           expect(res.status).to.equal(400);
-          expect(res.body.error.fullname).to.equal('Fullname must be not be empty');
+          expect(res.body.error.title).to.equal(
+            'Document title must be entered');
+          expect(res.body.error.fullName).to.equal('Fullname is required');
           expect(res.body.error.username).to.equal('username is required');
           expect(res.body.error.password).to.equal('password is required');
           expect(res.body.error).to.not.have.property('email');
@@ -85,7 +84,7 @@ describe('User controllers', () => {
 
     it('should return error when user already exist', (done) => {
       const userDetails = {
-        fullname: 'seun adekunle',
+        fullName: 'seun adekunle',
         username: 'seunadex',
         password: passwordHash('seunadex'),
         email: 'seunadex@gmail.com',
@@ -97,6 +96,7 @@ describe('User controllers', () => {
       .send(userDetails)
       .end((err, res) => {
         if (!err) {
+          expect(res.status).to.equal(409);
           expect(res.body.message).to.equal('User credentials already exist');
         }
         done();
@@ -105,11 +105,10 @@ describe('User controllers', () => {
 
     it('should post valid user details', (done) => {
       const userDetails = {
-        fullname: 'lionel messi',
+        fullName: 'lionel messi',
         username: 'lionelmessi',
         password: passwordHash('lionelmessi'),
         email: 'lionelmessi@gmail.com',
-        roleId: 1
       };
       request
       .post('/api/v1/users')
@@ -117,8 +116,11 @@ describe('User controllers', () => {
       .end((err, res) => {
         if (!err) {
           expect(res.status).to.equal(201);
-          expect(res.body).to.have.property('message');
-          expect(res.body.message).to.equal('User successfully created');
+          expect(res.body.userDetails.id).to.equal(2);
+          expect(res.body.userDetails.roleId).to.equal(2);
+          expect(res.body.userDetails.fullName).to.equal('lionel messi');
+          expect(res.body.userDetails.username).to.equal('lionelmessi');
+          expect(res.body.userDetails.email).to.equal('lionelmessi@gmail.com');
           expect(res.body).to.have.property('token');
         }
         done();
@@ -129,13 +131,13 @@ describe('User controllers', () => {
   describe('Login: POST /api/users/login', () => {
     beforeEach((done) => {
       User.bulkCreate([{
-        fullname: 'cristiano ronaldo',
+        fullName: 'cristiano ronaldo',
         username: 'cr7',
         password: passwordHash('ronaldo'),
         email: 'cr7@gmail.com',
         roleId: 1
       }, {
-        fullname: 'kun aguero',
+        fullName: 'kun aguero',
         username: 'sergioaguero',
         password: passwordHash('aguero'),
         email: 'kunaguero@gmail.com',
@@ -178,25 +180,21 @@ describe('User controllers', () => {
     });
 
     it('should respond with a 200 to a valid login request', (done) => {
-      User.create({
-        fullname: 'john doe',
-        email: 'johndoe@gmail.com',
-        username: 'johndoe',
-        password: passwordHash('johndoe'),
-        roleId: 2
-      }).then(() => {
-        request
+      request
       .post('/api/v1/users/login')
       .send({
-        username: 'johndoe',
-        password: 'johndoe',
+        username: 'sergioaguero',
+        password: 'aguero',
       })
       .expect(200)
       .end((err, res) => {
         expect(res.status).to.equal(200);
-        expect(res.body.message).to.equal('You are successfully logged in');
+        expect(res.body.User.fullName).to.equal('kun aguero');
+        expect(res.body.User.username).to.equal('sergioaguero');
+        expect(res.body.User.email).to.equal('kunaguero@gmail.com');
+        expect(res.body.User.role).to.equal(2);
+        expect(res.body.User).to.have.property('createdAt');
         done();
-      });
       });
     });
   });
@@ -204,15 +202,12 @@ describe('User controllers', () => {
   describe('GET /api/v1/users/:id', () => {
     beforeEach((done) => {
       User.create({
-        fullname: 'jesse lingard',
+        fullName: 'jesse lingard',
         username: 'jesse14',
         password: passwordHash('jesselingard'),
         email: 'jesse14@gmail.com',
         roleId: 2
-      }).then((err) => {
-        if (!err) {
-          //
-        }
+      }).then(() => {
         done();
       });
     });
@@ -221,13 +216,29 @@ describe('User controllers', () => {
       request
         .get('/api/v1/users/1')
         .set('Authorization', adminToken)
+        .set('Accept', 'application/json')
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(200);
-          }
+          expect(res.status).to.equal(200);
+          expect(res.body.id).to.equal(1);
+          expect(res.body.fullName).to.equal('jesse lingard');
+          expect(res.body.username).to.equal('jesse14');
+          expect(res.body.email).to.equal('jesse14@gmail.com');
+          expect(res.body.role).to.equal(2);
           done();
         });
     });
+    it('should return error message when viewing unauthorized page', (done) => {
+      request
+        .get('/api/v1/users/1')
+        .set('Authorization', token)
+        .set('Accept', 'application/json')
+        .end((err, res) => {
+          expect(res.body.message).to.equal(
+              'Oops, You are not allowed to view this page');
+          done();
+        });
+    });
+
 
     it('should return an error message for invalid token', (done) => {
       request
@@ -237,7 +248,6 @@ describe('User controllers', () => {
         .expect(401)
         .end((err, res) => {
           expect(res.body.message).to.equal('Invalid token');
-          expect(typeof (res.body)).to.equal('object');
           expect(res.status).to.equal(401);
           done();
         });
@@ -249,11 +259,8 @@ describe('User controllers', () => {
         .get('/api/v1/users/33')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(404);
-            expect(res.body.status).to.equal('error');
-            expect(res.body.message).to.equal('User not found');
-          }
+          expect(res.status).to.equal(404);
+          expect(res.body.message).to.equal('User not found');
           done();
         });
     });
@@ -263,23 +270,19 @@ describe('User controllers', () => {
         .get('/api/v1/users/sd')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(400);
-            expect(res.body.message).to.equal('id must be a number');
-          }
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal('id must be a number');
           done();
         });
     });
 
     it('should return error with invalid param', (done) => {
       request
-        .get('/api/v1/users/3765198265650198250128756019856187056187569487512')
+        .get('/api/v1/users/376519826565019825012875')
         .set('Authorization', token)
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(400);
-            expect(res.body.message).to.equal('Invalid param');
-          }
+          expect(res.status).to.equal(500);
+          expect(res.body.message).to.equal('Internal server error');
           done();
         });
     });
@@ -288,13 +291,13 @@ describe('User controllers', () => {
   describe('GET /api/v1/users/:id/documents', () => {
     beforeEach((done) => {
       User.bulkCreate([{
-        fullname: 'antonio valencia',
+        fullName: 'antonio valencia',
         username: 'valencia',
         password: passwordHash('valencia'),
         email: 'valencia@gmail.com',
         roleId: 1
       }, {
-        fullname: 'paul pogba',
+        fullName: 'paul pogba',
         username: 'pogback',
         password: passwordHash('pogback'),
         email: 'pogback6@gmail.com',
@@ -331,7 +334,8 @@ describe('User controllers', () => {
         .set('Authorization', adminToken)
         .end((err, res) => {
           if (!err) {
-            expect(res.body.message).to.equal('Access denied');
+            expect(res.status).to.equal(400);
+            expect(res.body.message).to.equal('id must be a number');
           }
           done();
         });
@@ -341,20 +345,22 @@ describe('User controllers', () => {
         .get('/api/v1/users/1/documents')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(200);
-          }
+          expect(res.status).to.equal(200);
+          expect(res.body.documents[0].id).to.equal(2);
+          expect(res.body.documents[1].title).to.equal('testing');
+          expect(res.body.documents[2].content).to.equal(
+            'just testing this stuff');
+          expect(res.body.documents[1].access).to.equal('public');
           done();
         });
     });
-    it('should return empty object when user has no document', (done) => {
+    it('should return error message when user has no document', (done) => {
       request
         .get('/api/v1/users/2/documents')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(typeof res.body).to.equal('object');
-          }
+          expect(typeof res.body).to.equal('object');
+          expect(res.body.message).to.equal('No document found for this user');
           done();
         });
     });
@@ -363,13 +369,13 @@ describe('User controllers', () => {
   describe('GET /api/v1/users', () => {
     beforeEach((done) => {
       User.bulkCreate([{
-        fullname: 'delima ronaldo',
+        fullName: 'delima ronaldo',
         username: 'ronaldo9',
         password: passwordHash('ronaldo'),
         email: 'ronaldo9@gmail.com',
         roleId: 1
       }, {
-        fullname: 'robin hood',
+        fullName: 'robin hood',
         username: 'robinhood',
         password: passwordHash('robinhood'),
         email: 'robinhood@gmail.com',
@@ -384,7 +390,8 @@ describe('User controllers', () => {
         .set({ Authorization: token })
         .end((err, res) => {
           expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal('limit and offset must be an integer');
+          expect(res.body.message).to.equal(
+            'limit and offset must be an integer');
           done();
         });
     });
@@ -400,33 +407,13 @@ describe('User controllers', () => {
     });
 
     it('should return a 403 status with no token set', (done) => {
-      User.destroy({
-        where: {},
-        truncate: true,
-        cascade: true,
-        restartIdentity: true
-      }).then((err) => {
-        if (!err) {
-          Role.destroy({
-            where: {},
-            truncate: true,
-            cascade: true,
-            restartIdentity: true
-          }).then(() => {
-            //
-          });
-        }
-      });
-
       request
         .get('/api/v1/users')
         .set('Accept', 'application/json')
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(403);
-            expect(res.body.message).to.equal('Please Log in');
-            expect(res.body.status).to.equal('Forbidden');
-          }
+          expect(res.status).to.equal(403);
+          expect(res.body.message).to.equal('Please Log in');
+          expect(res.body.status).to.equal('Forbidden');
           done();
         });
     });
@@ -435,15 +422,12 @@ describe('User controllers', () => {
   describe('GET /api/v1/search/users', () => {
     beforeEach((done) => {
       User.create({
-        fullname: 'just me',
+        fullName: 'just me',
         username: 'justme',
         password: passwordHash('seunadekunle'),
         email: 'justme@gmail.com',
         roleId: 2
-      }).then((err) => {
-        if (!err) {
-          //
-        }
+      }).then(() => {
         done();
       });
     });
@@ -452,12 +436,12 @@ describe('User controllers', () => {
         .get('/api/v1/search/users/?q=just')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(200);
-            expect(res.body.status).to.equal('OK');
-            expect(res.body.count).to.be.greaterThan(0);
-            expect(res.body.userList.length).to.be.greaterThan(0);
-          }
+          expect(res.status).to.equal(200);
+          expect(res.body.count).to.be.greaterThan(0);
+          expect(res.body.userList.length).to.be.greaterThan(0);
+          expect(res.body.userList[0].username).to.equal('justme');
+          expect(res.body.userList[0].fullName).to.equal('just me');
+          expect(res.body.userList[0]).to.have.property('createdAt');
           done();
         });
     });
@@ -467,10 +451,8 @@ describe('User controllers', () => {
         .get('/api/v1/search/users/?q=just')
         .set('Authorization', invalidToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(401);
-            expect(res.body.message).to.equal('Invalid token');
-          }
+          expect(res.status).to.equal(401);
+          expect(res.body.message).to.equal('Invalid token');
           done();
         });
     });
@@ -479,11 +461,8 @@ describe('User controllers', () => {
         .get('/api/v1/search/users/?q=hgjvqwhgj')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(200);
-            expect(res.body.status).to.equal('OK');
-            expect(res.body.userList).to.eqls([]);
-          }
+          expect(res.status).to.equal(200);
+          expect(res.body.userList).to.eqls([]);
           done();
         });
     });
@@ -492,21 +471,52 @@ describe('User controllers', () => {
   describe('Update user: PUT /api/v1/users/:id', () => {
     beforeEach((done) => {
       User.create({
-        fullname: 'adekunle oladele',
+        fullName: 'adekunle oladele',
         username: 'eldee',
         password: passwordHash('eldee'),
         email: 'eldee@gmail.com',
-      }).then((err) => {
-        if (!err) {
-          //
-        }
+      }).then(() => {
         done();
+      });
+    });
+    it('should return error message on email/username conflict', (done) => {
+      const password = passwordHash('jack');
+      User.create({
+        fullName: 'jabdjkhdb',
+        email: 'daniel@daniel.com',
+        username: 'daniel',
+        password,
+      }).then(() => {
+        request
+        .post('/api/v1/users/login')
+        .send({
+          username: 'daniel',
+          password: 'jack',
+        })
+        .expect(200)
+        .end((err, res) => {
+          const tokens = res.body.token;
+          request
+              .put('/api/v1/users/2')
+              .send({
+                email: 'eldee@gmail.com',
+              })
+              .set('Authorization', `${tokens}`)
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+                  .end((err, res) => {
+                    expect(res.status).to.equal(409);
+                    expect(res.body.message).to.equal(
+                      'A user exist with same email or username');
+                    done();
+                  });
+        });
       });
     });
 
     it('should return message for user not found', (done) => {
       User.create({
-        fullname: 'seun',
+        fullName: 'seun',
         email: 'seun@admin.com',
         username: 'seun',
         password: passwordHash('seun'),
@@ -527,8 +537,10 @@ describe('User controllers', () => {
           .set('Accept', 'application/json')
           .expect(200)
           .end((err, res) => {
-            expect(res.status).to.equal(404);
-            expect(res.body.message).to.equal('User not found');
+            if (!err) {
+              expect(res.status).to.equal(404);
+              expect(res.body.message).to.equal('User not found');
+            }
             done();
           });
       });
@@ -540,51 +552,21 @@ describe('User controllers', () => {
         .put('/api/v1/users/hh')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.body.message).to.equal('Id must be a number');
-          }
+          expect(res.body.message).to.equal('Id must be a number');
           done();
-        });
-    });
-    it('returns error', (done) => {
-      User.bulkCreate([{
-        username: 'firstuser',
-        fullname: 'firstuser',
-        password: passwordHash('test'),
-        email: 'firstuser@gmail.com',
-        roleId: 1,
-      }, {
-        username: 'seconduser',
-        fullname: 'seconduser',
-        password: passwordHash('test'),
-        email: 'seconduser@yahoo.com',
-        roleId: 2,
-      }])
-        .then(() => {
-          request
-            .put('/api/v1/users/1')
-            .set('Authorization', adminToken)
-            .send({
-              email: 'firstuser@gmail.com',
-            })
-            .end((err, res) => {
-              expect(res.status).to.equal(403);
-              expect(res.body.message).to.equal('Oops! You are not allowed to update the user');
-              done();
-            });
         });
     });
 
     it('returns error on unauthorized access', (done) => {
       User.bulkCreate([{
         username: 'firstuser',
-        fullname: 'firstuser',
+        fullName: 'firstuser',
         password: passwordHash('test'),
         email: 'firstuser@gmail.com',
         roleId: 1,
       }, {
         username: 'seconduser',
-        fullname: 'seconduser',
+        fullName: 'seconduser',
         password: passwordHash('test'),
         email: 'seconduser@yahoo.com',
         roleId: 2,
@@ -597,8 +579,9 @@ describe('User controllers', () => {
               username: 'moses',
             })
             .end((err, res) => {
-              expect(res.status).to.equal(403);
-              expect(res.body.message).to.equal('Oops! You are not allowed to update the user');
+              expect(res.status).to.equal(401);
+              expect(res.body.message).to.equal(
+                'Oops! You are not allowed to update the user');
               done();
             });
         });
@@ -608,17 +591,26 @@ describe('User controllers', () => {
   describe('DELETE user: /api/v1/users', () => {
     beforeEach((done) => {
       User.create({
-        fullname: 'new user',
+        fullName: 'new user',
         username: 'newuser',
         password: passwordHash('newuser'),
         email: 'newuser@gmail.com',
         roleId: 2
-      }).then((err) => {
-        if (!err) {
-          //
-        }
+      }).then(() => {
         done();
       });
+    });
+
+    it('should return an error on unauthorized access', (done) => {
+      request
+        .delete('/api/v1/users/1')
+        .set('Authorization', token)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(res.body.message).to.equal(
+              'You Are not authorized to delete this user');
+          done();
+        });
     });
 
     it('should return an error 404 for user not found', (done) => {
@@ -626,10 +618,8 @@ describe('User controllers', () => {
         .delete('/api/v1/users/10')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(404);
-            expect(res.body.message).to.equal('User Not Found');
-          }
+          expect(res.status).to.equal(404);
+          expect(res.body.message).to.equal('User not found');
           done();
         });
     });
@@ -638,10 +628,8 @@ describe('User controllers', () => {
         .delete('/api/v1/users/10876529837465908475874659485764')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(400);
-            expect(res.body.message).to.equal('Bad request');
-          }
+          expect(res.status).to.equal(500);
+          expect(res.body.message).to.equal('Internal server error');
           done();
         });
     });
@@ -651,11 +639,9 @@ describe('User controllers', () => {
         .delete('/api/v1/users/1')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(200);
-            expect(res.body.status).to.equal('ok');
-            expect(res.body.message).to.equal('You have successfully deleted a user');
-          }
+          expect(res.status).to.equal(200);
+          expect(res.body.message).to.equal(
+              'User successfully deleted');
           done();
         });
     });
