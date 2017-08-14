@@ -1,5 +1,4 @@
-const response = { error: {} };
-
+import omit from 'omit';
 /**
  *
  * @class Validation
@@ -23,10 +22,9 @@ class Validation {
 
     const errors = req.validationErrors();
     if (errors) {
-      errors.forEach((error) => {
-        response.error[error.param] = error.msg;
-      });
-      return res.status(400).json(response);
+      const unwanted = ['param', 'value'];
+      const errorMsg = errors.map(omit(unwanted));
+      return res.status(400).json(errorMsg);
     }
     return next();
   }
@@ -48,11 +46,9 @@ class Validation {
     const errors = req.validationErrors();
 
     if (errors) {
-      errors.forEach((error) => {
-        response.error[error.param] = error.msg;
-      });
-
-      return res.status(400).json(response);
+      const unwanted = ['param', 'value'];
+      const errorMsg = errors.map(omit(unwanted));
+      return res.status(400).json(errorMsg);
     }
     next();
   }

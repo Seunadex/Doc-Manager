@@ -71,12 +71,9 @@ describe('User controllers', () => {
       .end((err, res) => {
         if (!err) {
           expect(res.status).to.equal(400);
-          expect(res.body.error.title).to.equal(
-            'Document title must be entered');
-          expect(res.body.error.fullName).to.equal('Fullname is required');
-          expect(res.body.error.username).to.equal('username is required');
-          expect(res.body.error.password).to.equal('password is required');
-          expect(res.body.error).to.not.have.property('email');
+          expect(res.body[0].msg).to.equal('Fullname is required');
+          expect(res.body[1].msg).to.equal('username is required');
+          expect(res.body[2].msg).to.equal('password is required');
         }
         done();
       });

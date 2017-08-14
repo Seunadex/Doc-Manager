@@ -194,11 +194,10 @@ describe('Document controller', () => {
         .set('Authorization', adminToken)
         .send(document)
         .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.body.error.content).to.equal('Content is required');
-          expect(res.body.error.title).to.equal(
-              'Document title must be entered');
-          expect(res.body.error.access).to.equal('Access is required');
+          expect(res.body[0].msg).to.equal('Document title must be entered');
+          expect(res.body[1].msg).to.equal('Content is required');
+          expect(res.body[2].msg).to.equal('Access can not be an integer');
+          expect(res.body[3].msg).to.equal('Access is required');
           done();
         });
     });
