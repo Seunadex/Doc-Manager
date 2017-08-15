@@ -78,7 +78,7 @@ describe('Document controller', () => {
         .post('/api/v1/documents')
         .send({
           title: 'test doc',
-          content: 'test running it',
+          content: 'testing testing 123',
           access: 'public',
           userId: 2,
           roleId: 1
@@ -103,7 +103,6 @@ describe('Document controller', () => {
       })
         .then(() => {
         });
-
       request
         .get('/api/v1/documents')
         .set('Authorization', adminToken)
