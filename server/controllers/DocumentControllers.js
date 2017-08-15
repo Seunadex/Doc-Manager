@@ -66,7 +66,7 @@ const DocumentControllers = {
           paginationDetails: pagination(document.count, limit, offset)
         }
       }))
-      .catch(() => res.status(403).send({
+      .catch(() => res.status(400).send({
         message: 'limits and offsets must be number'
       }));
     }
@@ -83,7 +83,7 @@ const DocumentControllers = {
       .then((document) => {
         if (isUser(document.userId, req.decoded.id) ||
           document.access === 'private') {
-          return res.status(401).send({
+          return res.status(403).send({
             message: "You don't have permission to access this document"
           });
         }

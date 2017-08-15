@@ -90,7 +90,7 @@ const UserControllers = {
           token,
         });
       }
-      return res.status(400).send({ message: 'Incorrect password' });
+      return res.status(401).send({ message: 'Incorrect password' });
     })
       .catch(error => res.status(500).send(error.message));
   },
@@ -254,7 +254,7 @@ const UserControllers = {
     .then((user) => {
       if (!isUser(Number(req.params.id), req.decoded.userId) &&
         (req.decoded.userRoleId !== 1)) {
-        return res.status(401).send({
+        return res.status(403).send({
           message: 'You Are not authorized to delete this user',
         });
       }

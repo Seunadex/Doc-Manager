@@ -34,10 +34,7 @@ describe('User controllers', () => {
                 {
                   name: 'regular'
                 }
-              ]).then((err) => {
-                if (!err) {
-                  //
-                }
+              ]).then(() => {
                 done();
               });
             }
@@ -67,6 +64,7 @@ describe('User controllers', () => {
       request
       .post('/api/v1/users')
       .set('Authorization', adminToken)
+      .set('Accept', 'application/json')
       .send(userDetails)
       .end((err, res) => {
         if (!err) {
@@ -90,6 +88,7 @@ describe('User controllers', () => {
       request
       .post('/api/v1/users')
       .set('Authorization', adminToken)
+      .set('Accept', 'application/json')
       .send(userDetails)
       .end((err, res) => {
         if (!err) {
@@ -151,11 +150,10 @@ describe('User controllers', () => {
         username: '',
         password: passwordHash('ronald')
       })
+      .set('Accept', 'application/json')
       .end((err, res) => {
-        if (!err) {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal('User not found');
-        }
+        expect(res.status).to.equal(400);
+        expect(res.body.message).to.equal('User not found');
         done();
       });
     });
@@ -167,16 +165,15 @@ describe('User controllers', () => {
         username: 'cr7',
         password: passwordHash('ronald')
       })
+      .set('Accept', 'application/json')
       .end((err, res) => {
-        if (!err) {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal('Incorrect password');
-        }
+        expect(res.status).to.equal(401);
+        expect(res.body.message).to.equal('Incorrect password');
         done();
       });
     });
 
-    it('should respond with a 200 to a valid login request', (done) => {
+    it('should respond with a 200 for a valid login request', (done) => {
       request
       .post('/api/v1/users/login')
       .send({
@@ -209,7 +206,7 @@ describe('User controllers', () => {
       });
     });
 
-    it('should get a user by id', (done) => {
+    it('should get a particular user by id', (done) => {
       request
         .get('/api/v1/users/1')
         .set('Authorization', adminToken)
@@ -318,9 +315,8 @@ describe('User controllers', () => {
         .get('/api/v1/users/33/documents')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.body.message).to.equal('User not found');
-          }
+          expect(res.status).to.equal(404);
+          expect(res.body.message).to.equal('User not found');
           done();
         });
     });
@@ -330,10 +326,8 @@ describe('User controllers', () => {
         .get('/api/v1/users/dd/documents')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          if (!err) {
-            expect(res.status).to.equal(400);
-            expect(res.body.message).to.equal('id must be a number');
-          }
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal('id must be a number');
           done();
         });
     });
@@ -408,9 +402,9 @@ describe('User controllers', () => {
         .get('/api/v1/users')
         .set('Accept', 'application/json')
         .end((err, res) => {
-          expect(res.status).to.equal(403);
-          expect(res.body.message).to.equal('Please Log in');
-          expect(res.body.status).to.equal('Forbidden');
+          expect(res.status).to.equal(401);
+          expect(res.body.message).to.equal(
+            'Oops! You are not authenticated, Please Log in');
           done();
         });
     });
@@ -576,7 +570,7 @@ describe('User controllers', () => {
               username: 'moses',
             })
             .end((err, res) => {
-              expect(res.status).to.equal(401);
+              expect(res.status).to.equal(403);
               expect(res.body.message).to.equal(
                 'Oops! You are not allowed to update the user');
               done();
@@ -603,7 +597,7 @@ describe('User controllers', () => {
         .delete('/api/v1/users/1')
         .set('Authorization', token)
         .end((err, res) => {
-          expect(res.status).to.equal(401);
+          expect(res.status).to.equal(403);
           expect(res.body.message).to.equal(
               'You Are not authorized to delete this user');
           done();

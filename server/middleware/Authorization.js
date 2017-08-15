@@ -30,9 +30,8 @@ class Authorization {
         next();
       });
     } else {
-      return res.status(403).send({
-        status: 'Forbidden',
-        message: 'Please Log in'
+      return res.status(401).send({
+        message: 'Oops! You are not authenticated, Please Log in'
       });
     }
   }
@@ -83,7 +82,7 @@ class Authorization {
     if (Number(req.params.id) === parseInt(req.decoded.userId, 10)) {
       return next();
     }
-    return res.status(401).send({
+    return res.status(403).send({
       message: 'Oops! You are not allowed to update the user'
     });
   }
