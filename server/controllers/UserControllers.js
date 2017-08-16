@@ -5,6 +5,7 @@ import _ from 'lodash';
 import pagination from '../helper/pagination';
 import { User, Document } from '../models';
 import { isUser } from '../helper/helper';
+import jwtHelper from '../helper/jwtHelper';
 
 dotenv.config();
 
@@ -69,15 +70,7 @@ const UserControllers = {
       }
       const passkey = bcrypt.compareSync(req.body.password, user.password);
       if (passkey) {
-        const token = jwt.sign({
-          userId: user.id,
-          userFullName: user.fullName,
-          userUsername: user.username,
-          userEmail: user.email,
-          userRoleId: user.roleId,
-        }, secret, {
-          expiresIn: '24h'
-        });
+        const token = jwtHelper(user);
         return res.status(200).send({
           User: {
             id: user.id,

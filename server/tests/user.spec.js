@@ -3,12 +3,19 @@ import supertest from 'supertest';
 import { passwordHash } from '../helper/helper';
 import app from '../../build/server';
 import { User, Document, Role } from '../models';
+import userHelpers from './testHelpers/userHelpers';
 
 const adminToken = process.env.ADMIN_TOKEN;
 const token = process.env.TOKEN;
 const invalidToken = process.env.INVALID_TOKEN;
-
 const request = supertest.agent(app);
+const {
+  validAdmin,
+  incompleteData,
+  validUser,
+  userOne,
+  userTwo,
+  userThree } = userHelpers;
 
 describe('User controllers', () => {
   beforeEach((done) => {
@@ -44,81 +51,50 @@ describe('User controllers', () => {
   });
   describe('Signup: POST /api/v1/users', () => {
     beforeEach((done) => {
-      User.create({
-        fullName: 'seun adekunle',
-        username: 'seunadex',
-        password: passwordHash('seunadex'),
-        email: 'seunadex@gmail.com',
-        roleId: 1
-      }).then(() => {
+      User.create(validAdmin).then(() => {
         done();
       });
     });
     it('should return error with incomplete user details', (done) => {
-      const userDetails = {
-        fullName: '',
-        username: '',
-        password: '',
-        email: 'seun@gmail.com'
-      };
       request
       .post('/api/v1/users')
       .set('Authorization', adminToken)
       .set('Accept', 'application/json')
-      .send(userDetails)
+      .send(incompleteData)
       .end((err, res) => {
-        if (!err) {
-          expect(res.status).to.equal(400);
-          expect(res.body[0].msg).to.equal('Fullname is required');
-          expect(res.body[1].msg).to.equal('username is required');
-          expect(res.body[2].msg).to.equal('password is required');
-        }
+        expect(res.status).to.equal(400);
+        expect(res.body[0].msg).to.equal('Fullname is required');
+        expect(res.body[1].msg).to.equal('username is required');
+        expect(res.body[2].msg).to.equal('password is required');
         done();
       });
     });
 
     it('should return error when user already exist', (done) => {
-      const userDetails = {
-        fullName: 'seun adekunle',
-        username: 'seunadex',
-        password: passwordHash('seunadex'),
-        email: 'seunadex@gmail.com',
-        roleId: 1
-      };
       request
       .post('/api/v1/users')
       .set('Authorization', adminToken)
       .set('Accept', 'application/json')
-      .send(userDetails)
+      .send(validAdmin)
       .end((err, res) => {
-        if (!err) {
-          expect(res.status).to.equal(409);
-          expect(res.body.message).to.equal('User credentials already exist');
-        }
+        expect(res.status).to.equal(409);
+        expect(res.body.message).to.equal('User credentials already exist');
         done();
       });
     });
 
     it('should post valid user details', (done) => {
-      const userDetails = {
-        fullName: 'lionel messi',
-        username: 'lionelmessi',
-        password: passwordHash('lionelmessi'),
-        email: 'lionelmessi@gmail.com',
-      };
       request
       .post('/api/v1/users')
-      .send(userDetails)
+      .send(validUser)
       .end((err, res) => {
-        if (!err) {
-          expect(res.status).to.equal(201);
-          expect(res.body.userDetails.id).to.equal(2);
-          expect(res.body.userDetails.roleId).to.equal(2);
-          expect(res.body.userDetails.fullName).to.equal('lionel messi');
-          expect(res.body.userDetails.username).to.equal('lionelmessi');
-          expect(res.body.userDetails.email).to.equal('lionelmessi@gmail.com');
-          expect(res.body).to.have.property('token');
-        }
+        expect(res.status).to.equal(201);
+        expect(res.body.userDetails.id).to.equal(2);
+        expect(res.body.userDetails.roleId).to.equal(2);
+        expect(res.body.userDetails.fullName).to.equal('lionel messi');
+        expect(res.body.userDetails.username).to.equal('lionelmessi');
+        expect(res.body.userDetails.email).to.equal('lionelmessi@gmail.com');
+        expect(res.body).to.have.property('token');
         done();
       });
     });
@@ -126,19 +102,7 @@ describe('User controllers', () => {
 
   describe('Login: POST /api/users/login', () => {
     beforeEach((done) => {
-      User.bulkCreate([{
-        fullName: 'cristiano ronaldo',
-        username: 'cr7',
-        password: passwordHash('ronaldo'),
-        email: 'cr7@gmail.com',
-        roleId: 1
-      }, {
-        fullName: 'kun aguero',
-        username: 'sergioaguero',
-        password: passwordHash('aguero'),
-        email: 'kunaguero@gmail.com',
-        roleId: 2
-      }]).then(() => {
+      User.bulkCreate([userOne, userTwo]).then(() => {
         done();
       });
     });
@@ -195,13 +159,7 @@ describe('User controllers', () => {
 
   describe('GET /api/v1/users/:id', () => {
     beforeEach((done) => {
-      User.create({
-        fullName: 'jesse lingard',
-        username: 'jesse14',
-        password: passwordHash('jesselingard'),
-        email: 'jesse14@gmail.com',
-        roleId: 2
-      }).then(() => {
+      User.create(userThree).then(() => {
         done();
       });
     });
@@ -284,19 +242,7 @@ describe('User controllers', () => {
 
   describe('GET /api/v1/users/:id/documents', () => {
     beforeEach((done) => {
-      User.bulkCreate([{
-        fullName: 'antonio valencia',
-        username: 'valencia',
-        password: passwordHash('valencia'),
-        email: 'valencia@gmail.com',
-        roleId: 1
-      }, {
-        fullName: 'paul pogba',
-        username: 'pogback',
-        password: passwordHash('pogback'),
-        email: 'pogback6@gmail.com',
-        roleId: 2
-      }]).then(() => {
+      User.bulkCreate([userOne, userTwo]).then(() => {
         Document.create({
           title: 'testing',
           content: 'just testing this stuff',
@@ -359,19 +305,7 @@ describe('User controllers', () => {
 
   describe('GET /api/v1/users', () => {
     beforeEach((done) => {
-      User.bulkCreate([{
-        fullName: 'delima ronaldo',
-        username: 'ronaldo9',
-        password: passwordHash('ronaldo'),
-        email: 'ronaldo9@gmail.com',
-        roleId: 1
-      }, {
-        fullName: 'robin hood',
-        username: 'robinhood',
-        password: passwordHash('robinhood'),
-        email: 'robinhood@gmail.com',
-        roleId: 2
-      }]).then(() => {
+      User.bulkCreate([userOne, userTwo]).then(() => {
         done();
       });
     });
@@ -412,26 +346,20 @@ describe('User controllers', () => {
 
   describe('GET /api/v1/search/users', () => {
     beforeEach((done) => {
-      User.create({
-        fullName: 'just me',
-        username: 'justme',
-        password: passwordHash('seunadekunle'),
-        email: 'justme@gmail.com',
-        roleId: 2
-      }).then(() => {
+      User.create(userOne).then(() => {
         done();
       });
     });
     it('should return an array of users if found', (done) => {
       request
-        .get('/api/v1/search/users/?q=just')
+        .get('/api/v1/search/users/?q=cr')
         .set('Authorization', adminToken)
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res.body.count).to.be.greaterThan(0);
           expect(res.body.userList.length).to.be.greaterThan(0);
-          expect(res.body.userList[0].username).to.equal('justme');
-          expect(res.body.userList[0].fullName).to.equal('just me');
+          expect(res.body.userList[0].username).to.equal('cr7');
+          expect(res.body.userList[0].fullName).to.equal('cristiano ronaldo');
           expect(res.body.userList[0]).to.have.property('createdAt');
           done();
         });
@@ -461,28 +389,17 @@ describe('User controllers', () => {
 
   describe('Update user: PUT /api/v1/users/:id', () => {
     beforeEach((done) => {
-      User.create({
-        fullName: 'adekunle oladele',
-        username: 'eldee',
-        password: passwordHash('eldee'),
-        email: 'eldee@gmail.com',
-      }).then(() => {
+      User.create(userThree).then(() => {
         done();
       });
     });
     it('should return error message on email/username conflict', (done) => {
-      const password = passwordHash('jack');
-      User.create({
-        fullName: 'jabdjkhdb',
-        email: 'daniel@daniel.com',
-        username: 'daniel',
-        password,
-      }).then(() => {
+      User.create(userTwo).then(() => {
         request
         .post('/api/v1/users/login')
         .send({
-          username: 'daniel',
-          password: 'jack',
+          username: 'sergioaguero',
+          password: 'aguero',
         })
         .expect(200)
         .end((err, res) => {
@@ -490,7 +407,7 @@ describe('User controllers', () => {
           request
               .put('/api/v1/users/2')
               .send({
-                email: 'eldee@gmail.com',
+                email: 'jesse14@gmail.com',
               })
               .set('Authorization', `${tokens}`)
               .set('Accept', 'application/json')
@@ -506,25 +423,9 @@ describe('User controllers', () => {
     });
 
     it('should return message for user not found', (done) => {
-      User.create({
-        fullName: 'seun',
-        email: 'seun@admin.com',
-        username: 'seun',
-        password: passwordHash('seun'),
-        roleId: 1
-      }).then(() => {
-        request
-          .post('/api/v1/users/login')
-          .send({
-            username: 'seun',
-            password: 'seun',
-          })
-      .expect(400)
-      .end((err, res) => {
-        const tokens = res.body.token;
-        request
+      request
           .put('/api/v1/users/2')
-          .set('Authorization', `${tokens}`)
+          .set('Authorization', token)
           .set('Accept', 'application/json')
           .expect(200)
           .end((err, res) => {
@@ -534,8 +435,6 @@ describe('User controllers', () => {
             }
             done();
           });
-      });
-      });
     });
 
     it('should return error for invalid param', (done) => {
@@ -549,19 +448,7 @@ describe('User controllers', () => {
     });
 
     it('returns error on unauthorized access', (done) => {
-      User.bulkCreate([{
-        username: 'firstuser',
-        fullName: 'firstuser',
-        password: passwordHash('test'),
-        email: 'firstuser@gmail.com',
-        roleId: 1,
-      }, {
-        username: 'seconduser',
-        fullName: 'seconduser',
-        password: passwordHash('test'),
-        email: 'seconduser@yahoo.com',
-        roleId: 2,
-      }])
+      User.bulkCreate([userOne, userTwo])
         .then(() => {
           request
             .put('/api/v1/users/2')
@@ -581,13 +468,7 @@ describe('User controllers', () => {
 
   describe('DELETE user: /api/v1/users', () => {
     beforeEach((done) => {
-      User.create({
-        fullName: 'new user',
-        username: 'newuser',
-        password: passwordHash('newuser'),
-        email: 'newuser@gmail.com',
-        roleId: 2
-      }).then(() => {
+      User.create(userThree).then(() => {
         done();
       });
     });
