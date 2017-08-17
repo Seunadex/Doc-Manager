@@ -26,7 +26,7 @@ router(app);
 
 app.set('port', port);
 
-app.get('/', (req, res) => res.status(200).render('index.html'));
+app.get('*', (request, response) => response.status(200).render('index.html'));
 
 const server = http.createServer(app);
 server.listen(port);

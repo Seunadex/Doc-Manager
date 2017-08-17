@@ -21,7 +21,7 @@
             ],
         "no-shadow": [
             "error", { 
-                "allow": ["req", "res", "err"] 
+                "allow": ["request", "response", "err"] 
                 }],
         "valid-jsdoc": ["error", {
             "requireReturn": true,
