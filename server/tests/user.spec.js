@@ -4,9 +4,8 @@ import { passwordHash } from '../helper/helper';
 import app from '../../build/server';
 import { User, Document, Role } from '../models';
 import userHelpers from './testHelpers/userHelpers';
+import jwtHelper from '../helper/jwtHelper';
 
-const adminToken = process.env.ADMIN_TOKEN;
-const token = process.env.TOKEN;
 const invalidToken = process.env.INVALID_TOKEN;
 const request = supertest.agent(app);
 const {
@@ -16,6 +15,8 @@ const {
   userOne,
   userTwo,
   userThree } = userHelpers;
+const adminToken = jwtHelper(validAdmin);
+const token = jwtHelper(validUser);
 
 describe('User controllers', () => {
   beforeEach((done) => {
@@ -55,7 +56,7 @@ describe('User controllers', () => {
         done();
       });
     });
-    it('should return error with incomplete user details', (done) => {
+    it('should return error with empty input field', (done) => {
       request
       .post('/api/v1/users')
       .set('Authorization', adminToken)
@@ -70,7 +71,7 @@ describe('User controllers', () => {
       });
     });
 
-    it('should return error when user already exist', (done) => {
+    it('should return error 409 when user already exist', (done) => {
       request
       .post('/api/v1/users')
       .set('Authorization', adminToken)
@@ -83,7 +84,7 @@ describe('User controllers', () => {
       });
     });
 
-    it('should post valid user details', (done) => {
+    it('should signup successfully with valid user details', (done) => {
       request
       .post('/api/v1/users')
       .send(validUser)
@@ -137,7 +138,8 @@ describe('User controllers', () => {
       });
     });
 
-    it('should respond with a 200 for a valid login request', (done) => {
+    it('should respond with a 200 status code for a valid login request',
+    (done) => {
       request
       .post('/api/v1/users/login')
       .send({
@@ -164,7 +166,7 @@ describe('User controllers', () => {
       });
     });
 
-    it('should get a particular user by id', (done) => {
+    it('should get a particular user by its id', (done) => {
       request
         .get('/api/v1/users/1')
         .set('Authorization', adminToken)
@@ -185,6 +187,7 @@ describe('User controllers', () => {
         .set('Authorization', token)
         .set('Accept', 'application/json')
         .end((err, res) => {
+          expect(res.status).to.equal(401);
           expect(res.body.message).to.equal(
               'Oops, You are not allowed to view this page');
           done();
@@ -277,7 +280,8 @@ describe('User controllers', () => {
           done();
         });
     });
-    it('should return all documents belonging to a user', (done) => {
+    it('should successfully return all documents belonging to a user',
+    (done) => {
       request
         .get('/api/v1/users/1/documents')
         .set('Authorization', adminToken)
@@ -296,7 +300,6 @@ describe('User controllers', () => {
         .get('/api/v1/users/2/documents')
         .set('Authorization', adminToken)
         .end((err, res) => {
-          expect(typeof res.body).to.equal('object');
           expect(res.body.message).to.equal('No document found for this user');
           done();
         });

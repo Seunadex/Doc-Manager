@@ -107,7 +107,7 @@ GET /api/v1/documents/page/?limit={integer}&offset={integer} | Pagination for do
   * Write how to manually test the feature.
 
 ### Limitations.
-* The application currently uses shared database (Elephantsql) which may sometimes lead to slow in response.
+* The application currently uses shared database (Elephantsql) which may sometimes take more time to respond
 * Only one role is currently available to all users, which is the regular user.
 
 ### License
