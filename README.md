@@ -45,7 +45,7 @@ GET /api/v1/documents/page/?limit={integer}&offset={integer} | Pagination for do
 * **[Babel-preset-stage-2](https://www.npmjs.com/package/babel-preset-stage-2)** - Provide Babel presets for stage-2 plugin
 * **[Babel-register](https://www.npmjs.com/package/babel-register)** - Used to transpile code on the fly.
 * **[Bcryptjs](https://www.npmjs.com/package/bcryptjs)** - Use for hashing passwords
-* **[Body-parser](https://www.npmjs.com/package/body-parser)** - Node.js body parsing middleware. Parse incoming request bodies in a middleware before your handlers, available under the req.body property.
+* **[Body-parser](https://www.npmjs.com/package/body-parser)** - Node.js body parsing middleware. Parse incoming request bodies in a middleware before your handlers, available under the request.body property.
 * **[Dotenv](https://www.npmjs.com/package/dotenv)** - It loads environment variables from a .env file
 * **[Express](https://www.npmjs.com/package/express)** - Used as the web server for this application
 * **[Express-validator](https://www.npmjs.com/package/express-validator)** - Used in validating user input.

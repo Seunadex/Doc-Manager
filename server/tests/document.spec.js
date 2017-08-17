@@ -74,9 +74,9 @@ describe('Document controller', () => {
         .send(sameTitle)
         .set('Authorization', adminToken)
         .set('Accept', 'application/json')
-        .end((err, res) => {
-          expect(res.status).to.equal(409);
-          expect(res.body.message).to.equal(
+        .end((err, response) => {
+          expect(response.status).to.equal(409);
+          expect(response.body.message).to.equal(
               'A document already exist with same title');
           done();
         });
@@ -90,9 +90,9 @@ describe('Document controller', () => {
         .get('/api/v1/documents')
         .set('Authorization', adminToken)
         .set('Accept', 'application/json')
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res.body).to.be.an('object');
+        .end((err, response) => {
+          expect(response.status).to.equal(200);
+          expect(response.body).to.be.an('object');
           done();
         });
     });
@@ -102,8 +102,8 @@ describe('Document controller', () => {
         request
         .get('/api/v1/documents/?limit=2&offset=0')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
+        .end((err, response) => {
+          expect(response.status).to.equal(200);
           done();
         });
       });
@@ -113,9 +113,9 @@ describe('Document controller', () => {
       request
         .get('/api/v1/documents/?limit=e&offset=t')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal(
+        .end((err, response) => {
+          expect(response.status).to.equal(400);
+          expect(response.body.message).to.equal(
               'limit and offset must be an integer');
           done();
         });
@@ -124,9 +124,9 @@ describe('Document controller', () => {
       request
         .get('/api/v1/documents/?limit=2&offset=0')
         .set('Authorization', invalidToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(401);
-          expect(res.body.message).to.equal('Invalid token');
+        .end((err, response) => {
+          expect(response.status).to.equal(401);
+          expect(response.body.message).to.equal('Invalid token');
           done();
         });
     });
@@ -144,11 +144,12 @@ describe('Document controller', () => {
         .post('/api/v1/documents')
         .set('Authorization', token)
         .send(emptyDoc)
-        .end((err, res) => {
-          expect(res.body[0].msg).to.equal('Document title must be entered');
-          expect(res.body[1].msg).to.equal('Content is required');
-          expect(res.body[2].msg).to.equal('Access can not be an integer');
-          expect(res.body[3].msg).to.equal('Access is required');
+        .end((err, response) => {
+          expect(response.body[0].msg).to.equal(
+            'Document title must be entered');
+          expect(response.body[1].msg).to.equal('Content is required');
+          expect(response.body[2].msg).to.equal('Access can not be an integer');
+          expect(response.body[3].msg).to.equal('Access is required');
           done();
         });
     });
@@ -157,9 +158,9 @@ describe('Document controller', () => {
         .post('/api/v1/documents')
         .set('Authorization', adminToken)
         .send(invalidAccess)
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal(
+        .end((err, response) => {
+          expect(response.status).to.equal(400);
+          expect(response.body.message).to.equal(
               'Access field must be either PUBLIC, PRIVATE or ROLE');
           done();
         });
@@ -172,14 +173,14 @@ describe('Document controller', () => {
             .set('Authorization', token)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-                .end((err, res) => {
-                  expect(res.status).to.equal(201);
-                  expect(res.body.document.id).to.equal(1);
-                  expect(res.body.document.title).to.equal('New doc');
-                  expect(res.body.document.content).to.equal(
+                .end((err, response) => {
+                  expect(response.status).to.equal(201);
+                  expect(response.body.document.id).to.equal(1);
+                  expect(response.body.document.title).to.equal('New doc');
+                  expect(response.body.document.content).to.equal(
                     'the future is now');
-                  expect(res.body.document.access).to.equal('public');
-                  expect(res.body.document.userId).to.equal(2);
+                  expect(response.body.document.access).to.equal('public');
+                  expect(response.body.document.userId).to.equal(2);
 
                   done();
                 });
@@ -197,9 +198,9 @@ describe('Document controller', () => {
       request
         .put('/api/v1/documents/1')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(404);
-          expect(res.body.message).to.equal('Document not found');
+        .end((err, response) => {
+          expect(response.status).to.equal(404);
+          expect(response.body.message).to.equal('Document not found');
           done();
         });
     });
@@ -209,9 +210,9 @@ describe('Document controller', () => {
         .put('/api/v1/documents/seun')
         .set('Authorization', adminToken)
         .send(document2)
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal('Invalid document id');
+        .end((err, response) => {
+          expect(response.status).to.equal(400);
+          expect(response.body.message).to.equal('Invalid document id');
           done();
         });
     });
@@ -230,14 +231,14 @@ describe('Document controller', () => {
           userId: 2,
           roleId: 2
         })
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res.body.document.id).to.equal(1);
-          expect(res.body.document.title).to.equal('Test');
-          expect(res.body.document.content).to.equal(
+        .end((err, response) => {
+          expect(response.status).to.equal(200);
+          expect(response.body.document.id).to.equal(1);
+          expect(response.body.document.title).to.equal('Test');
+          expect(response.body.document.content).to.equal(
               'Running Tests with invalid id');
-          expect(res.body.document.access).to.equal('public');
-          expect(res.body.document.userId).to.equal(2);
+          expect(response.body.document.access).to.equal('public');
+          expect(response.body.document.userId).to.equal(2);
           done();
         });
     });
@@ -246,9 +247,9 @@ describe('Document controller', () => {
       request
         .put('/api/v1/documents/we')
         .set('Authorization', token)
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal('Invalid document id');
+        .end((err, response) => {
+          expect(response.status).to.equal(400);
+          expect(response.body.message).to.equal('Invalid document id');
           done();
         });
     });
@@ -267,9 +268,9 @@ describe('Document controller', () => {
           .send({
             access: 'public',
           })
-          .end((err, res) => {
-            expect(res.status).to.equal(500);
-            expect(res.body.message).to.equal(
+          .end((err, response) => {
+            expect(response.status).to.equal(500);
+            expect(response.body.message).to.equal(
                 'Internal server error');
             done();
           });
@@ -295,13 +296,13 @@ describe('Document controller', () => {
         request
         .get('/api/v1/search/documents/?q=Se')
         .set('Authorization', adminToken)
-        .end((err, res) => {
+        .end((err, response) => {
           if (!err) {
-            expect(res.status).to.equal(200);
-            expect(res.body.documents[0].title).to.equal('Search docs');
-            expect(res.body.documents[0].content).to.equal(
+            expect(response.status).to.equal(200);
+            expect(response.body.documents[0].title).to.equal('Search docs');
+            expect(response.body.documents[0].content).to.equal(
               'Search documents routes test');
-            expect(res.body.documents[0].access).to.be.equal('public');
+            expect(response.body.documents[0].access).to.be.equal('public');
           }
           done();
         });
@@ -332,12 +333,12 @@ describe('Document controller', () => {
             .get('/api/v1/documents/1')
             .set('Authorization', token)
             .set('Accept', 'application/json')
-                .end((err, res) => {
-                  expect(res.status).to.equal(200);
-                  expect(res.body.document.id).to.equal(1);
-                  expect(res.body.document.title).to.equal('title');
-                  expect(res.body.document.content).to.equal('content');
-                  expect(res.body.document.access).to.equal('public');
+                .end((err, response) => {
+                  expect(response.status).to.equal(200);
+                  expect(response.body.document.id).to.equal(1);
+                  expect(response.body.document.title).to.equal('title');
+                  expect(response.body.document.content).to.equal('content');
+                  expect(response.body.document.access).to.equal('public');
                   done();
                 });
           });
@@ -356,9 +357,9 @@ describe('Document controller', () => {
         .delete('/api/v1/documents/seun')
         .set('Authorization', token)
         .send(document2)
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal('Invalid document id');
+        .end((err, response) => {
+          expect(response.status).to.equal(400);
+          expect(response.body.message).to.equal('Invalid document id');
           done();
         });
     });
@@ -368,9 +369,9 @@ describe('Document controller', () => {
         .delete('/api/v1/documents/2')
         .set('Authorization', token)
         .send(document2)
-        .end((err, res) => {
-          expect(res.status).to.equal(404);
-          expect(res.body.message).to.equal('Document does not exist');
+        .end((err, response) => {
+          expect(response.status).to.equal(404);
+          expect(response.body.message).to.equal('Document does not exist');
           done();
         });
     });
@@ -381,9 +382,9 @@ describe('Document controller', () => {
         .delete('/api/v1/documents/4586580090997876757645745')
         .set('Authorization', adminToken)
         .send(document2)
-        .end((err, res) => {
-          expect(res.status).to.equal(500);
-          expect(res.body.message).to.equal(
+        .end((err, response) => {
+          expect(response.status).to.equal(500);
+          expect(response.body.message).to.equal(
               'Server error, please try again');
           done();
         });
@@ -396,9 +397,9 @@ describe('Document controller', () => {
           request
             .delete('/api/v1/documents/1')
             .set('Authorization', adminToken)
-            .end((err, res) => {
-              expect(res.status).to.equal(200);
-              expect(res.body.message).to.equal(
+            .end((err, response) => {
+              expect(response.status).to.equal(200);
+              expect(response.body.message).to.equal(
                   'Document succesfully deleted');
               done();
             });

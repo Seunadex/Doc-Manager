@@ -14,17 +14,18 @@ const secret = process.env.SECRET;
 const UserControllers = {
   /**
    * @description Creates a new user.
-   * @param {Object} req
-   * @param {Object} res response object containing user details
+   * @param {Object} request
+   * @param {Object} response response object containing user details
    * @returns {Object} returns the response object
    */
-  create(req, res) {
-    const password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
+  create(request, response) {
+    const password = bcrypt.hashSync(request.body.password,
+      bcrypt.genSaltSync(10));
     return User.create({
       password,
-      fullName: req.body.fullName,
-      username: req.body.username,
-      email: req.body.email,
+      fullName: request.body.fullName,
+      username: request.body.username,
+      email: request.body.email,
     })
     .then((user) => {
       const token = jwt.sign({
@@ -43,35 +44,35 @@ const UserControllers = {
         'email',
         'roleId'
       ]);
-      return res.status(201).send({
+      return response.status(201).send({
         userDetails,
         token,
       });
     })
-    .catch(() => res.status(409).send({
+    .catch(() => response.status(409).send({
       message: 'User credentials already exist',
     }));
   },
 /**
    * @description Logs a user in after Authentication.
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Object} returns a response object
    * containing the user's login details
    */
-  login(req, res) {
+  login(request, response) {
     return User.findOne({
       where: {
-        username: req.body.username
+        username: request.body.username
       }
     }).then((user) => {
       if (!user) {
-        return res.status(400).send({ message: 'User not found' });
+        return response.status(400).send({ message: 'User not found' });
       }
-      const passkey = bcrypt.compareSync(req.body.password, user.password);
+      const passkey = bcrypt.compareSync(request.body.password, user.password);
       if (passkey) {
         const token = jwtHelper(user);
-        return res.status(200).send({
+        return response.status(200).send({
           User: {
             id: user.id,
             fullName: user.fullName,
@@ -83,25 +84,25 @@ const UserControllers = {
           token,
         });
       }
-      return res.status(401).send({ message: 'Incorrect password' });
+      return response.status(401).send({ message: 'Incorrect password' });
     })
-      .catch(error => res.status(500).send(error.message));
+      .catch(error => response.status(500).send(error.message));
   },
 
 
   /**
    * @description Gets the list of users with pagination
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Object} returns a response object
    * containing list of users with pagination
    */
-  index(req, res) {
-    const limit = req.query.limit || 10;
-    const offset = req.query.offset || 0;
+  index(request, response) {
+    const limit = request.query.limit || 10;
+    const offset = request.query.offset || 0;
 
     if (isNaN(limit) || isNaN(offset)) {
-      return res.status(400).send({
+      return response.status(400).send({
         message: 'limit and offset must be an integer'
       });
     }
@@ -117,25 +118,25 @@ const UserControllers = {
         'createdAt'
       ],
     })
-    .then(user => res.status(200).send({
+    .then(user => response.status(200).send({
       Users: user.rows,
       paginationDetails: pagination(user.count, limit, offset)
     }))
-    .catch(error => res.status(500).send(error.message));
+    .catch(error => response.status(500).send(error.message));
   },
 
 
   /**
    * @description Search for users by their username
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Object} returns a response object
    * containing the list of user registered
    */
-  search(req, res) {
+  search(request, response) {
     let searchKey = '%%';
-    if (req.query.q) {
-      searchKey = `%${req.query.q}%`;
+    if (request.query.q) {
+      searchKey = `%${request.query.q}%`;
     }
 
     return User
@@ -145,7 +146,7 @@ const UserControllers = {
       } },
       order: [['createdAt', 'DESC']]
     })
-    .then(users => res.status(200).send({
+    .then(users => response.status(200).send({
       count: users.length,
       userList: users.map(user => (
         {
@@ -154,24 +155,24 @@ const UserControllers = {
           createdAt: user.createdAt
         }))
     }))
-    .catch(error => res.status(400).send(error.message));
+    .catch(error => response.status(400).send(error.message));
   },
 
   /**
    * @description Gets a particular user by their id.
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Object} returns a response object
    */
-  show(req, res) {
-    if (!isUser(Number(req.params.id), req.decoded.userId) &&
-      (req.decoded.userRoleId !== 1)) {
-      return res.status(401).send({
+  show(request, response) {
+    if (!isUser(Number(request.params.id), request.decoded.userId) &&
+      (request.decoded.userRoleId !== 1)) {
+      return response.status(401).send({
         message: 'Oops, You are not allowed to view this page'
       });
     }
-    User.findById(req.params.id)
-      .then(user => res.status(200).send({
+    User.findById(request.params.id)
+      .then(user => response.status(200).send({
         id: user.id,
         fullName: user.fullName,
         username: user.username,
@@ -180,34 +181,34 @@ const UserControllers = {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
       }))
-    .catch(() => res.status(404).send({
+    .catch(() => response.status(404).send({
       message: 'User not found'
     }));
   },
 
   /**
    * @description Updates a user profile
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Object} returns a response object
    */
-  update(req, res) {
-    User.findById(req.params.id)
+  update(request, response) {
+    User.findById(request.params.id)
     .then((user) => {
       User.findAll({
         where: {
           $or: [{
-            email: req.body.email
+            email: request.body.email
           }, {
-            username: req.body.username
+            username: request.body.username
           }]
         }
       })
       .then((authenticatedUser) => {
         if (authenticatedUser.length
             && (authenticatedUser[0].dataValues.id !==
-              parseInt(req.params.id, 10))) {
-          return res.status(409).send({
+              parseInt(request.params.id, 10))) {
+          return response.status(409).send({
             message: 'A user exist with same email or username'
           });
         }
@@ -218,17 +219,17 @@ const UserControllers = {
           'roleId'
         ]);
         return user.update({
-          fullName: req.body.fullName || user.fullName,
-          username: req.body.username || user.username,
-          email: req.body.email || user.email,
-          password: bcrypt.hashSync(req.body.password,
+          fullName: request.body.fullName || user.fullName,
+          username: request.body.username || user.username,
+          email: request.body.email || user.email,
+          password: bcrypt.hashSync(request.body.password,
             bcrypt.genSaltSync(10)) || user.password,
         })
-        .then(() => res.status(200).send({
+        .then(() => response.status(200).send({
           userDetails,
         }));
       })
-    .catch(() => res.status(500).send({
+    .catch(() => response.status(500).send({
       message: 'Internal server error'
     }));
     }
@@ -237,54 +238,54 @@ const UserControllers = {
 
   /**
    * @description Deletes a user account
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Object} returns a response object
    * containing a message that a user has been deleted
    */
-  destroy(req, res) {
-    return User.findById(req.params.id)
+  destroy(request, response) {
+    return User.findById(request.params.id)
     .then((user) => {
-      if (!isUser(Number(req.params.id), req.decoded.userId) &&
-        (req.decoded.userRoleId !== 1)) {
-        return res.status(403).send({
+      if (!isUser(Number(request.params.id), request.decoded.userId) &&
+        (request.decoded.userRoleId !== 1)) {
+        return response.status(403).send({
           message: 'You Are not authorized to delete this user',
         });
       }
       return user.destroy()
-        .then(() => res.status(200).send({
+        .then(() => response.status(200).send({
           message: 'User successfully deleted'
         }));
     });
   },
 
   /**
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Object} returns a response object containing
    * the list to documents belonging to a certain user.
    */
-  listUserDocuments(req, res) {
+  listUserDocuments(request, response) {
     Document.findAll()
-      .then((response) => {
-        const count = response.length;
-        const offset = req.query.offset || 0;
-        const limit = req.query.limit || 10;
+      .then((result) => {
+        const count = result.length;
+        const offset = request.query.offset || 0;
+        const limit = request.query.limit || 10;
 
         return Document.findAll({
           where: {
-            userId: req.params.id
+            userId: request.params.id
           },
           limit,
           offset,
         })
           .then((documents) => {
             if (documents.length === 0) {
-              return res.status(404).send({
+              return response.status(404).send({
                 message: 'No document found for this user'
               });
             }
-            return res.status(200).send({
+            return response.status(200).send({
               documents,
               paginationDetails: pagination(count, limit, offset),
             });

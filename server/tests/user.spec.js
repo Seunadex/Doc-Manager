@@ -62,11 +62,11 @@ describe('User controllers', () => {
       .set('Authorization', adminToken)
       .set('Accept', 'application/json')
       .send(incompleteData)
-      .end((err, res) => {
-        expect(res.status).to.equal(400);
-        expect(res.body[0].msg).to.equal('Fullname is required');
-        expect(res.body[1].msg).to.equal('username is required');
-        expect(res.body[2].msg).to.equal('password is required');
+      .end((err, response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body[0].msg).to.equal('Fullname is required');
+        expect(response.body[1].msg).to.equal('username is required');
+        expect(response.body[2].msg).to.equal('password is required');
         done();
       });
     });
@@ -77,9 +77,10 @@ describe('User controllers', () => {
       .set('Authorization', adminToken)
       .set('Accept', 'application/json')
       .send(validAdmin)
-      .end((err, res) => {
-        expect(res.status).to.equal(409);
-        expect(res.body.message).to.equal('User credentials already exist');
+      .end((err, response) => {
+        expect(response.status).to.equal(409);
+        expect(response.body.message).to.equal(
+          'User credentials already exist');
         done();
       });
     });
@@ -88,14 +89,15 @@ describe('User controllers', () => {
       request
       .post('/api/v1/users')
       .send(validUser)
-      .end((err, res) => {
-        expect(res.status).to.equal(201);
-        expect(res.body.userDetails.id).to.equal(2);
-        expect(res.body.userDetails.roleId).to.equal(2);
-        expect(res.body.userDetails.fullName).to.equal('lionel messi');
-        expect(res.body.userDetails.username).to.equal('lionelmessi');
-        expect(res.body.userDetails.email).to.equal('lionelmessi@gmail.com');
-        expect(res.body).to.have.property('token');
+      .end((err, response) => {
+        expect(response.status).to.equal(201);
+        expect(response.body.userDetails.id).to.equal(2);
+        expect(response.body.userDetails.roleId).to.equal(2);
+        expect(response.body.userDetails.fullName).to.equal('lionel messi');
+        expect(response.body.userDetails.username).to.equal('lionelmessi');
+        expect(response.body.userDetails.email).to.equal(
+          'lionelmessi@gmail.com');
+        expect(response.body).to.have.property('token');
         done();
       });
     });
@@ -116,9 +118,9 @@ describe('User controllers', () => {
         password: passwordHash('ronald')
       })
       .set('Accept', 'application/json')
-      .end((err, res) => {
-        expect(res.status).to.equal(400);
-        expect(res.body.message).to.equal('User not found');
+      .end((err, response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body.message).to.equal('User not found');
         done();
       });
     });
@@ -131,9 +133,9 @@ describe('User controllers', () => {
         password: passwordHash('ronald')
       })
       .set('Accept', 'application/json')
-      .end((err, res) => {
-        expect(res.status).to.equal(401);
-        expect(res.body.message).to.equal('Incorrect password');
+      .end((err, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.message).to.equal('Incorrect password');
         done();
       });
     });
@@ -147,13 +149,13 @@ describe('User controllers', () => {
         password: 'aguero',
       })
       .expect(200)
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-        expect(res.body.User.fullName).to.equal('kun aguero');
-        expect(res.body.User.username).to.equal('sergioaguero');
-        expect(res.body.User.email).to.equal('kunaguero@gmail.com');
-        expect(res.body.User.role).to.equal(2);
-        expect(res.body.User).to.have.property('createdAt');
+      .end((err, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body.User.fullName).to.equal('kun aguero');
+        expect(response.body.User.username).to.equal('sergioaguero');
+        expect(response.body.User.email).to.equal('kunaguero@gmail.com');
+        expect(response.body.User.role).to.equal(2);
+        expect(response.body.User).to.have.property('createdAt');
         done();
       });
     });
@@ -171,13 +173,13 @@ describe('User controllers', () => {
         .get('/api/v1/users/1')
         .set('Authorization', adminToken)
         .set('Accept', 'application/json')
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res.body.id).to.equal(1);
-          expect(res.body.fullName).to.equal('jesse lingard');
-          expect(res.body.username).to.equal('jesse14');
-          expect(res.body.email).to.equal('jesse14@gmail.com');
-          expect(res.body.role).to.equal(2);
+        .end((err, response) => {
+          expect(response.status).to.equal(200);
+          expect(response.body.id).to.equal(1);
+          expect(response.body.fullName).to.equal('jesse lingard');
+          expect(response.body.username).to.equal('jesse14');
+          expect(response.body.email).to.equal('jesse14@gmail.com');
+          expect(response.body.role).to.equal(2);
           done();
         });
     });
@@ -186,9 +188,9 @@ describe('User controllers', () => {
         .get('/api/v1/users/1')
         .set('Authorization', token)
         .set('Accept', 'application/json')
-        .end((err, res) => {
-          expect(res.status).to.equal(401);
-          expect(res.body.message).to.equal(
+        .end((err, response) => {
+          expect(response.status).to.equal(401);
+          expect(response.body.message).to.equal(
               'Oops, You are not allowed to view this page');
           done();
         });
@@ -201,9 +203,9 @@ describe('User controllers', () => {
         .set('Authorization', invalidToken)
         .set('Accept', 'application/json')
         .expect(401)
-        .end((err, res) => {
-          expect(res.body.message).to.equal('Invalid token');
-          expect(res.status).to.equal(401);
+        .end((err, response) => {
+          expect(response.body.message).to.equal('Invalid token');
+          expect(response.status).to.equal(401);
           done();
         });
       done();
@@ -213,9 +215,9 @@ describe('User controllers', () => {
       request
         .get('/api/v1/users/33')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(404);
-          expect(res.body.message).to.equal('User not found');
+        .end((err, response) => {
+          expect(response.status).to.equal(404);
+          expect(response.body.message).to.equal('User not found');
           done();
         });
     });
@@ -224,9 +226,9 @@ describe('User controllers', () => {
       request
         .get('/api/v1/users/sd')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal('id must be a number');
+        .end((err, response) => {
+          expect(response.status).to.equal(400);
+          expect(response.body.message).to.equal('id must be a number');
           done();
         });
     });
@@ -235,9 +237,9 @@ describe('User controllers', () => {
       request
         .get('/api/v1/users/376519826565019825012875')
         .set('Authorization', token)
-        .end((err, res) => {
-          expect(res.status).to.equal(500);
-          expect(res.body.message).to.equal('Internal server error');
+        .end((err, response) => {
+          expect(response.status).to.equal(500);
+          expect(response.body.message).to.equal('Internal server error');
           done();
         });
     });
@@ -263,9 +265,9 @@ describe('User controllers', () => {
       request
         .get('/api/v1/users/33/documents')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(404);
-          expect(res.body.message).to.equal('User not found');
+        .end((err, response) => {
+          expect(response.status).to.equal(404);
+          expect(response.body.message).to.equal('User not found');
           done();
         });
     });
@@ -274,9 +276,9 @@ describe('User controllers', () => {
       request
         .get('/api/v1/users/dd/documents')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal('id must be a number');
+        .end((err, response) => {
+          expect(response.status).to.equal(400);
+          expect(response.body.message).to.equal('id must be a number');
           done();
         });
     });
@@ -285,13 +287,13 @@ describe('User controllers', () => {
       request
         .get('/api/v1/users/1/documents')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res.body.documents[0].id).to.equal(2);
-          expect(res.body.documents[1].title).to.equal('testing');
-          expect(res.body.documents[2].content).to.equal(
+        .end((err, response) => {
+          expect(response.status).to.equal(200);
+          expect(response.body.documents[0].id).to.equal(2);
+          expect(response.body.documents[1].title).to.equal('testing');
+          expect(response.body.documents[2].content).to.equal(
             'just testing this stuff');
-          expect(res.body.documents[1].access).to.equal('public');
+          expect(response.body.documents[1].access).to.equal('public');
           done();
         });
     });
@@ -299,8 +301,9 @@ describe('User controllers', () => {
       request
         .get('/api/v1/users/2/documents')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.body.message).to.equal('No document found for this user');
+        .end((err, response) => {
+          expect(response.body.message).to.equal(
+            'No document found for this user');
           done();
         });
     });
@@ -316,9 +319,9 @@ describe('User controllers', () => {
       request
         .get('/api/v1/users/?limit=yu&offset=0')
         .set({ Authorization: token })
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal(
+        .end((err, response) => {
+          expect(response.status).to.equal(400);
+          expect(response.body.message).to.equal(
             'limit and offset must be an integer');
           done();
         });
@@ -328,8 +331,8 @@ describe('User controllers', () => {
       request
         .get('/api/v1/users/?limit=3&offset=0')
         .set({ Authorization: adminToken })
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
+        .end((err, response) => {
+          expect(response.status).to.equal(200);
           done();
         });
     });
@@ -338,9 +341,9 @@ describe('User controllers', () => {
       request
         .get('/api/v1/users')
         .set('Accept', 'application/json')
-        .end((err, res) => {
-          expect(res.status).to.equal(401);
-          expect(res.body.message).to.equal(
+        .end((err, response) => {
+          expect(response.status).to.equal(401);
+          expect(response.body.message).to.equal(
             'Oops! You are not authenticated, Please Log in');
           done();
         });
@@ -357,13 +360,14 @@ describe('User controllers', () => {
       request
         .get('/api/v1/search/users/?q=cr')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res.body.count).to.be.greaterThan(0);
-          expect(res.body.userList.length).to.be.greaterThan(0);
-          expect(res.body.userList[0].username).to.equal('cr7');
-          expect(res.body.userList[0].fullName).to.equal('cristiano ronaldo');
-          expect(res.body.userList[0]).to.have.property('createdAt');
+        .end((err, response) => {
+          expect(response.status).to.equal(200);
+          expect(response.body.count).to.be.greaterThan(0);
+          expect(response.body.userList.length).to.be.greaterThan(0);
+          expect(response.body.userList[0].username).to.equal('cr7');
+          expect(response.body.userList[0].fullName).to.equal(
+            'cristiano ronaldo');
+          expect(response.body.userList[0]).to.have.property('createdAt');
           done();
         });
     });
@@ -372,9 +376,9 @@ describe('User controllers', () => {
       request
         .get('/api/v1/search/users/?q=just')
         .set('Authorization', invalidToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(401);
-          expect(res.body.message).to.equal('Invalid token');
+        .end((err, response) => {
+          expect(response.status).to.equal(401);
+          expect(response.body.message).to.equal('Invalid token');
           done();
         });
     });
@@ -382,9 +386,9 @@ describe('User controllers', () => {
       request
         .get('/api/v1/search/users/?q=hgjvqwhgj')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res.body.userList).to.eqls([]);
+        .end((err, response) => {
+          expect(response.status).to.equal(200);
+          expect(response.body.userList).to.eqls([]);
           done();
         });
     });
@@ -405,8 +409,8 @@ describe('User controllers', () => {
           password: 'aguero',
         })
         .expect(200)
-        .end((err, res) => {
-          const tokens = res.body.token;
+        .end((err, response) => {
+          const tokens = response.body.token;
           request
               .put('/api/v1/users/2')
               .send({
@@ -415,9 +419,9 @@ describe('User controllers', () => {
               .set('Authorization', `${tokens}`)
               .set('Accept', 'application/json')
               .expect('Content-Type', /json/)
-                  .end((err, res) => {
-                    expect(res.status).to.equal(409);
-                    expect(res.body.message).to.equal(
+                  .end((err, response) => {
+                    expect(response.status).to.equal(409);
+                    expect(response.body.message).to.equal(
                       'A user exist with same email or username');
                     done();
                   });
@@ -431,10 +435,10 @@ describe('User controllers', () => {
           .set('Authorization', token)
           .set('Accept', 'application/json')
           .expect(200)
-          .end((err, res) => {
+          .end((err, response) => {
             if (!err) {
-              expect(res.status).to.equal(404);
-              expect(res.body.message).to.equal('User not found');
+              expect(response.status).to.equal(404);
+              expect(response.body.message).to.equal('User not found');
             }
             done();
           });
@@ -444,8 +448,8 @@ describe('User controllers', () => {
       request
         .put('/api/v1/users/hh')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.body.message).to.equal('Id must be a number');
+        .end((err, response) => {
+          expect(response.body.message).to.equal('Id must be a number');
           done();
         });
     });
@@ -459,9 +463,9 @@ describe('User controllers', () => {
             .send({
               username: 'moses',
             })
-            .end((err, res) => {
-              expect(res.status).to.equal(403);
-              expect(res.body.message).to.equal(
+            .end((err, response) => {
+              expect(response.status).to.equal(403);
+              expect(response.body.message).to.equal(
                 'Oops! You are not allowed to update the user');
               done();
             });
@@ -480,9 +484,9 @@ describe('User controllers', () => {
       request
         .delete('/api/v1/users/1')
         .set('Authorization', token)
-        .end((err, res) => {
-          expect(res.status).to.equal(403);
-          expect(res.body.message).to.equal(
+        .end((err, response) => {
+          expect(response.status).to.equal(403);
+          expect(response.body.message).to.equal(
               'You Are not authorized to delete this user');
           done();
         });
@@ -492,9 +496,9 @@ describe('User controllers', () => {
       request
         .delete('/api/v1/users/10')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(404);
-          expect(res.body.message).to.equal('User not found');
+        .end((err, response) => {
+          expect(response.status).to.equal(404);
+          expect(response.body.message).to.equal('User not found');
           done();
         });
     });
@@ -502,9 +506,9 @@ describe('User controllers', () => {
       request
         .delete('/api/v1/users/10876529837465908475874659485764')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(500);
-          expect(res.body.message).to.equal('Internal server error');
+        .end((err, response) => {
+          expect(response.status).to.equal(500);
+          expect(response.body.message).to.equal('Internal server error');
           done();
         });
     });
@@ -513,9 +517,9 @@ describe('User controllers', () => {
       request
         .delete('/api/v1/users/1')
         .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res.body.message).to.equal(
+        .end((err, response) => {
+          expect(response.status).to.equal(200);
+          expect(response.body.message).to.equal(
               'User successfully deleted');
           done();
         });

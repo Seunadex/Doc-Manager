@@ -5,34 +5,34 @@ import { isUser } from '../helper/helper';
 const DocumentControllers = {
   /**
    * @description Creates a new document
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Object} returns a response object.
    */
-  create(req, res) {
-    const authorId = req.decoded.userId;
+  create(request, response) {
+    const authorId = request.decoded.userId;
     Document.findOne({
       where: {
-        title: req.body.title
+        title: request.body.title
       }
     })
     .then((documents) => {
       if (documents) {
-        return res.status(409).send({
+        return response.status(409).send({
           message: 'A document already exist with same title',
         });
       }
       Document.create({
-        title: req.body.title,
-        content: req.body.content,
+        title: request.body.title,
+        content: request.body.content,
         userId: authorId,
-        access: req.body.access
+        access: request.body.access
       })
-    .then(document => res.status(201).send(
+    .then(document => response.status(201).send(
       {
         document,
       }))
-    .catch(() => res.status(400).send(
+    .catch(() => response.status(400).send(
       {
         message: 'Access field must be either PUBLIC, PRIVATE or ROLE'
       }));
@@ -41,32 +41,32 @@ const DocumentControllers = {
 
   /**
    * @description Fetch all documents
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Object} returns the list of documents available
    */
 
-  index(req, res) {
-    const limit = req.query.limit || 10;
-    const offset = req.query.offset || 0;
+  index(request, response) {
+    const limit = request.query.limit || 10;
+    const offset = request.query.offset || 0;
 
     if (isNaN(limit) || isNaN(offset)) {
-      return res.status(400).send({
+      return response.status(400).send({
         message: 'limit and offset must be an integer'
       });
     }
-    if (req.query) {
+    if (request.query) {
       return Document.findAndCount({
         limit,
         offset,
       })
-      .then(document => res.status(200).send({
+      .then(document => response.status(200).send({
         pagination: {
           document: document.rows,
           paginationDetails: pagination(document.count, limit, offset)
         }
       }))
-      .catch(() => res.status(400).send({
+      .catch(() => response.status(400).send({
         message: 'limits and offsets must be number'
       }));
     }
@@ -74,21 +74,21 @@ const DocumentControllers = {
 
   /**
    * @description find document by id
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Object} returns the requested document
    */
-  show(req, res) {
-    Document.findById(req.params.id)
+  show(request, response) {
+    Document.findById(request.params.id)
       .then((document) => {
-        if (isUser(document.userId, req.decoded.id) ||
+        if (isUser(document.userId, request.decoded.id) ||
           document.access === 'private') {
-          return res.status(403).send({
+          return response.status(403).send({
             message: "You don't have permission to access this document"
           });
         }
 
-        return res.status(200).send({
+        return response.status(200).send({
           document,
         });
       });
@@ -96,20 +96,21 @@ const DocumentControllers = {
 
   /**
    * @description Updates the document
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Object} returns the updated document
    */
-  update(req, res) {
+  update(request, response) {
     return Document.find({
       where: {
-        id: req.params.id,
+        id: request.params.id,
       },
     })
       .then((document) => {
         if (document) {
-          return document.update(req.body, { fields: Object.keys(req.body) })
-          .then(() => res.status(200).send({
+          return document.update(request.body, { fields:
+            Object.keys(request.body) })
+          .then(() => response.status(200).send({
             document,
           }));
         }
@@ -117,53 +118,53 @@ const DocumentControllers = {
   },
 
   /**
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Object} returns a message indicating
    * that a document has been deleted
    */
-  destroy(req, res) {
-    if (isNaN(Number(req.params.id))) {
-      return res.status(400).json({
+  destroy(request, response) {
+    if (isNaN(Number(request.params.id))) {
+      return response.status(400).json({
         message: 'Invalid document id'
       });
     }
     return Document.find({
       where: {
-        id: req.params.id,
+        id: request.params.id,
       },
     })
     .then((document) => {
       if (!document) {
-        return res.status(404).send({
+        return response.status(404).send({
           message: 'Document does not exist',
         });
       }
       return document.destroy()
-        .then(() => res.status(200).send({
+        .then(() => response.status(200).send({
           message: 'Document succesfully deleted',
         }))
-        .catch(() => res.status(400).send({
+        .catch(() => response.status(400).send({
           message: 'Problem encountered, please try again'
         }));
     })
-    .catch(() => res.status(500).send({
+    .catch(() => response.status(500).send({
       message: 'Server error, please try again'
     }));
   },
 
   /**
    * @description Deletes a document
-   * @param {Object} req
-   * @param {Object} res
+   * @param {Object} request
+   * @param {Object} response
    * @returns {Response} Response object
    */
-  search(req, res) {
-    const verifiedRoleId = req.decoded.userRoleId;
-    const userId = req.decoded.userId;
+  search(request, response) {
+    const verifiedRoleId = request.decoded.userRoleId;
+    const userId = request.decoded.userId;
     let searchKey = '%%';
-    if (req.query.q) {
-      searchKey = `%${req.query.q}%` || `%${req.body.search}%`;
+    if (request.query.q) {
+      searchKey = `%${request.query.q}%` || `%${request.body.search}%`;
     }
     const searchParam = verifiedRoleId === 1 ? {
       $or: [{ title: { $iLike: searchKey } }]
@@ -186,11 +187,11 @@ const DocumentControllers = {
       where: searchParam,
       order: [['createdAt', 'DESC']]
     })
-    .then(documents => res.status(200).send({
+    .then(documents => response.status(200).send({
       count: documents.length,
       documents
     }))
-    .catch(error => res.status(400).send(error.message));
+    .catch(error => response.status(400).send(error.message));
   },
 };
 
