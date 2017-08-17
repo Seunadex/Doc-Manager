@@ -18,8 +18,8 @@ const {
   invalidAccess,
   validDoc
  } = documentHelpers;
-const adminToken2 = jwtHelper(validAdmin);
-const token2 = jwtHelper(validUser);
+const adminToken = jwtHelper(validAdmin);
+const token = jwtHelper(validUser);
 
 describe('Document controller', () => {
   beforeEach((done) => {
@@ -72,7 +72,7 @@ describe('Document controller', () => {
       request
         .post('/api/v1/documents')
         .send(sameTitle)
-        .set('Authorization', adminToken2)
+        .set('Authorization', adminToken)
         .set('Accept', 'application/json')
         .end((err, res) => {
           expect(res.status).to.equal(409);
@@ -88,7 +88,7 @@ describe('Document controller', () => {
         });
       request
         .get('/api/v1/documents')
-        .set('Authorization', adminToken2)
+        .set('Authorization', adminToken)
         .set('Accept', 'application/json')
         .end((err, res) => {
           expect(res.status).to.equal(200);
@@ -101,7 +101,7 @@ describe('Document controller', () => {
       Document.bulkCreate([document1, document2, document3]).then(() => {
         request
         .get('/api/v1/documents/?limit=2&offset=0')
-        .set('Authorization', adminToken2)
+        .set('Authorization', adminToken)
         .end((err, res) => {
           expect(res.status).to.equal(200);
           done();
@@ -112,7 +112,7 @@ describe('Document controller', () => {
     it('should return error with non-integer limit or offset', (done) => {
       request
         .get('/api/v1/documents/?limit=e&offset=t')
-        .set('Authorization', adminToken2)
+        .set('Authorization', adminToken)
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(res.body.message).to.equal(
@@ -142,7 +142,7 @@ describe('Document controller', () => {
     it('should return error message for invalid input data', (done) => {
       request
         .post('/api/v1/documents')
-        .set('Authorization', token2)
+        .set('Authorization', token)
         .send(emptyDoc)
         .end((err, res) => {
           expect(res.body[0].msg).to.equal('Document title must be entered');
@@ -155,7 +155,7 @@ describe('Document controller', () => {
     it('should return an error for invalid access', (done) => {
       request
         .post('/api/v1/documents')
-        .set('Authorization', adminToken2)
+        .set('Authorization', adminToken)
         .send(invalidAccess)
         .end((err, res) => {
           expect(res.status).to.equal(400);
@@ -169,7 +169,7 @@ describe('Document controller', () => {
       request
             .post('/api/v1/documents')
             .send(validDoc)
-            .set('Authorization', token2)
+            .set('Authorization', token)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
                 .end((err, res) => {
@@ -196,7 +196,7 @@ describe('Document controller', () => {
     it('should return an error message when document is not found', (done) => {
       request
         .put('/api/v1/documents/1')
-        .set('Authorization', adminToken2)
+        .set('Authorization', adminToken)
         .end((err, res) => {
           expect(res.status).to.equal(404);
           expect(res.body.message).to.equal('Document not found');
@@ -207,7 +207,7 @@ describe('Document controller', () => {
     it('should return error for invalid document id', (done) => {
       request
         .put('/api/v1/documents/seun')
-        .set('Authorization', adminToken2)
+        .set('Authorization', adminToken)
         .send(document2)
         .end((err, res) => {
           expect(res.status).to.equal(400);
@@ -223,7 +223,7 @@ describe('Document controller', () => {
 
       request
         .put('/api/v1/documents/1')
-        .set('Authorization', token2)
+        .set('Authorization', token)
         .send({
           title: 'Test',
           content: 'Running Tests with invalid id',
@@ -245,7 +245,7 @@ describe('Document controller', () => {
     it('should return an error message for id not a number', (done) => {
       request
         .put('/api/v1/documents/we')
-        .set('Authorization', token2)
+        .set('Authorization', token)
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(res.body.message).to.equal('Invalid document id');
@@ -263,7 +263,7 @@ describe('Document controller', () => {
       Document.create(document).then(() => {
         request
           .put('/api/v1/documents/1012435787876776785756454')
-          .set('Authorization', adminToken2)
+          .set('Authorization', adminToken)
           .send({
             access: 'public',
           })
@@ -294,7 +294,7 @@ describe('Document controller', () => {
       }).then(() => {
         request
         .get('/api/v1/search/documents/?q=Se')
-        .set('Authorization', adminToken2)
+        .set('Authorization', adminToken)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
@@ -324,13 +324,13 @@ describe('Document controller', () => {
             content: 'content',
             access: 'public'
           })
-           .set('Authorization', token2)
+           .set('Authorization', token)
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .end(() => {
             request
             .get('/api/v1/documents/1')
-            .set('Authorization', token2)
+            .set('Authorization', token)
             .set('Accept', 'application/json')
                 .end((err, res) => {
                   expect(res.status).to.equal(200);
@@ -354,7 +354,7 @@ describe('Document controller', () => {
     it('should return error for invalid document id', (done) => {
       request
         .delete('/api/v1/documents/seun')
-        .set('Authorization', token2)
+        .set('Authorization', token)
         .send(document2)
         .end((err, res) => {
           expect(res.status).to.equal(400);
@@ -366,7 +366,7 @@ describe('Document controller', () => {
     it('should return error for non-existing document', (done) => {
       request
         .delete('/api/v1/documents/2')
-        .set('Authorization', token2)
+        .set('Authorization', token)
         .send(document2)
         .end((err, res) => {
           expect(res.status).to.equal(404);
@@ -379,7 +379,7 @@ describe('Document controller', () => {
       Document.create(document2).then(() => {
         request
         .delete('/api/v1/documents/4586580090997876757645745')
-        .set('Authorization', adminToken2)
+        .set('Authorization', adminToken)
         .send(document2)
         .end((err, res) => {
           expect(res.status).to.equal(500);
@@ -395,7 +395,7 @@ describe('Document controller', () => {
         .then(() => {
           request
             .delete('/api/v1/documents/1')
-            .set('Authorization', adminToken2)
+            .set('Authorization', adminToken)
             .end((err, res) => {
               expect(res.status).to.equal(200);
               expect(res.body.message).to.equal(
