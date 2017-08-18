@@ -385,7 +385,7 @@ describe('Document controller', () => {
         .end((err, response) => {
           expect(response.status).to.equal(500);
           expect(response.body.message).to.equal(
-              'Server error, please try again');
+            'Internal server error');
           done();
         });
       });

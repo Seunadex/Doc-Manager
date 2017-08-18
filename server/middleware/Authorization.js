@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import models from '../models';
+import errorMsg from '../helper/errorMsg';
+
+const { userError, serverError } = errorMsg;
 
 dotenv.config();
 
@@ -47,7 +50,7 @@ class Authorization {
   findById(request, response, next) {
     if (isNaN(request.params.id)) {
       return response.status(400).send({
-        message: 'id must be a number'
+        message: userError.idIsNumber
       });
     }
     models.User.findById(request.params.id)
@@ -60,7 +63,7 @@ class Authorization {
       next();
     })
     .catch(() => response.status(500).send({
-      message: 'Internal server error'
+      message: serverError.internalServerError
     }));
   }
 
@@ -76,7 +79,7 @@ class Authorization {
   verifyCurrentUser(request, response, next) {
     if (isNaN(request.params.id)) {
       return response.status(400).send({
-        message: 'Id must be a number'
+        message: userError.idIsNumber
       });
     }
     if (Number(request.params.id) === parseInt(request.decoded.userId, 10)) {
@@ -113,7 +116,7 @@ class Authorization {
         next();
       })
       .catch(() => response.status(500).send({
-        message: 'Internal server error'
+        message: serverError.internalServerError
       }));
   }
 }
