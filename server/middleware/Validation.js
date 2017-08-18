@@ -31,6 +31,28 @@ class Validation {
 
   /**
    *
+   *
+   * @param {Object} request
+   * @param {Object} response
+   * @param {callback} next
+   * @returns {json} returns the error (if there's any) in a JSON format
+   * @memberof Validation
+   */
+  validateLoginInput(request, response, next) {
+    request.checkBody('username', 'username is required').notEmpty();
+    request.checkBody('password', 'password is required').notEmpty();
+
+    const errors = request.validationErrors();
+    if (errors) {
+      const unwanted = ['param', 'value'];
+      const errorMsg = errors.map(omit(unwanted));
+      return response.status(400).json(errorMsg);
+    }
+    return next();
+  }
+
+  /**
+   *
    * @param {Object} request
    * @param {Object} response
    * @param {callback} next

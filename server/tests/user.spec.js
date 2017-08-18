@@ -114,13 +114,12 @@ describe('User controllers', () => {
       request
       .post('/api/v1/users/login')
       .send({
-        username: '',
         password: passwordHash('ronald')
       })
       .set('Accept', 'application/json')
       .end((err, response) => {
         expect(response.status).to.equal(400);
-        expect(response.body.message).to.equal('User not found');
+        expect(response.body[0].msg).to.equal('username is required');
         done();
       });
     });
@@ -228,7 +227,7 @@ describe('User controllers', () => {
         .set('Authorization', adminToken)
         .end((err, response) => {
           expect(response.status).to.equal(400);
-          expect(response.body.message).to.equal('id must be a number');
+          expect(response.body.message).to.equal('Id must be a number');
           done();
         });
     });
@@ -278,7 +277,7 @@ describe('User controllers', () => {
         .set('Authorization', adminToken)
         .end((err, response) => {
           expect(response.status).to.equal(400);
-          expect(response.body.message).to.equal('id must be a number');
+          expect(response.body.message).to.equal('Id must be a number');
           done();
         });
     });

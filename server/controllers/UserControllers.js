@@ -4,12 +4,14 @@ import bcrypt from 'bcryptjs';
 import _ from 'lodash';
 import pagination from '../helper/pagination';
 import { User, Document } from '../models';
-import { isUser } from '../helper/helper';
+import { isUser, passwordHash } from '../helper/helper';
 import jwtHelper from '../helper/jwtHelper';
+import errorMsg from '../helper/errorMsg';
 
 dotenv.config();
 
 const secret = process.env.SECRET;
+const { userError, serverError } = errorMsg;
 
 const UserControllers = {
   /**
@@ -19,8 +21,7 @@ const UserControllers = {
    * @returns {Object} returns the response object
    */
   create(request, response) {
-    const password = bcrypt.hashSync(request.body.password,
-      bcrypt.genSaltSync(10));
+    const password = passwordHash(request.body.password);
     return User.create({
       password,
       fullName: request.body.fullName,
@@ -84,9 +85,11 @@ const UserControllers = {
           token,
         });
       }
-      return response.status(401).send({ message: 'Incorrect password' });
+      return response.status(401).send({
+        message: userError.incorrectPassword });
     })
-      .catch(error => response.status(500).send(error.message));
+      .catch(() => response.status(401).send({
+        message: userError.incorrectEmailOrPassword }));
   },
 
 
@@ -122,7 +125,8 @@ const UserControllers = {
       Users: user.rows,
       paginationDetails: pagination(user.count, limit, offset)
     }))
-    .catch(error => response.status(500).send(error.message));
+    .catch(() => response.status(500).send({
+      message: serverError.internalServerError }));
   },
 
 
@@ -155,7 +159,8 @@ const UserControllers = {
           createdAt: user.createdAt
         }))
     }))
-    .catch(error => response.status(400).send(error.message));
+    .catch(() => response.status().send({
+      message: serverError.internalServerError }));
   },
 
   /**
@@ -230,7 +235,7 @@ const UserControllers = {
         }));
       })
     .catch(() => response.status(500).send({
-      message: 'Internal server error'
+      message: serverError.internalServerError
     }));
     }
     );
@@ -274,7 +279,7 @@ const UserControllers = {
 
         return Document.findAll({
           where: {
-            userId: request.params.id
+            userId: request.params.id,
           },
           limit,
           offset,

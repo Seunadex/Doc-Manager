@@ -1,6 +1,9 @@
 import pagination from '../helper/pagination';
 import { Document } from '../models';
 import { isUser } from '../helper/helper';
+import errorMsg from '../helper/errorMsg';
+
+const { serverError } = errorMsg;
 
 const DocumentControllers = {
   /**
@@ -57,6 +60,9 @@ const DocumentControllers = {
     }
     if (request.query) {
       return Document.findAndCount({
+        where: {
+          access: 'public'
+        },
         limit,
         offset,
       })
@@ -149,7 +155,7 @@ const DocumentControllers = {
         }));
     })
     .catch(() => response.status(500).send({
-      message: 'Server error, please try again'
+      message: serverError.internalServerError
     }));
   },
 
