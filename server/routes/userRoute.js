@@ -12,7 +12,8 @@ export default (router) => {
     Authorization.findById,
     UserControllers.show);
 
-  router.get('/api/v1/users', Authorization.verifyUser, UserControllers.index);
+  router.get('/api/v1/users', Authorization.verifyUser,
+  Authorization.verifyAdmin, UserControllers.index);
 
   router.get('/api/v1/search/users', Authorization.verifyUser,
     UserControllers.search);

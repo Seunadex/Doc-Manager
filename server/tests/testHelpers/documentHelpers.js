@@ -49,5 +49,13 @@ export default {
     access: 'public',
     userId: 2,
     roleId: 2,
+  },
+
+  titleString: {
+    title: 233,
+    content: 'the future is now',
+    access: 'public',
+    userId: 2,
+    roleId: 2,
   }
 };

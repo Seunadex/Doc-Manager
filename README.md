@@ -98,7 +98,7 @@ GET /api/v1/documents/page/?limit={integer}&offset={integer} | Pagination for do
 * Fork the repo.
 * Open a new branch for the feature to add.
 * Follow the correct style guide and folder/file naming convention by **[Airbnb](https://github.com/airbnb/javascript)** for consistency.
-* Strictly adhere to the correct PR, commit messages, and branch naming convention as compiled **[here](https://github.com/andela/temari-rc/wiki/Pull-Request-Naming-and-Description-Convention)**
+* Strictly adhere to the correct PR, commit messages, and branch naming convention as compiled in this **[wiki](https://github.com/Seunadex/Doc-Manager/wiki)**
 * Use the eslint configuration in this app.
 * Create a pull request.
   * Write a short description of what the PR does.

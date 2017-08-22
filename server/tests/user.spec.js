@@ -150,11 +150,11 @@ describe('User controllers', () => {
       .expect(200)
       .end((err, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body.User.fullName).to.equal('kun aguero');
-        expect(response.body.User.username).to.equal('sergioaguero');
-        expect(response.body.User.email).to.equal('kunaguero@gmail.com');
-        expect(response.body.User.role).to.equal(2);
-        expect(response.body.User).to.have.property('createdAt');
+        expect(response.body.userDetails.fullName).to.equal('kun aguero');
+        expect(response.body.userDetails.username).to.equal('sergioaguero');
+        expect(response.body.userDetails.email).to.equal('kunaguero@gmail.com');
+        expect(response.body.userDetails.role).to.equal(2);
+        expect(response.body.userDetails).to.have.property('createdAt');
         done();
       });
     });
@@ -174,11 +174,11 @@ describe('User controllers', () => {
         .set('Accept', 'application/json')
         .end((err, response) => {
           expect(response.status).to.equal(200);
-          expect(response.body.id).to.equal(1);
-          expect(response.body.fullName).to.equal('jesse lingard');
-          expect(response.body.username).to.equal('jesse14');
-          expect(response.body.email).to.equal('jesse14@gmail.com');
-          expect(response.body.role).to.equal(2);
+          expect(response.body.userDetails.id).to.equal(1);
+          expect(response.body.userDetails.fullName).to.equal('jesse lingard');
+          expect(response.body.userDetails.username).to.equal('jesse14');
+          expect(response.body.userDetails.email).to.equal('jesse14@gmail.com');
+          expect(response.body.userDetails.role).to.equal(2);
           done();
         });
     });
@@ -188,7 +188,7 @@ describe('User controllers', () => {
         .set('Authorization', token)
         .set('Accept', 'application/json')
         .end((err, response) => {
-          expect(response.status).to.equal(401);
+          expect(response.status).to.equal(403);
           expect(response.body.message).to.equal(
               'Oops, You are not allowed to view this page');
           done();
@@ -288,11 +288,11 @@ describe('User controllers', () => {
         .set('Authorization', adminToken)
         .end((err, response) => {
           expect(response.status).to.equal(200);
-          expect(response.body.documents[0].id).to.equal(2);
-          expect(response.body.documents[1].title).to.equal('testing');
-          expect(response.body.documents[2].content).to.equal(
+          expect(response.body.documents[0].id).to.equal(1);
+          expect(response.body.documents[0].title).to.equal('testing');
+          expect(response.body.documents[0].content).to.equal(
             'just testing this stuff');
-          expect(response.body.documents[1].access).to.equal('public');
+          expect(response.body.documents[0].access).to.equal('public');
           done();
         });
     });
@@ -314,10 +314,10 @@ describe('User controllers', () => {
         done();
       });
     });
-    it('should return error with incorrect data', (done) => {
+    it('should return error with limit or offset not an integer', (done) => {
       request
         .get('/api/v1/users/?limit=yu&offset=0')
-        .set({ Authorization: token })
+        .set({ Authorization: adminToken })
         .end((err, response) => {
           expect(response.status).to.equal(400);
           expect(response.body.message).to.equal(
@@ -362,11 +362,11 @@ describe('User controllers', () => {
         .end((err, response) => {
           expect(response.status).to.equal(200);
           expect(response.body.count).to.be.greaterThan(0);
-          expect(response.body.userList.length).to.be.greaterThan(0);
-          expect(response.body.userList[0].username).to.equal('cr7');
-          expect(response.body.userList[0].fullName).to.equal(
+          expect(response.body.userDetails.length).to.be.greaterThan(0);
+          expect(response.body.userDetails[0].username).to.equal('cr7');
+          expect(response.body.userDetails[0].fullName).to.equal(
             'cristiano ronaldo');
-          expect(response.body.userList[0]).to.have.property('createdAt');
+          expect(response.body.userDetails[0]).to.have.property('createdAt');
           done();
         });
     });
@@ -387,7 +387,7 @@ describe('User controllers', () => {
         .set('Authorization', adminToken)
         .end((err, response) => {
           expect(response.status).to.equal(200);
-          expect(response.body.userList).to.eqls([]);
+          expect(response.body.userDetails).to.eqls([]);
           done();
         });
     });
