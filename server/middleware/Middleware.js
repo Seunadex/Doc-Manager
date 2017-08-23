@@ -12,7 +12,7 @@ dotenv.config();
  * authorization class
  * @class Authorization
  */
-export default class Authorization {
+export default class Middleware {
 
   /**
    * @description verify authentication
