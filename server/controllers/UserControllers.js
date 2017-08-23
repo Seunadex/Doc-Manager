@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import _ from 'lodash';
 import pagination from '../helper/pagination';
 import { User, Document } from '../models';
-import { isUser, passwordHash } from '../helper/helper';
+import { isUser, passwordHash, generateUserDetails } from '../helper/helper';
 import jwtHelper from '../helper/jwtHelper';
 import errorMsg from '../helper/errorMsg';
 
@@ -60,14 +60,7 @@ const UserControllers = {
       if (passkey) {
         const token = jwtHelper(user);
         return response.status(200).send({
-          userDetails: {
-            id: user.id,
-            fullName: user.fullName,
-            username: user.username,
-            email: user.email,
-            role: user.roleId,
-            createdAt: user.createdAt
-          },
+          userDetails: generateUserDetails(user),
           token,
         });
       }
@@ -75,7 +68,7 @@ const UserControllers = {
         message: userError.incorrectPassword });
     })
       .catch(() => response.status(401).send({
-        message: userError.incorrectEmailOrPassword }));
+        message: userError.incorrectUsernameOrPassword }));
   },
 
 
@@ -164,15 +157,7 @@ const UserControllers = {
     }
     User.findById(request.params.id)
       .then(user => response.status(200).send({
-        userDetails: {
-          id: user.id,
-          fullName: user.fullName,
-          username: user.username,
-          email: user.email,
-          role: user.roleId,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt
-        }
+        userDetails: generateUserDetails(user)
       }))
     .catch(() => response.status(404).send({
       message: 'User not found'
@@ -205,12 +190,6 @@ const UserControllers = {
             message: 'A user exist with same email or username'
           });
         }
-        const userDetails = _.pick(user, [
-          'fullName',
-          'username',
-          'email',
-          'roleId'
-        ]);
         return user.update({
           fullName: request.body.fullName || user.fullName,
           username: request.body.username || user.username,
@@ -219,7 +198,7 @@ const UserControllers = {
             bcrypt.genSaltSync(10)) || user.password,
         })
         .then(() => response.status(200).send({
-          userDetails,
+          userDetails: generateUserDetails(user)
         }));
       })
     .catch(() => response.status(500).send({

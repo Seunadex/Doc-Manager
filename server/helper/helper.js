@@ -32,3 +32,21 @@ export function isAdmin(roleId) {
   return roleId === 1;
 }
 
+/**
+ * @description generates user details
+ * @export
+ * @param {Object} user
+ * @returns {Object} returns generated user object
+ */
+export function generateUserDetails(user) {
+  return {
+    id: user.id,
+    fullName: user.fullName,
+    username: user.username,
+    email: user.email,
+    roleId: user.roleId,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt
+  };
+}
+

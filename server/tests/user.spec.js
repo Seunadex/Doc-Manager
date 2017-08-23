@@ -110,6 +110,21 @@ describe('User controllers', () => {
       });
     });
 
+    it('should return error message when user does not exist in the database',
+    () => {
+      request
+      .post('/api/v1/users/login')
+      .send({
+        username: 'uiyre',
+        password: 'jhsab'
+      })
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        expect(response.status).to.equal(404);
+        expect(response.body.message).to.equal('User not found');
+      });
+    });
+
     it('should return error with invalid details', (done) => {
       request
       .post('/api/v1/users/login')
@@ -124,7 +139,7 @@ describe('User controllers', () => {
       });
     });
 
-    it('should return error with incorrect password', (done) => {
+    it('should return error message with incorrect password', (done) => {
       request
       .post('/api/v1/users/login')
       .send({
@@ -153,7 +168,7 @@ describe('User controllers', () => {
         expect(response.body.userDetails.fullName).to.equal('kun aguero');
         expect(response.body.userDetails.username).to.equal('sergioaguero');
         expect(response.body.userDetails.email).to.equal('kunaguero@gmail.com');
-        expect(response.body.userDetails.role).to.equal(2);
+        expect(response.body.userDetails.roleId).to.equal(2);
         expect(response.body.userDetails).to.have.property('createdAt');
         done();
       });
@@ -178,7 +193,7 @@ describe('User controllers', () => {
           expect(response.body.userDetails.fullName).to.equal('jesse lingard');
           expect(response.body.userDetails.username).to.equal('jesse14');
           expect(response.body.userDetails.email).to.equal('jesse14@gmail.com');
-          expect(response.body.userDetails.role).to.equal(2);
+          expect(response.body.userDetails.roleId).to.equal(2);
           done();
         });
     });
@@ -399,6 +414,7 @@ describe('User controllers', () => {
         done();
       });
     });
+
     it('should return error message on email/username conflict', (done) => {
       User.create(userTwo).then(() => {
         request
