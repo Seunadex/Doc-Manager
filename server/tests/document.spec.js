@@ -17,7 +17,8 @@ const {
   emptyDoc,
   invalidAccess,
   validDoc,
-  titleString
+  titleString,
+  privateDoc
  } = documentHelpers;
 const adminToken = jwtHelper(validAdmin);
 const token = jwtHelper(validUser);
@@ -83,7 +84,7 @@ describe('Document controller', () => {
         });
     });
 
-    it('should get all documents', (done) => {
+    it('should get all documents if user is admin', (done) => {
       Document.create(document1)
         .then(() => {
         });
@@ -147,7 +148,7 @@ describe('Document controller', () => {
       });
     });
 
-    it('should return error message for invalid input data', (done) => {
+    it('should return error message for invalid/empty input data', (done) => {
       request
         .post('/api/v1/documents')
         .set('Authorization', token)
@@ -330,6 +331,21 @@ describe('Document controller', () => {
   });
 
   describe('Get DocumentById: GET /api/v1/documents/:id', () => {
+    it('should return error message when user does not have access', (done) => {
+      Document.create(privateDoc)
+      .then(() => {
+      });
+
+      request
+      .get('/api/v1/documents/1')
+      .set('Authorization', token)
+      .end((err, response) => {
+        expect(response.status).to.equal(403);
+        expect(response.body.message).to.equal(
+          'You do not have access to this document');
+        done();
+      });
+    });
     it('should return error message when document does not exist', (done) => {
       request
       .get('/api/v1/documents/5')
@@ -410,7 +426,7 @@ describe('Document controller', () => {
       });
     });
 
-    it('should return a message indicating a document deleted', (done) => {
+    it('should return a message indicating a document is deleted', (done) => {
       Document.create(document3)
         .then(() => {
           request

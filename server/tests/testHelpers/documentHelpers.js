@@ -30,6 +30,13 @@ export default {
     userId: 1,
     roleId: 1,
   },
+  privateDoc: {
+    title: 'private doc',
+    content: 'lkajksdhlvkdjsnlkd',
+    access: 'private',
+    userId: 1,
+    roleId: 1,
+  },
 
   emptyDoc: {
     title: '',

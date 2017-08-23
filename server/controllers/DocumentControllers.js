@@ -119,7 +119,10 @@ const DocumentControllers = {
         return response.status(200).send({
           document,
         });
-      });
+      })
+      .catch(() => response.status(500).send({
+        message: serverError.internalServerError
+      }));
   },
 
   /**
@@ -246,7 +249,9 @@ const DocumentControllers = {
       count: documents.length,
       documents
     }))
-    .catch(error => response.status(400).send(error.message));
+    .catch(() => response.status(500).send({
+      message: serverError.internalServerError
+    }));
   },
 };
 
