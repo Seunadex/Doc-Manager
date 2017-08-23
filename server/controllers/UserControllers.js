@@ -1,5 +1,3 @@
-import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import _ from 'lodash';
 import pagination from '../helper/pagination';
@@ -8,15 +6,12 @@ import { isUser, passwordHash } from '../helper/helper';
 import jwtHelper from '../helper/jwtHelper';
 import errorMsg from '../helper/errorMsg';
 
-dotenv.config();
-
-const secret = process.env.SECRET;
 const { userError, serverError } = errorMsg;
 
 const UserControllers = {
   /**
    * @description Creates a new user.
-   * @param {Object} request
+   * @param {Object} request client request
    * @param {Object} response response object containing user details
    * @returns {Object} returns the response object
    */
@@ -29,15 +24,6 @@ const UserControllers = {
       email: request.body.email,
     })
     .then((user) => {
-      const token = jwt.sign({
-        userId: user.id,
-        userFullName: user.fullName,
-        userUsername: user.username,
-        userEmail: user.email,
-        userRoleId: user.roleId,
-      }, secret, {
-        expiresIn: '72h'
-      });
       const userDetails = _.pick(user, [
         'id',
         'fullName',
@@ -47,7 +33,7 @@ const UserControllers = {
       ]);
       return response.status(201).send({
         userDetails,
-        token,
+        token: jwtHelper(user)
       });
     })
     .catch(() => response.status(409).send({
@@ -56,8 +42,8 @@ const UserControllers = {
   },
 /**
    * @description Logs a user in after Authentication.
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request client request
+   * @param {Object} response server response
    * @returns {Object} returns a response object
    * containing the user's login details
    */
@@ -68,13 +54,13 @@ const UserControllers = {
       }
     }).then((user) => {
       if (!user) {
-        return response.status(400).send({ message: 'User not found' });
+        return response.status(404).send({ message: 'User not found' });
       }
       const passkey = bcrypt.compareSync(request.body.password, user.password);
       if (passkey) {
         const token = jwtHelper(user);
         return response.status(200).send({
-          User: {
+          userDetails: {
             id: user.id,
             fullName: user.fullName,
             username: user.username,
@@ -95,8 +81,8 @@ const UserControllers = {
 
   /**
    * @description Gets the list of users with pagination
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request client request
+   * @param {Object} response server response
    * @returns {Object} returns a response object
    * containing list of users with pagination
    */
@@ -122,7 +108,7 @@ const UserControllers = {
       ],
     })
     .then(user => response.status(200).send({
-      Users: user.rows,
+      userDetails: user.rows,
       paginationDetails: pagination(user.count, limit, offset)
     }))
     .catch(() => response.status(500).send({
@@ -132,8 +118,8 @@ const UserControllers = {
 
   /**
    * @description Search for users by their username
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request client request
+   * @param {Object} response server response
    * @returns {Object} returns a response object
    * containing the list of user registered
    */
@@ -152,39 +138,41 @@ const UserControllers = {
     })
     .then(users => response.status(200).send({
       count: users.length,
-      userList: users.map(user => (
+      userDetails: users.map(user => (
         {
           username: user.username,
           fullName: user.fullName,
           createdAt: user.createdAt
         }))
     }))
-    .catch(() => response.status().send({
+    .catch(() => response.status(500).send({
       message: serverError.internalServerError }));
   },
 
   /**
    * @description Gets a particular user by their id.
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from the client
+   * @param {Object} response server response
    * @returns {Object} returns a response object
    */
   show(request, response) {
     if (!isUser(Number(request.params.id), request.decoded.userId) &&
       (request.decoded.userRoleId !== 1)) {
-      return response.status(401).send({
+      return response.status(403).send({
         message: 'Oops, You are not allowed to view this page'
       });
     }
     User.findById(request.params.id)
       .then(user => response.status(200).send({
-        id: user.id,
-        fullName: user.fullName,
-        username: user.username,
-        email: user.email,
-        role: user.roleId,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        userDetails: {
+          id: user.id,
+          fullName: user.fullName,
+          username: user.username,
+          email: user.email,
+          role: user.roleId,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
+        }
       }))
     .catch(() => response.status(404).send({
       message: 'User not found'
@@ -193,8 +181,8 @@ const UserControllers = {
 
   /**
    * @description Updates a user profile
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from the client
+   * @param {Object} response server response
    * @returns {Object} returns a response object
    */
   update(request, response) {
@@ -243,8 +231,8 @@ const UserControllers = {
 
   /**
    * @description Deletes a user account
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from the client
+   * @param {Object} response server response
    * @returns {Object} returns a response object
    * containing a message that a user has been deleted
    */
@@ -265,8 +253,8 @@ const UserControllers = {
   },
 
   /**
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from the client
+   * @param {Object} response server response
    * @returns {Object} returns a response object containing
    * the list to documents belonging to a certain user.
    */

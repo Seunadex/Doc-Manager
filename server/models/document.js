@@ -9,19 +9,17 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     access: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM('public', 'private', 'role'),
       allowNull: false,
       defaultValue: 'public',
-      validate: {
-        isIn: {
-          args: [['public', 'private', 'role']],
-          msg: 'Use a valid access type'
-        }
-      }
     },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    roleId: {
+      type: DataTypes.STRING,
+      defaultValue: 2,
     },
   });
   Document.associate = (models) => {
@@ -29,6 +27,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       onDelete: 'CASCADE'
     });
+    Document.belongsTo(models.Role, {
+      foreignKey: 'roleId',
+      onDelete: 'CASCADE'
+    });
   };
+
   return Document;
 };

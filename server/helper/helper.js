@@ -20,3 +20,15 @@ export function passwordHash(password) {
 export function isUser(id, userId) {
   return id === userId;
 }
+
+
+/**
+ * @description checks if a user is admin or not
+ * @export
+ * @param {Integer} roleId
+ * @returns {Boolean} returns true or false
+ */
+export function isAdmin(roleId) {
+  return roleId === 1;
+}
+

@@ -3,17 +3,17 @@ import omit from 'omit';
  *
  * @class Validation
  */
-class Validation {
+export default class Validation {
   /**
    *
    *
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from client
+   * @param {Object} response server response
    * @param {callback} next
    * @returns {json} returns the error (if there's any) in a JSON format
    * @memberof Validation
    */
-  validateUser(request, response, next) {
+  static validateUser(request, response, next) {
     request.checkBody('fullName', 'Fullname is required').notEmpty();
     request.checkBody('username', 'username is required').notEmpty();
     request.checkBody('password', 'password is required').notEmpty();
@@ -32,13 +32,13 @@ class Validation {
   /**
    *
    *
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from client
+   * @param {Object} response server response
    * @param {callback} next
    * @returns {json} returns the error (if there's any) in a JSON format
    * @memberof Validation
    */
-  validateLoginInput(request, response, next) {
+  static validateLoginInput(request, response, next) {
     request.checkBody('username', 'username is required').notEmpty();
     request.checkBody('password', 'password is required').notEmpty();
 
@@ -53,13 +53,13 @@ class Validation {
 
   /**
    *
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from client
+   * @param {Object} response server response
    * @param {callback} next
    * @returns {JSON} returns the error (if there's any) in a JSON format
    * @memberof Validation
    */
-  validateDocuments(request, response, next) {
+  static validateDocuments(request, response, next) {
     request.checkBody('title', 'Document title must be entered').notEmpty();
     request.checkBody('content', 'Content is required').notEmpty();
     request.checkBody('access', 'Access can not be an integer').isAlpha();
@@ -76,4 +76,3 @@ class Validation {
   }
 }
 
-export default new Validation();

@@ -1,8 +1,11 @@
 export default {
   userError: {
-    incorrectEmailOrPassword: 'invalid username or password',
+    incorrectUsernameOrPassword: 'invalid username or password',
     incorrectPassword: 'Incorrect password',
     idIsNumber: 'Id must be a number'
+  },
+  documentError: {
+    titleConflict: 'A document already exist with same title',
   },
 
   serverError: {

@@ -19,7 +19,7 @@ const invalidUser = {
 
 describe('User model tests', () => {
   describe('Create User', () => {
-    it('should create a user', (done) => {
+    it('should create a user with valid details', (done) => {
       User.create(newUser)
       .then((user) => {
         expect(user.dataValues.fullName).to.equal(newUser.fullName);

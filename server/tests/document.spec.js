@@ -16,7 +16,8 @@ const {
   sameTitle,
   emptyDoc,
   invalidAccess,
-  validDoc
+  validDoc,
+  titleString
  } = documentHelpers;
 const adminToken = jwtHelper(validAdmin);
 const token = jwtHelper(validUser);
@@ -58,13 +59,13 @@ describe('Document controller', () => {
       }
     });
   });
+  beforeEach((done) => {
+    User.bulkCreate([validAdmin, validUser]).then(() => {
+      done();
+    });
+  });
 
   describe('Get documents: GET /api/v1/documents', () => {
-    beforeEach((done) => {
-      User.create(validAdmin).then(() => {
-        done();
-      });
-    });
     it('should return an error message on title conflict', (done) => {
       Document.create(document1)
         .then(() => {
@@ -133,8 +134,15 @@ describe('Document controller', () => {
   });
 
   describe('Create document: POST /api/v1/documents', () => {
-    beforeEach((done) => {
-      User.bulkCreate([validAdmin, validUser]).then(() => {
+    it('should return error message when title is not a string', (done) => {
+      request
+      .post('/api/v1/documents')
+      .set('Authorization', token)
+      .send(titleString)
+      .end((err, response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body.message).to.equal(
+          'Title must be in string format');
         done();
       });
     });
@@ -181,15 +189,31 @@ describe('Document controller', () => {
                     'the future is now');
                   expect(response.body.document.access).to.equal('public');
                   expect(response.body.document.userId).to.equal(2);
-
                   done();
                 });
     });
   });
 
   describe('Update document: PUT /api/v1/documents/:id', () => {
-    beforeEach((done) => {
-      User.bulkCreate([validAdmin, validUser]).then(() => {
+    it('should return error message when title is not a string', (done) => {
+      Document.create(validDoc)
+      .then(() => {
+      });
+
+      request
+      .put('/api/v1/documents/1')
+      .set('Authorization', token)
+      .send({
+        title: 87,
+        content: 'Running Tests with invalid id',
+        access: 'public',
+        userId: 2,
+        roleId: 2
+      })
+      .end((err, response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body.message).to.equal(
+          'Title must be in string format');
         done();
       });
     });
@@ -200,7 +224,7 @@ describe('Document controller', () => {
         .set('Authorization', adminToken)
         .end((err, response) => {
           expect(response.status).to.equal(404);
-          expect(response.body.message).to.equal('Document not found');
+          expect(response.body.message).to.equal('Document does not exist');
           done();
         });
     });
@@ -228,6 +252,7 @@ describe('Document controller', () => {
         .send({
           title: 'Test',
           content: 'Running Tests with invalid id',
+          access: 'public',
           userId: 2,
           roleId: 2
         })
@@ -279,12 +304,6 @@ describe('Document controller', () => {
   });
 
   describe('Search document: GET /api/v1/search/documents', () => {
-    beforeEach((done) => {
-      User.create(validAdmin).then(() => {
-        done();
-      });
-    });
-
     it('returns an array of documents if found', (done) => {
       Document.create({
         title: 'Search docs',
@@ -311,13 +330,19 @@ describe('Document controller', () => {
   });
 
   describe('Get DocumentById: GET /api/v1/documents/:id', () => {
-    beforeEach((done) => {
-      User.create(validUser).then(() => {
-        done();
-      });
+    it('should return error message when document does not exist', (done) => {
+      request
+      .get('/api/v1/documents/5')
+      .set('Authorization', token)
+      .set('Accept', 'application/json')
+          .end((err, response) => {
+            expect(response.status).to.equal(404);
+            expect(response.body.message).to.equal('Document does not exist');
+            done();
+          });
     });
 
-    it('should return document if found', (done) => {
+    it('should return the document if found', (done) => {
       request
           .post('/api/v1/documents')
           .send({
@@ -346,12 +371,6 @@ describe('Document controller', () => {
   });
 
   describe('Delete document: DELETE /api/v1/document/:id', () => {
-    beforeEach((done) => {
-      User.bulkCreate([validAdmin, validUser]).then(() => {
-        done();
-      });
-    });
-
     it('should return error for invalid document id', (done) => {
       request
         .delete('/api/v1/documents/seun')

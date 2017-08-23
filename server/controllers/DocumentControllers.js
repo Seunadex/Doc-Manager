@@ -1,19 +1,26 @@
 import pagination from '../helper/pagination';
 import { Document } from '../models';
-import { isUser } from '../helper/helper';
+import { isAdmin } from '../helper/helper';
+import DocumentMethods from '../helper/DocumentMethods';
 import errorMsg from '../helper/errorMsg';
 
-const { serverError } = errorMsg;
+const { serverError, documentError } = errorMsg;
 
 const DocumentControllers = {
   /**
    * @description Creates a new document
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from client
+   * @param {Object} response response from server
    * @returns {Object} returns a response object.
    */
   create(request, response) {
     const authorId = request.decoded.userId;
+    const title = request.body.title;
+    if (typeof title !== 'string') {
+      return response.status(400).send({
+        message: 'Title must be in string format',
+      });
+    }
     Document.findOne({
       where: {
         title: request.body.title
@@ -21,31 +28,30 @@ const DocumentControllers = {
     })
     .then((documents) => {
       if (documents) {
-        return response.status(409).send({
-          message: 'A document already exist with same title',
+        response.status(409).send({
+          message: documentError.titleConflict,
         });
       }
       Document.create({
         title: request.body.title,
         content: request.body.content,
         userId: authorId,
-        access: request.body.access
+        access: (request.body.access).toLowerCase(),
+        roleId: request.decoded.userRoleId
       })
-    .then(document => response.status(201).send(
-      {
-        document,
-      }))
-    .catch(() => response.status(400).send(
-      {
-        message: 'Access field must be either PUBLIC, PRIVATE or ROLE'
-      }));
+    .then(document => response.status(201).send({
+      document,
+    }))
+    .catch(() => response.status(400).send({
+      message: 'Access field must be either PUBLIC, PRIVATE or ROLE'
+    }));
     });
   },
 
   /**
    * @description Fetch all documents
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from client
+   * @param {Object} response response from server
    * @returns {Object} returns the list of documents available
    */
 
@@ -58,42 +64,58 @@ const DocumentControllers = {
         message: 'limit and offset must be an integer'
       });
     }
-    if (request.query) {
+    if (!isAdmin(request.decoded.userRoleId)) {
       return Document.findAndCount({
         where: {
-          access: 'public'
+          $or: [{ access: 'public' },
+          { access: 'role', $and: { roleId: request.decoded.userRoleId } },
+          { access: 'private', $and: { userId: request.decoded.userId } }]
         },
         limit,
         offset,
       })
-      .then(document => response.status(200).send({
-        pagination: {
-          document: document.rows,
-          paginationDetails: pagination(document.count, limit, offset)
-        }
+      .then(documents => response.status(200).send({
+        documents: documents.rows,
+        paginationDetails: pagination(documents.count, limit, offset)
       }))
-      .catch(() => response.status(400).send({
-        message: 'limits and offsets must be number'
+      .catch(() => response.status(500).send({
+        message: serverError.internalServerError
       }));
     }
+    return Document.findAndCount({
+      limit,
+      offset,
+    })
+  .then(documents => response.status(200).send({
+    documents: documents.rows,
+    paginationDetails: pagination(documents.count, limit, offset)
+  }))
+  .catch(() => response.status(500).send({
+    message: serverError.internalServerError
+  }));
   },
 
   /**
    * @description find document by id
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from client
+   * @param {Object} response response from server
    * @returns {Object} returns the requested document
    */
   show(request, response) {
-    Document.findById(request.params.id)
+    Document.find({
+      where: {
+        id: request.params.id,
+        $or: [{ access: 'public' },
+          { access: 'role', $and: { roleId: request.decoded.userRoleId } },
+          { access: 'private', $and: { userId: request.decoded.userId } }]
+      }
+    })
       .then((document) => {
-        if (isUser(document.userId, request.decoded.id) ||
-          document.access === 'private') {
-          return response.status(403).send({
-            message: "You don't have permission to access this document"
+        if (document === null) {
+          return response.status(403).json({
+            message: 'You do not have access to this document'
           });
         }
-
         return response.status(200).send({
           document,
         });
@@ -102,30 +124,60 @@ const DocumentControllers = {
 
   /**
    * @description Updates the document
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from client
+   * @param {Object} response request from server
    * @returns {Object} returns the updated document
    */
   update(request, response) {
-    return Document.find({
+    if (typeof request.body.title !== 'string') {
+      return response.status(400).send({
+        message: 'Title must be in string format',
+      });
+    }
+    Document.findOne({
       where: {
-        id: request.params.id,
-      },
+        title: request.body.title,
+        content: request.body.content,
+      }
     })
+    .then((documents) => {
+      if (documents) {
+        response.status(409).send({
+          message: documentError.titleConflict,
+        });
+      }
+      Document.find({
+        where: {
+          id: request.params.id,
+        },
+      })
       .then((document) => {
         if (document) {
-          return document.update(request.body, { fields:
-            Object.keys(request.body) })
+          return document.update({
+            title: request.body.title || document.title,
+            content: request.body.content || document.content,
+            access: request.body.access || document.access,
+          })
           .then(() => response.status(200).send({
             document,
+          }))
+          .catch(error => response.status(500).send({
+            message: error
           }));
         }
-      });
+      })
+      .catch(() => response.status(500).send({
+        message: serverError.internalServerError
+      }));
+    })
+    .catch(() => response.status(500).send({
+      message: serverError.internalServerError
+    }));
   },
 
   /**
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from client
+   * @param {Object} response response from server
    * @returns {Object} returns a message indicating
    * that a document has been deleted
    */
@@ -141,18 +193,15 @@ const DocumentControllers = {
       },
     })
     .then((document) => {
-      if (!document) {
-        return response.status(404).send({
-          message: 'Document does not exist',
-        });
-      }
-      return document.destroy()
+      if (!DocumentMethods.documentExist(request, response, document)) {
+        return document.destroy()
         .then(() => response.status(200).send({
           message: 'Document succesfully deleted',
         }))
-        .catch(() => response.status(400).send({
-          message: 'Problem encountered, please try again'
+        .catch(() => response.status(500).send({
+          message: serverError.internalServerError
         }));
+      }
     })
     .catch(() => response.status(500).send({
       message: serverError.internalServerError
@@ -161,8 +210,8 @@ const DocumentControllers = {
 
   /**
    * @description Deletes a document
-   * @param {Object} request
-   * @param {Object} response
+   * @param {Object} request request from client
+   * @param {Object} response server response
    * @returns {Response} Response object
    */
   search(request, response) {
