@@ -2,7 +2,10 @@ import bcrypt from 'bcryptjs';
 import _ from 'lodash';
 import pagination from '../helper/pagination';
 import { User, Document } from '../models';
-import { isUser, passwordHash, generateUserDetails } from '../helper/helper';
+import {
+  isUser,
+  passwordHash,
+  generateUserDetails, } from '../helper/helper';
 import jwtHelper from '../helper/jwtHelper';
 import errorMsg from '../helper/errorMsg';
 
@@ -247,6 +250,15 @@ const UserControllers = {
         return Document.findAll({
           where: {
             userId: request.params.id,
+            $or: [
+              { access: 'public' },
+              { access: 'role',
+                $and: { roleId: request.decoded.userRoleId } },
+              { access: 'private',
+                $and: { userId: request.decoded.userId } }]
+          },
+          attributes: {
+            exclude: ['roleId']
           },
           limit,
           offset,
