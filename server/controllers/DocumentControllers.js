@@ -71,6 +71,9 @@ const DocumentControllers = {
           { access: 'role', $and: { roleId: request.decoded.userRoleId } },
           { access: 'private', $and: { userId: request.decoded.userId } }]
         },
+        attributes: {
+          exclude: ['roleId']
+        },
         limit,
         offset,
       })
@@ -108,6 +111,9 @@ const DocumentControllers = {
         $or: [{ access: 'public' },
           { access: 'role', $and: { roleId: request.decoded.userRoleId } },
           { access: 'private', $and: { userId: request.decoded.userId } }]
+      },
+      attributes: {
+        exclude: ['roleId']
       }
     })
       .then((document) => {
@@ -141,6 +147,9 @@ const DocumentControllers = {
       where: {
         title: request.body.title,
         content: request.body.content,
+      },
+      attributes: {
+        exclude: ['roleId']
       }
     })
     .then((documents) => {

@@ -41,7 +41,7 @@ export default class Middleware {
   }
 
   /**
-   *
+   * @description verify if a logged in user is an admin
    * @param {Object} request request from client
    * @param {Object} response server response
    * @param {Object} next
@@ -130,7 +130,7 @@ export default class Middleware {
           });
         }
         if (!isUser(request.decoded.userId, document.userId)) {
-          return response.status(401).send({
+          return response.status(403).send({
             message: "You don't have permission to update this document"
           });
         }
