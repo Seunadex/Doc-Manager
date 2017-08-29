@@ -271,7 +271,7 @@ const UserControllers = {
             }
             return response.status(200).send({
               documents,
-              paginationDetails: pagination(count, limit, offset),
+              pagination: pagination(count, limit, offset),
             });
           });
       });

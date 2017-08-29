@@ -79,7 +79,7 @@ const DocumentControllers = {
       })
       .then(documents => response.status(200).send({
         documents: documents.rows,
-        paginationDetails: pagination(documents.count, limit, offset)
+        pagination: pagination(documents.count, limit, offset)
       }))
       .catch(() => response.status(500).send({
         message: serverError.internalServerError
@@ -91,7 +91,7 @@ const DocumentControllers = {
     })
   .then(documents => response.status(200).send({
     documents: documents.rows,
-    paginationDetails: pagination(documents.count, limit, offset)
+    pagination: pagination(documents.count, limit, offset)
   }))
   .catch(() => response.status(500).send({
     message: serverError.internalServerError
