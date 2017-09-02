@@ -67,23 +67,6 @@ describe('Document controller', () => {
   });
 
   describe('Get documents: GET /api/v1/documents', () => {
-    it('should return an error message on title conflict', (done) => {
-      Document.create(document1)
-        .then(() => {
-        });
-      request
-        .post('/api/v1/documents')
-        .send(sameTitle)
-        .set('Authorization', adminToken)
-        .set('Accept', 'application/json')
-        .end((err, response) => {
-          expect(response.status).to.equal(409);
-          expect(response.body.message).to.equal(
-              'A document already exist with same title');
-          done();
-        });
-    });
-
     it('should get all documents if user is admin', (done) => {
       Document.create(document1)
         .then(() => {
@@ -135,6 +118,22 @@ describe('Document controller', () => {
   });
 
   describe('Create document: POST /api/v1/documents', () => {
+    it('should return an error message on title conflict', (done) => {
+      Document.create(document1)
+        .then(() => {
+        });
+      request
+        .post('/api/v1/documents')
+        .send(sameTitle)
+        .set('Authorization', adminToken)
+        .set('Accept', 'application/json')
+        .end((err, response) => {
+          expect(response.status).to.equal(409);
+          expect(response.body.message).to.equal(
+              'A document already exist with same title');
+          done();
+        });
+    });
     it('should return error message when title is not a string', (done) => {
       request
       .post('/api/v1/documents')
@@ -346,14 +345,14 @@ describe('Document controller', () => {
         done();
       });
     });
-    it('should return error message when document does not exist', (done) => {
+    it('should return error message when document is not found', (done) => {
       request
       .get('/api/v1/documents/5')
       .set('Authorization', token)
       .set('Accept', 'application/json')
           .end((err, response) => {
             expect(response.status).to.equal(404);
-            expect(response.body.message).to.equal('Document does not exist');
+            expect(response.body.message).to.equal('Document Not Found');
             done();
           });
     });
@@ -399,19 +398,20 @@ describe('Document controller', () => {
         });
     });
 
-    it('should return error for non-existing document', (done) => {
+    it('should return error for document not found', (done) => {
       request
         .delete('/api/v1/documents/2')
         .set('Authorization', token)
         .send(document2)
         .end((err, response) => {
           expect(response.status).to.equal(404);
-          expect(response.body.message).to.equal('Document does not exist');
+          expect(response.body.message).to.equal('Document Not Found');
           done();
         });
     });
 
-    it('should return error for non-existing document', (done) => {
+    it('should return server error when other errors has been checked',
+    (done) => {
       Document.create(document2).then(() => {
         request
         .delete('/api/v1/documents/4586580090997876757645745')
