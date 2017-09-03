@@ -8,6 +8,7 @@ import {
   generateUserDetails, } from '../helper/helper';
 import jwtHelper from '../helper/jwtHelper';
 import errorMsg from '../helper/errorMsg';
+import UserHelper from '../helper/UserHelper';
 
 const { userError, serverError } = errorMsg;
 
@@ -57,7 +58,9 @@ const UserControllers = {
       }
     }).then((user) => {
       if (!user) {
-        return response.status(404).send({ message: 'User not found' });
+        return response.status(404).send({
+          message: userError.userNotFound
+        });
       }
       const passkey = bcrypt.compareSync(request.body.password, user.password);
       if (passkey) {
@@ -152,19 +155,13 @@ const UserControllers = {
    * @returns {Object} returns a response object
    */
   show(request, response) {
-    if (!isUser(Number(request.params.id), request.decoded.userId) &&
-      (request.decoded.userRoleId !== 1)) {
-      return response.status(403).send({
-        message: 'Oops, You are not allowed to view this page'
-      });
-    }
-    User.findById(request.params.id)
+    if (!UserHelper.notAllowed(request, response, request.params.id)) {
+      return User.findById(request.params.id)
       .then(user => response.status(200).send({
         userDetails: generateUserDetails(user)
       }))
-    .catch(() => response.status(404).send({
-      message: 'User not found'
-    }));
+    .catch(() => UserHelper.serverError(response));
+    }
   },
 
   /**
@@ -190,7 +187,7 @@ const UserControllers = {
             && (authenticatedUser[0].dataValues.id !==
               parseInt(request.params.id, 10))) {
           return response.status(409).send({
-            message: 'A user exist with same email or username'
+            message: userError.userExist
           });
         }
         return user.update({
@@ -202,6 +199,9 @@ const UserControllers = {
         })
         .then(() => response.status(200).send({
           userDetails: generateUserDetails(user)
+        }))
+        .catch(() => response.status(500).send({
+          message: serverError.internalServerError
         }));
       })
     .catch(() => response.status(500).send({
@@ -231,7 +231,10 @@ const UserControllers = {
         .then(() => response.status(200).send({
           message: 'User successfully deleted'
         }));
-    });
+    })
+    .catch(() => response.status(500).send({
+      message: serverError.internalServerError
+    }));
   },
 
   /**
@@ -264,16 +267,16 @@ const UserControllers = {
           offset,
         })
           .then((documents) => {
-            if (documents.length === 0) {
-              return response.status(404).send({
-                message: 'No document found for this user'
+            if (!UserHelper.userHasNoDocument(request, response, documents)) {
+              return response.status(200).send({
+                documents,
+                pagination: pagination(count, limit, offset),
               });
             }
-            return response.status(200).send({
-              documents,
-              pagination: pagination(count, limit, offset),
-            });
-          });
+          })
+          .catch(() => response.status(500).send({
+            message: serverError.internalServerError
+          }));
       });
   }
 };

@@ -31,7 +31,7 @@ export default class Middleware {
     .then((user) => {
       if (!user) {
         return response.status(404).send({
-          message: 'User not found'
+          message: 'User Not Found'
         });
       }
       next();
