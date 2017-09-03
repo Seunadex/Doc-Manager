@@ -231,7 +231,7 @@ describe('User controllers', () => {
         .set('Authorization', adminToken)
         .end((err, response) => {
           expect(response.status).to.equal(404);
-          expect(response.body.message).to.equal('User not found');
+          expect(response.body.message).to.equal('User Not Found');
           done();
         });
     });
@@ -281,7 +281,7 @@ describe('User controllers', () => {
         .set('Authorization', adminToken)
         .end((err, response) => {
           expect(response.status).to.equal(404);
-          expect(response.body.message).to.equal('User not found');
+          expect(response.body.message).to.equal('User Not Found');
           done();
         });
     });
@@ -513,7 +513,7 @@ describe('User controllers', () => {
         .set('Authorization', adminToken)
         .end((err, response) => {
           expect(response.status).to.equal(404);
-          expect(response.body.message).to.equal('User not found');
+          expect(response.body.message).to.equal('User Not Found');
           done();
         });
     });
