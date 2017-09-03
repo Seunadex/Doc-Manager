@@ -22,6 +22,8 @@
 .highlight .gp {
   color: #555555;
 }
+.highlight .gs {
+}
 .highlight .gu {
   color: #aaaaaa;
 }
@@ -322,7 +324,7 @@ Register and get a token to be inserted in the header</p>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"userDetails"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"id"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
         <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Adekunle bisola"</span><span class="p">,</span>
         <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"cutiebee"</span><span class="p">,</span>
@@ -354,7 +356,7 @@ Register and get a token to be inserted in the header</p>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"userDetails"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"id"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
         <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Adekunle bisola"</span><span class="p">,</span>
         <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"cutiebee"</span><span class="p">,</span>
@@ -380,7 +382,7 @@ Register and get a token to be inserted in the header</p>
 &gt; Sample JSON structured response:</li>
 </ul>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"userDetails"</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">"users"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
@@ -430,7 +432,7 @@ Register and get a token to be inserted in the header</p>
             <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-21"</span>
         <span class="p">}</span>
     <span class="p">],</span>
-    <span class="s2">"paginationDetails"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"metadata"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
@@ -453,7 +455,7 @@ Register and get a token to be inserted in the header</p>
 &gt; Sample JSON structured response:</li>
 </ul>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"userDetails"</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">"users"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
@@ -479,7 +481,7 @@ Register and get a token to be inserted in the header</p>
             <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-21"</span>
         <span class="p">}</span>
     <span class="p">],</span>
-    <span class="s2">"paginationDetails"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"metadata"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
         <span class="s2">"pageSize"</span><span class="p">:</span> <span class="s2">"3"</span><span class="p">,</span>
@@ -524,7 +526,7 @@ Register and get a token to be inserted in the header</p>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"userDetails"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"id"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
         <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Adekunle bisola"</span><span class="p">,</span>
         <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"cutiebee"</span><span class="p">,</span>
@@ -558,7 +560,7 @@ Register and get a token to be inserted in the header</p>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"userDetails"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Adekunle Abosede"</span><span class="p">,</span>
         <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"kutiebee"</span><span class="p">,</span>
         <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"cutie@hotmail.com"</span><span class="p">,</span>
@@ -609,7 +611,7 @@ Register and get a token to be inserted in the header</p>
             <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-21"</span>
         <span class="p">}</span>
     <span class="p">],</span>
-    <span class="s2">"pagination"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"metadata"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
@@ -631,7 +633,7 @@ Register and get a token to be inserted in the header</p>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"userDetails"</span><span class="p">:</span> <span class="p">[</span>
+  <span class="s2">"users"</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span>
       <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
       <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"seunadex"</span><span class="p">,</span>
@@ -640,7 +642,7 @@ Register and get a token to be inserted in the header</p>
       <span class="s2">"roleId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
     <span class="p">}</span>
   <span class="p">],</span>
-  <span class="s2">"paginationDetails"</span><span class="p">:</span> <span class="p">{</span>
+  <span class="s2">"metadata"</span><span class="p">:</span> <span class="p">{</span>
     <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -739,7 +741,7 @@ Register and get a token to be inserted in the header</p>
             <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-21"</span>
           <span class="p">}</span>
       <span class="p">],</span>
-      <span class="s2">"pagination"</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">"metadata"</span><span class="p">:</span> <span class="p">{</span>
           <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
           <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
           <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
@@ -781,7 +783,7 @@ Register and get a token to be inserted in the header</p>
         <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-21"</span>
       <span class="p">}</span>
   <span class="p">],</span>
-  <span class="s2">"pagination"</span><span class="p">:</span> <span class="p">{</span>
+  <span class="s2">"metadata"</span><span class="p">:</span> <span class="p">{</span>
     <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
