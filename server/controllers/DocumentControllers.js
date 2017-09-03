@@ -1,7 +1,7 @@
 import pagination from '../helper/pagination';
 import { Document } from '../models';
-import { isAdmin } from '../helper/helper';
-import DocumentMethods from '../helper/DocumentMethods';
+import { isAdmin, generateDocumentDetails } from '../helper/helper';
+import DocumentHelper from '../helper/DocumentHelper';
 import errorMsg from '../helper/errorMsg';
 
 const { serverError, documentError } = errorMsg;
@@ -16,36 +16,33 @@ const DocumentControllers = {
   create(request, response) {
     const authorId = request.decoded.userId;
     const title = request.body.title;
-    if (typeof title !== 'string') {
-      return response.status(400).send({
-        message: 'Title must be in string format',
-      });
-    }
-    Document.findOne({
-      where: {
-        title: request.body.title
-      }
-    })
-    .then((documents) => {
-      if (documents) {
-        response.status(409).send({
-          message: documentError.titleConflict,
-        });
-      }
-      Document.create({
-        title: request.body.title,
-        content: request.body.content,
-        userId: authorId,
-        access: (request.body.access).toLowerCase(),
-        roleId: request.decoded.userRoleId
+    if (!DocumentHelper.titleIsString(request, response, title)) {
+      return Document.findOne({
+        where: {
+          title: request.body.title
+        }
       })
+    .then((documents) => {
+      if (!DocumentHelper.titleExist(request, response, documents)) {
+        return Document.create({
+          title: request.body.title,
+          content: request.body.content,
+          userId: authorId,
+          access: (request.body.access).toLowerCase(),
+          roleId: request.decoded.userRoleId
+        })
     .then(document => response.status(201).send({
       document,
     }))
     .catch(() => response.status(400).send({
       message: 'Access field must be either PUBLIC, PRIVATE or ROLE'
     }));
-    });
+      }
+    })
+    .catch(() => response.status(500).send({
+      message: serverError.internalServerError
+    }));
+    }
   },
 
   /**
@@ -79,23 +76,19 @@ const DocumentControllers = {
       })
       .then(documents => response.status(200).send({
         documents: documents.rows,
-        pagination: pagination(documents.count, limit, offset)
+        metadata: pagination(documents.count, limit, offset)
       }))
-      .catch(() => response.status(500).send({
-        message: serverError.internalServerError
-      }));
+      .catch(() => DocumentHelper.serverError(response));
     }
     return Document.findAndCount({
       limit,
       offset,
     })
-  .then(documents => response.status(200).send({
-    documents: documents.rows,
-    pagination: pagination(documents.count, limit, offset)
-  }))
-  .catch(() => response.status(500).send({
-    message: serverError.internalServerError
-  }));
+    .then(documents => response.status(200).send({
+      documents: documents.rows,
+      metadata: pagination(documents.count, limit, offset)
+    }))
+   .catch(() => DocumentHelper.serverError(response));
   },
 
   /**
@@ -105,30 +98,29 @@ const DocumentControllers = {
    * @returns {Object} returns the requested document
    */
   show(request, response) {
-    Document.find({
-      where: {
-        id: request.params.id,
-        $or: [{ access: 'public' },
+    if (!DocumentHelper.invalidDocumentId(
+      request, response, request.params.id)) {
+      return Document.find({
+        where: {
+          id: request.params.id,
+          $or: [{ access: 'public' },
           { access: 'role', $and: { roleId: request.decoded.userRoleId } },
           { access: 'private', $and: { userId: request.decoded.userId } }]
-      },
-      attributes: {
-        exclude: ['roleId']
-      }
-    })
+        },
+        attributes: {
+          exclude: ['roleId']
+        }
+      })
       .then((document) => {
-        if (document === null) {
-          return response.status(403).json({
-            message: 'You do not have access to this document'
+        if (!DocumentHelper.noAccess(request,
+          response, document)) {
+          return response.status(200).send({
+            document: generateDocumentDetails(document)
           });
         }
-        return response.status(200).send({
-          document,
-        });
       })
-      .catch(() => response.status(500).send({
-        message: serverError.internalServerError
-      }));
+      .catch(() => DocumentHelper.serverError(response));
+    }
   },
 
   /**
@@ -140,7 +132,7 @@ const DocumentControllers = {
   update(request, response) {
     if (typeof request.body.title !== 'string') {
       return response.status(400).send({
-        message: 'Title must be in string format',
+        message: documentError.titleIsString
       });
     }
     Document.findOne({
@@ -153,16 +145,12 @@ const DocumentControllers = {
       }
     })
     .then((documents) => {
-      if (documents) {
-        response.status(409).send({
-          message: documentError.titleConflict,
-        });
-      }
-      Document.find({
-        where: {
-          id: request.params.id,
-        },
-      })
+      if (!DocumentHelper.titleExist(request, response, documents)) {
+        return Document.find({
+          where: {
+            id: request.params.id,
+          },
+        })
       .then((document) => {
         if (document) {
           return document.update({
@@ -171,20 +159,17 @@ const DocumentControllers = {
             access: request.body.access || document.access,
           })
           .then(() => response.status(200).send({
-            document,
+            document: generateDocumentDetails(document),
           }))
           .catch(error => response.status(500).send({
             message: error
           }));
         }
       })
-      .catch(() => response.status(500).send({
-        message: serverError.internalServerError
-      }));
+      .catch(() => DocumentHelper.serverError(response));
+      }
     })
-    .catch(() => response.status(500).send({
-      message: serverError.internalServerError
-    }));
+    .catch(() => DocumentHelper.serverError(response));
   },
 
   /**
@@ -194,30 +179,25 @@ const DocumentControllers = {
    * that a document has been deleted
    */
   destroy(request, response) {
-    if (isNaN(Number(request.params.id))) {
-      return response.status(400).json({
-        message: 'Invalid document id'
-      });
-    }
-    return Document.find({
-      where: {
-        id: request.params.id,
-      },
-    })
+    if (!DocumentHelper.invalidDocumentId(
+      request, response, request.params.id)) {
+      return Document.find({
+        where: {
+          id: request.params.id,
+          userId: request.decoded.userId
+        },
+      })
     .then((document) => {
-      if (!DocumentMethods.documentExist(request, response, document)) {
+      if (!DocumentHelper.documentExist(request, response, document)) {
         return document.destroy()
         .then(() => response.status(200).send({
           message: 'Document succesfully deleted',
         }))
-        .catch(() => response.status(500).send({
-          message: serverError.internalServerError
-        }));
+        .catch(() => DocumentHelper.serverError(response));
       }
     })
-    .catch(() => response.status(500).send({
-      message: serverError.internalServerError
-    }));
+    .catch(() => DocumentHelper.serverError(response));
+    }
   },
 
   /**
@@ -258,9 +238,7 @@ const DocumentControllers = {
       count: documents.length,
       documents
     }))
-    .catch(() => response.status(500).send({
-      message: serverError.internalServerError
-    }));
+    .catch(() => DocumentHelper.serverError(response));
   },
 };
 

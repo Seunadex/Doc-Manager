@@ -50,3 +50,22 @@ export function generateUserDetails(user) {
   };
 }
 
+
+/**
+ *
+ * @description generates document details
+ * @export
+ * @param {Object} document
+ * @returns {Object} returns generated document object
+ */
+export function generateDocumentDetails(document) {
+  return {
+    id: document.id,
+    title: document.title,
+    content: document.content,
+    access: document.access,
+    userId: document.userId,
+    createdAt: document.createdAt,
+    updatedAt: document.updatedAt
+  };
+}

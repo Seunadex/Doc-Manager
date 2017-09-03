@@ -8,7 +8,6 @@ export default (router) => {
   DocumentControllers.index);
 
   router.get('/api/v1/documents/:id', Authorization.verifyUser,
-  Authorization.allowUserGetDocument,
   DocumentControllers.show);
 
   router.get('/api/v1/search/documents', Authorization.verifyUser,

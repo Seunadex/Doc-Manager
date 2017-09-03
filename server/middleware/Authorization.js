@@ -1,9 +1,8 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import models from '../models';
 import errorMsg from '../helper/errorMsg';
 
-const { userError, serverError } = errorMsg;
+const { userError } = errorMsg;
 
 dotenv.config();
 
@@ -75,34 +74,5 @@ export default class Authorization {
     return response.status(403).send({
       message: 'Oops! You are not allowed to update the user'
     });
-  }
-
-  /**
-   *
-   * @description finds documents by id
-   * @param {Object} request request from client
-   * @param {Object} response server response
-   * @param {Callback} next
-   * @returns {void}
-   * @memberof Authorization
-   */
-  static allowUserGetDocument(request, response, next) {
-    if (isNaN(Number(request.params.id))) {
-      return response.status(400).json({
-        message: 'Invalid document id'
-      });
-    }
-    models.Document.findById(request.params.id)
-      .then((document) => {
-        if (!document) {
-          return response.status(404).send({
-            message: 'Document does not exist'
-          });
-        }
-        next();
-      })
-      .catch(() => response.status(500).send({
-        message: serverError.internalServerError
-      }));
   }
 }
