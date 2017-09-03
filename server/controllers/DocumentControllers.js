@@ -76,7 +76,7 @@ const DocumentControllers = {
       })
       .then(documents => response.status(200).send({
         documents: documents.rows,
-        pagination: pagination(documents.count, limit, offset)
+        metadata: pagination(documents.count, limit, offset)
       }))
       .catch(() => DocumentHelper.serverError(response));
     }
@@ -86,7 +86,7 @@ const DocumentControllers = {
     })
     .then(documents => response.status(200).send({
       documents: documents.rows,
-      pagination: pagination(documents.count, limit, offset)
+      metadata: pagination(documents.count, limit, offset)
     }))
    .catch(() => DocumentHelper.serverError(response));
   },

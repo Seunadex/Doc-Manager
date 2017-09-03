@@ -113,10 +113,10 @@ describe('Document controller', () => {
           expect(response.body.documents[0]).to.have.property('title');
           expect(response.body.documents[0]).to.have.property('content');
           expect(response.body.documents[0]).to.have.property('access');
-          expect(response.body.pagination.page).to.equal(1);
-          expect(response.body.pagination.pageCount).to.equal(2);
-          expect(response.body.pagination.pageSize).to.equal('2');
-          expect(response.body.pagination.totalCount).to.equal(3);
+          expect(response.body.metadata.page).to.equal(1);
+          expect(response.body.metadata.pageCount).to.equal(2);
+          expect(response.body.metadata.pageSize).to.equal('2');
+          expect(response.body.metadata.totalCount).to.equal(3);
           done();
         });
     });

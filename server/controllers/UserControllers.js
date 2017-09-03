@@ -28,7 +28,7 @@ const UserControllers = {
       email: request.body.email,
     })
     .then((user) => {
-      const userDetails = _.pick(user, [
+      user = _.pick(user, [
         'id',
         'fullName',
         'username',
@@ -36,7 +36,7 @@ const UserControllers = {
         'roleId'
       ]);
       return response.status(201).send({
-        userDetails,
+        user,
         token: jwtHelper(user)
       });
     })
@@ -66,7 +66,7 @@ const UserControllers = {
       if (passkey) {
         const token = jwtHelper(user);
         return response.status(200).send({
-          userDetails: generateUserDetails(user),
+          user: generateUserDetails(user),
           token,
         });
       }
@@ -107,8 +107,8 @@ const UserControllers = {
       ],
     })
     .then(user => response.status(200).send({
-      userDetails: user.rows,
-      paginationDetails: pagination(user.count, limit, offset)
+      users: user.rows,
+      metadata: pagination(user.count, limit, offset)
     }))
     .catch(() => response.status(500).send({
       message: serverError.internalServerError }));
@@ -137,7 +137,7 @@ const UserControllers = {
     })
     .then(users => response.status(200).send({
       count: users.length,
-      userDetails: users.map(user => (
+      users: users.map(user => (
         {
           username: user.username,
           fullName: user.fullName,
@@ -158,7 +158,7 @@ const UserControllers = {
     if (!UserHelper.notAllowed(request, response, request.params.id)) {
       return User.findById(request.params.id)
       .then(user => response.status(200).send({
-        userDetails: generateUserDetails(user)
+        user: generateUserDetails(user)
       }))
     .catch(() => UserHelper.serverError(response));
     }
@@ -198,7 +198,7 @@ const UserControllers = {
             bcrypt.genSaltSync(10)) || user.password,
         })
         .then(() => response.status(200).send({
-          userDetails: generateUserDetails(user)
+          user: generateUserDetails(user)
         }))
         .catch(() => response.status(500).send({
           message: serverError.internalServerError
@@ -270,7 +270,7 @@ const UserControllers = {
             if (!UserHelper.userHasNoDocument(request, response, documents)) {
               return response.status(200).send({
                 documents,
-                pagination: pagination(count, limit, offset),
+                metadata: pagination(count, limit, offset),
               });
             }
           })
