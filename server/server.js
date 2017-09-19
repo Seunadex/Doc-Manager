@@ -1,21 +1,33 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import path from 'path';
 import expressValidator from 'express-validator';
 import http from 'http';
+import path from 'path';
+import webpack from 'webpack';
 import winston from 'winston';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
+import webpackHotMidlleware from 'webpack-hot-middleware';
+import webpackMiddleware from 'webpack-dev-middleware';
+import webpackConfig from '../webpack.config.dev';
 import router from './routes';
 
 dotenv.config();
 // Set up the express app
 const app = express();
-const port = parseInt(process.env.PORT, 10) || 4000;
+const port = parseInt(process.env.PORT, 10) || 5000;
+const compiler = webpack(webpackConfig);
 
 // Log requests to the console.
 app.use(logger('dev'));
 app.use(express.static(path.resolve(`${__dirname}./../public`)));
+app.use(webpackMiddleware(compiler));
+
+app.use(webpackHotMidlleware(compiler, {
+  hot: true,
+  publicPath: webpackConfig.output.publicPath,
+  noInfo: false
+}));
 
 // Parse incoming requests data
 app.use(bodyParser.json());
@@ -33,13 +45,13 @@ app.use(expressValidator());
 router(app);
 app.set('port', port);
 
-app.use('*', (request, response) => {
-  response.sendFile(path.resolve(__dirname, '../public', 'index.html'));
-});
+// app.use('*', (request, response) => {
+//   response.sendFile(path.resolve(__dirname, '../public', 'index.html'));
+// });
 
 const server = http.createServer(app);
 server.listen(port);
-winston.info('server is running');
+winston.info('server is running on port:' + port);
 
 export default app;
 
