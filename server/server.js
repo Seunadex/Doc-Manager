@@ -5,12 +5,14 @@ import http from 'http';
 import path from 'path';
 import webpack from 'webpack';
 import winston from 'winston';
+import colors from 'colors';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
 import webpackHotMidlleware from 'webpack-hot-middleware';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackConfig from '../webpack.config.dev';
 import router from './routes';
+
 
 dotenv.config();
 // Set up the express app
@@ -55,7 +57,7 @@ app.use('*', (request, response) => {
 
 const server = http.createServer(app);
 server.listen(port);
-winston.info('server is running on port: ' + port);
+winston.info('server is running on port: '.green + port);
 
 export default app;
 
