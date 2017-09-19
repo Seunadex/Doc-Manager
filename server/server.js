@@ -20,13 +20,13 @@ const compiler = webpack(webpackConfig);
 
 // Log requests to the console.
 app.use(logger('dev'));
-app.use(express.static(path.resolve(`${__dirname}./../public`)));
+app.use(express.static(path.resolve(`${__dirname}./../client`)));
 app.use(webpackMiddleware(compiler));
 
 app.use(webpackHotMidlleware(compiler, {
   hot: true,
   publicPath: webpackConfig.output.publicPath,
-  noInfo: false
+  noInfo: true
 }));
 
 // Parse incoming requests data
@@ -45,13 +45,17 @@ app.use(expressValidator());
 router(app);
 app.set('port', port);
 
-// app.use('*', (request, response) => {
-//   response.sendFile(path.resolve(__dirname, '../public', 'index.html'));
-// });
+app.get('/api', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
+app.use('*', (request, response) => {
+  response.sendFile(path.join(__dirname, '../client/index.html'));
+});
 
 const server = http.createServer(app);
 server.listen(port);
-winston.info('server is running on port:' + port);
+winston.info('server is running on port: ' + port);
 
 export default app;
 

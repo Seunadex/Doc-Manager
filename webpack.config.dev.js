@@ -4,7 +4,6 @@ import webpack from 'webpack';
 export default {
   // debug: true,
   devtool: 'inline-source-map',
-  // noInfo: false,
   entry: [
     'eventsource-polyfill',
     'webpack-hot-middleware/client?reload=true',
