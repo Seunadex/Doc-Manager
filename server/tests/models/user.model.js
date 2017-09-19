@@ -17,9 +17,9 @@ const invalidUser = {
   email: 'janedoe@gmail.com'
 };
 
-describe('User model tests', () => {
-  describe('Create User', () => {
-    it('should create a user with valid details', (done) => {
+xdescribe('User model tests', () => {
+  xdescribe('Create User', () => {
+    xit('should create a user with valid details', (done) => {
       User.create(newUser)
       .then((user) => {
         expect(user.dataValues.fullName).to.equal(newUser.fullName);
