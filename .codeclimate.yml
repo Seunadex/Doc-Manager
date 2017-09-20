@@ -1,0 +1,23 @@
+engines:
+  eslint:
+    enabled: true
+    config:
+      config: .eslintrc.json
+  duplication:
+    enabled: true
+    checks:
+      Similar code:
+        enabled: false
+    config:
+      languages:
+        javascript:
+          mass_threshold: 60
+  fixme:
+    enabled: true
+ratings:
+  paths:
+  - "**.es6"
+  - "**.js"
+exclude_paths:
+- node_modules/**/*
+- tests/*
