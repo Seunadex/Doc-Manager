@@ -1,7 +1,11 @@
+import 'babel-polyfill';
 import React from 'react';
 import { render } from 'react-dom';
+import { Router, browserHistory } from 'react-router';
+import routes from './routes';
+import './components/styles/styles.scss';
 
-// render(<h1>Document Management System</h1>, document.getElementById('root'),
-// );
-
-console.log('hello seun adekunle');
+render(
+  <Router history={browserHistory} routes={routes} />,
+   document.getElementById('app')
+  );
