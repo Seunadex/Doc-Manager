@@ -1,0 +1,37 @@
+#app {
+    color: #FFFFFF;
+}
+
+body {
+    background: linear-gradient(to bottom right, #0f3195 0%, #7ba8e7 100%) no-repeat;
+}
+
+nav, footer {
+    background-color: inherit !important;
+}
+
+.login-form {
+    margin-bottom: 58px;
+    background-color: #1E45B0;
+    padding: 40px;
+    margin-top: 40px;
+}
+
+.signup-form {
+    margin-bottom: 2px;
+    background-color: #1E45B0;
+    padding: 30px;
+    margin-top: 20px;
+}
+
+.login-img {
+    height: 100px;
+    width: 100px;
+    margin-left: 90px;
+    // margin-left: auto;
+}
+
+.dashboard {
+  background-image: url('../../images/documents.jpg') !important;
+
+}
