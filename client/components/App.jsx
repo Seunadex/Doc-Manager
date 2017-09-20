@@ -19,7 +19,7 @@ class App extends React.Component {
       <div>
         <Navbar />
         {this.props.children}
-        <footer className="page-footer">
+        {/* <footer className="page-footer">
           <div className="footer-copyright">
             <div className="container">
       © 2017 Copyright <strong>Seun Adekunle</strong>
@@ -30,7 +30,7 @@ class App extends React.Component {
               rel="noopener noreferrer">GitHub</a>
             </div>
           </div>
-        </footer>
+        </footer> */}
       </div>
     );
   }

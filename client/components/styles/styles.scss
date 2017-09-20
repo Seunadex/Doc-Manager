@@ -3,7 +3,7 @@
 }
 
 body {
-    background: linear-gradient(to bottom right, #0f3195 0%, #7ba8e7 100%) no-repeat;
+    background: linear-gradient(to bottom right, #0f3195 0%, #7ba8e7 100%);
 }
 
 nav, footer {
@@ -11,7 +11,7 @@ nav, footer {
 }
 
 .login-form {
-    margin-bottom: 58px;
+    margin-bottom: 85px;
     background-color: #1E45B0;
     padding: 40px;
     margin-top: 40px;
@@ -31,7 +31,19 @@ nav, footer {
     // margin-left: auto;
 }
 
-.dashboard {
-  background-image: url('../../images/documents.jpg') !important;
+.signup-img {
+    height: 60px;
+    width: 60px;
+    margin-left: 120px;
+    // margin-left: auto;
+}
+div.dashboard {
+  background-image: url('/images/documents.jpg') !important;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: fixed;
+  height: 100%;
+  width: 100%;
+  margin: 0;
 
 }
