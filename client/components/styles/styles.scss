@@ -3,7 +3,7 @@
 }
 
 body {
-    background: linear-gradient(to bottom right, #0f3195 0%, #7ba8e7 100%);
+    background: linear-gradient(to top, #ffffff 70%, #3399ff 103%);
 }
 
 nav, footer {
@@ -38,7 +38,7 @@ nav, footer {
     // margin-left: auto;
 }
 div.dashboard {
-  background-image: url('/images/documents.jpg') !important;
+  background-image: url('/images/pexels-photo.jpeg') !important;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: fixed;
@@ -46,4 +46,11 @@ div.dashboard {
   width: 100%;
   margin: 0;
 
+}
+
+.overlay {
+    height: 100%;
+    width: 100%;
+    background-color: rgba(170, 187, 229, 0.5);
+    margin-top: -32px;
 }

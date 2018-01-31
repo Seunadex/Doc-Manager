@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -23,23 +24,23 @@ class LoginPage extends React.Component {
                       <div className="input-field col s12">
                         <i className="material-icons prefix">person_pin</i>
                         <input
-                        id="icon_telephone"
-                        type="tel"
-                        className="validate" />
-                        <label htmlFor="icon_telephone">Username</label>
+                        id="username"
+                        type="text"
+                        className="validate" required />
+                        <label htmlFor="username">Username</label>
                       </div>
                       <div className="input-field col s12">
                         <i className="material-icons prefix">lock</i>
                         <input
-                        id="icon_telephone"
-                        type="tel"
-                        className="validate" />
+                        id="password"
+                        type="password"
+                        className="validate" required />
                         <label htmlFor="password">Password</label>
                       </div>
                     </div>
-                    <a className="waves-effect waves-teal btn col s12">
+                    <button className="waves-effect waves-teal btn col s12">
                         Login
-                      </a>
+                      </button>
 
                   </form>
                 </div>

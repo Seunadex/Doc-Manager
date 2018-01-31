@@ -1,21 +1,25 @@
 import 'babel-polyfill';
 import React from 'react';
 import { render } from 'react-dom';
-import { Router, browserHistory } from 'react-router';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
+import { Router } from 'react-router-dom';
 import { createStore, applyMiddleware } from 'redux';
-import routes from './routes';
+import thunk from 'redux-thunk';
+import { createBrowserHistory } from 'history';
+
+
+import { Routes, history } from './routes';
+import reducers from './reducers/rootReducer';
 import './components/styles/styles.scss';
 
-const store = createStore(
-  (state = {}) => state,
-  applyMiddleware(thunk)
-);
+const createStoreWithMiddleware =
+applyMiddleware(thunk)(createStore);
 
 render(
-  <Provider store={store}>
-    <Router history={browserHistory} routes={routes} />
+  <Provider store={createStoreWithMiddleware(reducers)}>
+    <Router history={history}>
+      <Routes />
+    </Router>
   </Provider>,
    document.getElementById('app')
   );
