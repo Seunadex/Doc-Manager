@@ -47,7 +47,7 @@ class SignupForm extends React.Component {
                 value={this.state.fullName}
                 onChange={this.onChange}
                 name="fullName"
-                className="validate" required />
+                className="validate" required autoFocus />
               <label htmlFor="icon_prefix">Full Name</label>
             </div>
             <div className="input-field col s12">

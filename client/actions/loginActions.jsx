@@ -1,23 +1,24 @@
 import axios from 'axios';
 import { history } from '../routes';
-// import jwt from 'jsonwebtoken';
 import setToken from '../utils/setToken';
 
-import { SIGN_UP, SIGN_UP_FAIL } from '../constants';
+import { LOGIN, LOGIN_FAIL } from '../constants';
 
 export default (userData) => {
   return (dispatch) => {
-    const url = '/api/v1/users';
+    const url = '/api/v1/users/login';
     axios.post(url, userData).then((response) => {
       const token = response.data.token;
+      console.log(token);
       localStorage.setItem('jwtToken', token);
       setToken(token);
-      dispatch({ type: SIGN_UP, payload: response.data });
+      dispatch({ type: LOGIN, payload: response.data });
       history.push('/documents');
     })
     .catch((error) => {
-      dispatch({ type: SIGN_UP_FAIL, payload: error.response.data });
-      history.push('/signup');
+      console.log(error.response.data);
+      dispatch({ type: LOGIN_FAIL, payload: error.response.data });
+      history.push('/login');
     });
   };
 };

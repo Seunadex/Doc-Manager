@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 import SignupForm from './SignupForm';
 import userSignupRequest from '../../actions/signupActions';
@@ -14,16 +15,14 @@ class SignupPage extends React.Component {
     return (
       <div className="container">
         <div className="row">
-          <div className="col m7"><h1>Signup Page</h1></div>
-          <div className="col m5">
+          <div className="col m6"><h1>Signup Page</h1></div>
+          <div className="col m6">
             <div className="signup-form z-depth-5">
-              <img
-                  src="./../../images/signup.png"
-                  alt="login"
-                  className="signup-img" />
+              <div className="login-img" />
               <div className="row">
                 <SignupForm onUserSignup={onUserSignup} />
               </div>
+              <p>Already registered? Login <Link to="/login">here</Link></p>
             </div>
           </div>
         </div>
